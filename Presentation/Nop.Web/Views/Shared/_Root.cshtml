@@ -1,0 +1,26 @@
+﻿@{
+    Layout = "_Root.Head";
+}
+@await Component.InvokeAsync("Widget", new { widgetZone = "body_start_html_tag_after" })
+@await Html.PartialAsync("_Notifications")
+@await Html.PartialAsync("_JavaScriptDisabledWarning")
+@await Html.PartialAsync("_OldInternetExplorerWarning")
+<div class="master-wrapper-page">
+    @await Component.InvokeAsync("AdminHeaderLinks")
+    @await Html.PartialAsync("_Header")  
+    <div class="master-wrapper-content">
+        @await Component.InvokeAsync("Widget", new { widgetZone = "content_before" })
+
+        @if (IsSectionDefined("Breadcrumb"))
+        {
+            @RenderSection("Breadcrumb") 
+        }
+        <div class="master-column-wrapper">
+            @RenderBody()
+        </div>
+        @await Component.InvokeAsync("Widget", new { widgetZone = "content_after" })
+    </div>
+    @await Component.InvokeAsync("Footer")
+</div>
+ 
+@await Component.InvokeAsync("Widget", new { widgetZone = "body_end_html_tag_before" })

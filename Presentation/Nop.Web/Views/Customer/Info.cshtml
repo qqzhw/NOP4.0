@@ -1,0 +1,256 @@
+﻿@using Nop.Core
+@model CustomerInfoModel
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    Html.AddTitleParts(T("PageTitle.Account").Text);
+    //page class
+    Html.AppendPageCssClassParts("html-account-page");
+    Html.AppendPageCssClassParts("html-customer-info-page");
+}
+
+ 
+    @await Component.InvokeAsync("CustomerNavigation", new { selectedTabId = CustomerNavigationEnum.Info })
+ 
+
+ 
+
+<div class="page account-page customer-info-page">
+    <div class="page-title">
+        <h1>@T("Account.MyAccount") - @T("Account.CustomerInfo")</h1>
+    </div>
+    <div class="page-body">
+        <form asp-route="CustomerInfo" method="post">
+            <div asp-validation-summary="ModelOnly" class="message-error"></div>
+            <div class="fieldset">
+                <div class="title">
+                    <strong>@T("Account.YourPersonalDetails")</strong>
+                </div>
+                <div class="form-fields">
+                    @if (Model.GenderEnabled)
+                    {
+                        <div class="inputs">
+                            <label>@T("Account.Fields.Gender"):</label>
+                            <div class="gender">
+                                <span class="male">
+                                    <input type="radio" asp-for="Gender" value="M" checked="@(Model.Gender == "M")" id="gender-male" />
+                                    <label class="forcheckbox" for="gender-male">@T("Account.Fields.Gender.Male")</label>
+                                </span>
+                                <span class="female">
+                                    <input type="radio" asp-for="Gender" value="F" checked="@(Model.Gender == "F")" id="gender-female" />
+                                    <label class="forcheckbox" for="gender-female">@T("Account.Fields.Gender.Female")</label>
+                                </span>
+                            </div>
+                        </div>
+                    }
+                    <div class="inputs">
+                        <label asp-for="FirstName">@T("Account.Fields.FirstName"):</label>
+                        <input asp-for="FirstName" />
+                        <nop-required/>
+                        <span asp-validation-for="FirstName"></span>
+                    </div>
+                    <div class="inputs">
+                        <label asp-for="LastName">@T("Account.Fields.LastName"):</label>
+                        <input asp-for="LastName" />
+                        <nop-required />
+                        <span asp-validation-for="LastName"></span>
+                    </div>
+                    @if (Model.DateOfBirthEnabled)
+                    {
+                        <div class="inputs date-of-birth">
+                            <label>@T("Account.Fields.DateOfBirth"):</label>
+                            <nop-date-picker 
+                                asp-day-name="@Html.NameFor(x => x.DateOfBirthDay)" 
+                                asp-month-name="@Html.NameFor(x => x.DateOfBirthMonth)" 
+                                asp-year-name="@Html.NameFor(x => x.DateOfBirthYear)"
+                                asp-begin-year="@(DateTime.Now.Year - 110)"
+                                asp-end-year="@(DateTime.Now.Year)"
+                                asp-selected-day="@Model.DateOfBirthDay"
+                                asp-selected-month="@Model.DateOfBirthMonth"
+                                asp-selected-year="@Model.DateOfBirthYear"
+                            />
+                            @if (Model.DateOfBirthRequired)
+                            {
+                                <nop-required />
+                            }
+                            <span asp-validation-for="DateOfBirthDay"></span>
+                            <span asp-validation-for="DateOfBirthMonth"></span>
+                            <span asp-validation-for="DateOfBirthYear"></span>
+                        </div>
+                    }
+                    <div class="inputs">
+                        <label asp-for="Email">@T("Account.Fields.Email"):</label>
+                        <input asp-for="Email" />
+                        <nop-required />
+                        <span asp-validation-for="Email"></span>
+                    </div>
+                    @if (!String.IsNullOrEmpty(Model.EmailToRevalidate))
+                    {
+                        <div class="inputs">
+                            <label asp-for="EmailToRevalidate">@T("Account.Fields.EmailToRevalidate"):</label>
+                            <span class="email-to-revalidate">@Model.EmailToRevalidate</span>
+                            <span class="email-to-revalidate-note">
+                                <em>@T("Account.Fields.EmailToRevalidate.Note")</em>
+                            </span>
+                        </div>
+                    }
+                    @if (Model.UsernamesEnabled)
+                    {
+                        if (Model.AllowUsersToChangeUsernames)
+                        {
+                            <div class="inputs">
+                                <label asp-for="Username">@T("Account.Fields.Username"):</label>
+                                <input asp-for="Username" />
+                                <nop-required />
+                                <span asp-validation-for="Username"></span>
+                                @if (Model.CheckUsernameAvailabilityEnabled)
+                                {
+                                    @await Html.PartialAsync("_CheckUsernameAvailability")
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="inputs">
+                                <label asp-for="Username">@T("Account.Fields.Username"):</label>
+                                <span class="readonly-username">@Model.Username</span>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        
+            @if (Model.PhoneEnabled || Model.FaxEnabled)
+            {
+                <div class="fieldset">
+                    <div class="title">
+                        <strong>@T("Account.YourContactInformation")</strong>
+                    </div>
+                    <div class="form-fields">
+                        @if (Model.PhoneEnabled)
+                        {
+                            <div class="inputs">
+                                <label asp-for="Phone">@T("Account.Fields.Phone"):</label>
+                                <input asp-for="Phone" />
+                                @if (Model.PhoneRequired)
+                                {
+                                    <nop-required />
+                                }
+                                <span asp-validation-for="Phone"></span>
+                            </div>
+                        }
+                        @if (Model.FaxEnabled)
+                        {
+                            <div class="inputs">
+                                <label asp-for="Fax">@T("Account.Fields.Fax"):</label>
+                                <input asp-for="Fax" />
+                                @if (Model.FaxRequired)
+                                {
+                                    <nop-required />
+                                }
+                                <span asp-validation-for="Fax"></span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            
+         
+            @if (Model.NumberOfExternalAuthenticationProviders > 0)
+            {
+                <div class="fieldset">
+                    <div class="title">
+                        <strong>@T("Account.AssociatedExternalAuth")</strong>
+                    </div>
+                    @if (Model.AssociatedExternalAuthRecords.Count > 0)
+                    {
+                        //existing associated external records
+                        <div class="table-wrapper">
+                            <table class="data-table">
+                                <colgroup>
+                                    <col />
+                                    <col />
+                                    <col />
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th class="auth-method-name">
+                                            @T("Account.AssociatedExternalAuth.AuthMethodName")
+                                        </th>
+                                        <th class="email">
+                                            @T("Account.AssociatedExternalAuth.Email")
+                                        </th>
+                                        <th class="external-id">
+                                            @T("Account.AssociatedExternalAuth.ExternalIdentifier")
+                                        </th>
+                                        <th class="remove">
+                                            @T("Account.AssociatedExternalAuth.Remove")
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.AssociatedExternalAuthRecords)
+                                    {
+                                        <tr>
+                                            <td class="auth-method-name">
+                                                @item.AuthMethodName
+                                            </td>
+                                            <td class="email">
+                                                @item.Email
+                                            </td>
+                                            <td class="external-id">
+                                                @CommonHelper.EnsureMaximumLength(item.ExternalIdentifier, 40, "...")
+                                            </td>
+                                            <td class="remove">
+                                                <a href="#" onclick="return removeexternalassociation(@item.Id)">@T("Account.AssociatedExternalAuth.Remove")</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    @if (Model.NumberOfExternalAuthenticationProviders > Model.AssociatedExternalAuthRecords.Count)
+                    {
+                        //we can add more external records
+                        <div class="form-fields add-more-external-records">
+                            @T("Account.AssociatedExternalAuth.AddMoreRecords")
+                            <a href="@Url.RouteUrl("Login", null, "http")">
+                                @Url.RouteUrl("Login", null, "http")
+                            </a>
+                        </div>
+                    }
+                </div>
+            }
+            <div class="buttons">
+                <input type="submit" value="@T("Common.Save")" name="save-info-button" class="button-1 save-customer-info-button" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function removeexternalassociation(itemId) {
+        if (confirm('@T("Common.AreYouSure")')) {
+            var postData = {
+                id: itemId
+            };
+            addAntiForgeryToken(postData);
+            $.ajax({
+                cache: false,
+                type: 'POST',
+                url: '@Url.Action("RemoveExternalAssociation", "Customer")',
+                data: postData,
+                dataType: 'json',
+                success: function (data) {
+                    location.href = data.redirect;
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Failed to delete');
+                }
+            });
+        }
+        return false;
+    }
+</script>

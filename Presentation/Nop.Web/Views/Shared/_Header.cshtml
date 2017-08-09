@@ -1,0 +1,21 @@
+﻿<div class="header">
+    @await Component.InvokeAsync("Widget", new { widgetZone = "header" })
+    <div class="header-upper">
+        <div class="header-selectors-wrapper">
+         
+            @await Component.InvokeAsync("Widget", new { widgetZone = "header_selectors" })
+        </div>
+        <div class="header-links-wrapper">
+            @await Component.InvokeAsync("HeaderLinks")
+       
+        </div>
+    </div>
+    <div class="header-lower">
+        <div class="header-logo">
+         
+        </div>
+        <div class="search-box store-search-box">
+         
+        </div>
+    </div>
+</div>
