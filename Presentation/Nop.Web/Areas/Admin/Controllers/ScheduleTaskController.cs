@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Nop.Web.Areas.Admin.Models.Tasks;
 using Nop.Core.Domain.Tasks;
 using Nop.Services.Helpers;
-using Nop.Services.Localization;
+
 using Nop.Services.Logging;
 using Nop.Services.Security;
 using Nop.Services.Tasks;
@@ -19,8 +19,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         private readonly IScheduleTaskService _scheduleTaskService;
         private readonly IPermissionService _permissionService;
-        private readonly IDateTimeHelper _dateTimeHelper;
-        private readonly ILocalizationService _localizationService;
+        private readonly IDateTimeHelper _dateTimeHelper;       
         private readonly ICustomerActivityService _customerActivityService;
 
         #endregion
@@ -29,13 +28,13 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         public ScheduleTaskController(IScheduleTaskService scheduleTaskService, 
             IPermissionService permissionService,
-            IDateTimeHelper dateTimeHelper, ILocalizationService localizationService,
+            IDateTimeHelper dateTimeHelper,  
             ICustomerActivityService customerActivityService)
         {
             this._scheduleTaskService = scheduleTaskService;
             this._permissionService = permissionService;
             this._dateTimeHelper = dateTimeHelper;
-            this._localizationService = localizationService;
+            
             this._customerActivityService = customerActivityService;
         }
 
@@ -116,7 +115,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             _scheduleTaskService.UpdateTask(scheduleTask);
 
             //activity log
-            _customerActivityService.InsertActivity("EditTask", _localizationService.GetResource("ActivityLog.EditTask"), scheduleTask.Id);
+            _customerActivityService.InsertActivity("EditTask", ("ActivityLog.EditTask"), scheduleTask.Id);
 
             return new NullJsonResult();
         }
@@ -135,7 +134,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 var task = new Task(scheduleTask) {Enabled = true};
                 //ensure that the task is enabled
                 task.Execute(true, false);
-                SuccessNotification(_localizationService.GetResource("Admin.System.ScheduleTasks.RunNow.Done"));
+                SuccessNotification(("Admin.System.ScheduleTasks.RunNow.Done"));
             }
             catch (Exception exc)
             {

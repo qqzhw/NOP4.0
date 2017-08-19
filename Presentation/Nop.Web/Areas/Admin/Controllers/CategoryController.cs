@@ -10,20 +10,15 @@ using Nop.Web.Areas.Admin.Helpers;
 using Nop.Web.Areas.Admin.Models.Catalog;
 using Nop.Core;
 using Nop.Core.Caching;
-using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Discounts;
+using Nop.Core.Domain.Catalog; 
 using Nop.Services;
 using Nop.Services.Catalog;
-using Nop.Services.Customers;
-using Nop.Services.Discounts;
-using Nop.Services.ExportImport;
-using Nop.Services.Localization;
+using Nop.Services.Customers; 
 using Nop.Services.Logging;
 using Nop.Services.Media;
 using Nop.Services.Security;
 using Nop.Services.Seo;
-using Nop.Services.Stores;
-using Nop.Services.Vendors;
+using Nop.Services.Stores; 
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Kendoui;
 using Nop.Web.Framework.Mvc;
@@ -35,75 +30,56 @@ namespace Nop.Web.Areas.Admin.Controllers
     {
         #region Fields
 
-        private readonly ICategoryService _categoryService;
-        private readonly ICategoryTemplateService _categoryTemplateService;
-        private readonly IManufacturerService _manufacturerService;
+        private readonly ICategoryService _categoryService; 
         private readonly IProductService _productService;
         private readonly ICustomerService _customerService;
         private readonly IUrlRecordService _urlRecordService;
-        private readonly IPictureService _pictureService;
-        private readonly ILanguageService _languageService;
-        private readonly ILocalizationService _localizationService;
-        private readonly ILocalizedEntityService _localizedEntityService;
-        private readonly IDiscountService _discountService;
+        private readonly IPictureService _pictureService; 
         private readonly IPermissionService _permissionService;
         private readonly IAclService _aclService;
         private readonly IStoreService _storeService;
-        private readonly IStoreMappingService _storeMappingService;
-        private readonly IExportManager _exportManager;
+        private readonly IStoreMappingService _storeMappingService; 
         private readonly ICustomerActivityService _customerActivityService;
-        private readonly IVendorService _vendorService;
+        
         private readonly CatalogSettings _catalogSettings;
         private readonly IWorkContext _workContext;
-        private readonly IImportManager _importManager;
+      
         private readonly IStaticCacheManager _cacheManager;
         
         #endregion
         
         #region Constructors
 
-        public CategoryController(ICategoryService categoryService, ICategoryTemplateService categoryTemplateService,
-            IManufacturerService manufacturerService, IProductService productService, 
+        public CategoryController(ICategoryService categoryService, 
+           IProductService productService, 
             ICustomerService customerService,
             IUrlRecordService urlRecordService, 
-            IPictureService pictureService, 
-            ILanguageService languageService,
-            ILocalizationService localizationService, 
-            ILocalizedEntityService localizedEntityService,
-            IDiscountService discountService,
+            IPictureService pictureService,  
             IPermissionService permissionService,
             IAclService aclService, 
             IStoreService storeService,
-            IStoreMappingService storeMappingService,
-            IExportManager exportManager, 
-            IVendorService vendorService, 
+            IStoreMappingService storeMappingService, 
             ICustomerActivityService customerActivityService,
             CatalogSettings catalogSettings,
-            IWorkContext workContext,
-            IImportManager importManager, 
+            IWorkContext workContext, 
             IStaticCacheManager cacheManager)
         {
             this._categoryService = categoryService;
-            this._categoryTemplateService = categoryTemplateService;
-            this._manufacturerService = manufacturerService;
+        
             this._productService = productService;
             this._customerService = customerService;
             this._urlRecordService = urlRecordService;
-            this._pictureService = pictureService;
-            this._languageService = languageService;
-            this._localizationService = localizationService;
-            this._localizedEntityService = localizedEntityService;
-            this._discountService = discountService;
+            this._pictureService = pictureService; 
             this._permissionService = permissionService;
-            this._vendorService = vendorService;
+           
             this._aclService = aclService;
             this._storeService = storeService;
             this._storeMappingService = storeMappingService;
-            this._exportManager = exportManager;
+           
             this._customerActivityService = customerActivityService;
             this._catalogSettings = catalogSettings;
             this._workContext = workContext;
-            this._importManager = importManager;
+       
             this._cacheManager = cacheManager;
         }
         
@@ -111,41 +87,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         
         #region Utilities
         
-        protected virtual void UpdateLocales(Category category, CategoryModel model)
-        {
-            foreach (var localized in model.Locales)
-            {
-                _localizedEntityService.SaveLocalizedValue(category,
-                                                               x => x.Name,
-                                                               localized.Name,
-                                                               localized.LanguageId);
-
-                _localizedEntityService.SaveLocalizedValue(category,
-                                                           x => x.Description,
-                                                           localized.Description,
-                                                           localized.LanguageId);
-
-                _localizedEntityService.SaveLocalizedValue(category,
-                                                           x => x.MetaKeywords,
-                                                           localized.MetaKeywords,
-                                                           localized.LanguageId);
-
-                _localizedEntityService.SaveLocalizedValue(category,
-                                                           x => x.MetaDescription,
-                                                           localized.MetaDescription,
-                                                           localized.LanguageId);
-
-                _localizedEntityService.SaveLocalizedValue(category,
-                                                           x => x.MetaTitle,
-                                                           localized.MetaTitle,
-                                                           localized.LanguageId);
-
-                //search engine name
-                var seName = category.ValidateSeName(localized.SeName, localized.Name, false);
-                _urlRecordService.SaveSlug(category, seName, localized.LanguageId);
-            }
-        }
-        
+       
         protected virtual void UpdatePictureSeoNames(Category category)
         {
             var picture = _pictureService.GetPictureById(category.PictureId);
@@ -160,49 +102,14 @@ namespace Nop.Web.Areas.Admin.Controllers
 
             model.AvailableCategories.Add(new SelectListItem
             {
-                Text = _localizationService.GetResource("Admin.Catalog.Categories.Fields.Parent.None"),
+                Text = ("Admin.Catalog.Categories.Fields.Parent.None"),
                 Value = "0"
             });
             var categories = SelectListHelper.GetCategoryList(_categoryService, _cacheManager, true);
             foreach (var c in categories)
                 model.AvailableCategories.Add(c);
         }
-
-        protected virtual void PrepareTemplatesModel(CategoryModel model)
-        {
-            if (model == null)
-                throw new ArgumentNullException(nameof(model));
-
-            var templates = _categoryTemplateService.GetAllCategoryTemplates();
-            foreach (var template in templates)
-            {
-                model.AvailableCategoryTemplates.Add(new SelectListItem
-                {
-                    Text = template.Name,
-                    Value = template.Id.ToString()
-                });
-            }
-        }
-        
-        protected virtual void PrepareDiscountModel(CategoryModel model, Category category, bool excludeProperties)
-        {
-            if (model == null)
-                throw new ArgumentNullException(nameof(model));
-
-            if (!excludeProperties && category != null)
-                model.SelectedDiscountIds = category.AppliedDiscounts.Select(d => d.Id).ToList();
-
-            foreach (var discount in _discountService.GetAllDiscounts(DiscountType.AssignedToCategories, showHidden: true))
-            {
-                model.AvailableDiscounts.Add(new SelectListItem
-                {
-                    Text = discount.Name,
-                    Value = discount.Id.ToString(),
-                    Selected = model.SelectedDiscountIds.Contains(discount.Id)
-                });
-            }
-        }
-        
+         
         protected virtual void PrepareAclModel(CategoryModel model, Category category, bool excludeProperties)
         {
             if (model == null)
@@ -306,7 +213,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             var model = new CategoryListModel();
-            model.AvailableStores.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
+            model.AvailableStores.Add(new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
             foreach (var s in _storeService.GetAllStores())
                 model.AvailableStores.Add(new SelectListItem { Text = s.Name, Value = s.Id.ToString() });
             return View(model);
@@ -343,14 +250,10 @@ namespace Nop.Web.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             var model = new CategoryModel();
-            //locales
-            AddLocales(_languageService, model.Locales);
-            //templates
-            PrepareTemplatesModel(model);
+         
             //categories
             PrepareAllCategoriesModel(model);
-            //discounts
-            PrepareDiscountModel(model, null, true);
+        
             //ACL
             PrepareAclModel(model, null, false);
             //Stores
@@ -380,15 +283,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 //search engine name
                 model.SeName = category.ValidateSeName(model.SeName, category.Name, true);
                 _urlRecordService.SaveSlug(category, model.SeName, 0);
-                //locales
-                UpdateLocales(category, model);
-                //discounts
-                var allDiscounts = _discountService.GetAllDiscounts(DiscountType.AssignedToCategories, showHidden: true);
-                foreach (var discount in allDiscounts)
-                {
-                    if (model.SelectedDiscountIds != null && model.SelectedDiscountIds.Contains(discount.Id))
-                        category.AppliedDiscounts.Add(discount);
-                }
+               
                 _categoryService.UpdateCategory(category);
                 //update picture seo file name
                 UpdatePictureSeoNames(category);
@@ -398,9 +293,9 @@ namespace Nop.Web.Areas.Admin.Controllers
                 SaveStoreMappings(category, model);
 
                 //activity log
-                _customerActivityService.InsertActivity("AddNewCategory", _localizationService.GetResource("ActivityLog.AddNewCategory"), category.Name);
+                _customerActivityService.InsertActivity("AddNewCategory", ("ActivityLog.AddNewCategory"), category.Name);
 
-                SuccessNotification(_localizationService.GetResource("Admin.Catalog.Categories.Added"));
+                SuccessNotification(("Admin.Catalog.Categories.Added"));
 
                 if (continueEditing)
                 {
@@ -412,13 +307,10 @@ namespace Nop.Web.Areas.Admin.Controllers
                 return RedirectToAction("List");
             }
 
-            //If we got this far, something failed, redisplay form
-            //templates
-            PrepareTemplatesModel(model);
+          
             //categories
             PrepareAllCategoriesModel(model);
-            //discounts
-            PrepareDiscountModel(model, null, true);
+         
             //ACL
             PrepareAclModel(model, null, true);
             //Stores
@@ -437,22 +329,11 @@ namespace Nop.Web.Areas.Admin.Controllers
                 return RedirectToAction("List");
 
             var model = category.ToModel();
-            //locales
-            AddLocales(_languageService, model.Locales, (locale, languageId) =>
-            {
-                locale.Name = category.GetLocalized(x => x.Name, languageId, false, false);
-                locale.Description = category.GetLocalized(x => x.Description, languageId, false, false);
-                locale.MetaKeywords = category.GetLocalized(x => x.MetaKeywords, languageId, false, false);
-                locale.MetaDescription = category.GetLocalized(x => x.MetaDescription, languageId, false, false);
-                locale.MetaTitle = category.GetLocalized(x => x.MetaTitle, languageId, false, false);
-                locale.SeName = category.GetSeName(languageId, false, false);
-            });
-            //templates
-            PrepareTemplatesModel(model);
+          
+          
             //categories
             PrepareAllCategoriesModel(model);
-            //discounts
-            PrepareDiscountModel(model, category, false);
+          
             //ACL
             PrepareAclModel(model, category, false);
             //Stores
@@ -481,25 +362,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 //search engine name
                 model.SeName = category.ValidateSeName(model.SeName, category.Name, true);
                 _urlRecordService.SaveSlug(category, model.SeName, 0);
-                //locales
-                UpdateLocales(category, model);
-                //discounts
-                var allDiscounts = _discountService.GetAllDiscounts(DiscountType.AssignedToCategories, showHidden: true);
-                foreach (var discount in allDiscounts)
-                {
-                    if (model.SelectedDiscountIds != null && model.SelectedDiscountIds.Contains(discount.Id))
-                    {
-                        //new discount
-                        if (category.AppliedDiscounts.Count(d => d.Id == discount.Id) == 0)
-                            category.AppliedDiscounts.Add(discount);
-                    }
-                    else
-                    {
-                        //remove discount
-                        if (category.AppliedDiscounts.Count(d => d.Id == discount.Id) > 0)
-                            category.AppliedDiscounts.Remove(discount);
-                    }
-                }
+                
                 _categoryService.UpdateCategory(category);
                 //delete an old picture (if deleted or updated)
                 if (prevPictureId > 0 && prevPictureId != category.PictureId)
@@ -516,9 +379,9 @@ namespace Nop.Web.Areas.Admin.Controllers
                 SaveStoreMappings(category, model);
 
                 //activity log
-                _customerActivityService.InsertActivity("EditCategory", _localizationService.GetResource("ActivityLog.EditCategory"), category.Name);
+                _customerActivityService.InsertActivity("EditCategory", ("ActivityLog.EditCategory"), category.Name);
 
-                SuccessNotification(_localizationService.GetResource("Admin.Catalog.Categories.Updated"));
+                SuccessNotification(("Admin.Catalog.Categories.Updated"));
                 if (continueEditing)
                 {
                     //selected tab
@@ -528,15 +391,11 @@ namespace Nop.Web.Areas.Admin.Controllers
                 }
                 return RedirectToAction("List");
             }
-
-
-            //If we got this far, something failed, redisplay form
-            //templates
-            PrepareTemplatesModel(model);
+             
+        
             //categories
             PrepareAllCategoriesModel(model);
-            //discounts
-            PrepareDiscountModel(model, category, true);
+          
             //ACL
             PrepareAclModel(model, category, true);
             //Stores
@@ -559,81 +418,13 @@ namespace Nop.Web.Areas.Admin.Controllers
             _categoryService.DeleteCategory(category);
 
             //activity log
-            _customerActivityService.InsertActivity("DeleteCategory", _localizationService.GetResource("ActivityLog.DeleteCategory"), category.Name);
+            _customerActivityService.InsertActivity("DeleteCategory", ("ActivityLog.DeleteCategory"), category.Name);
 
-            SuccessNotification(_localizationService.GetResource("Admin.Catalog.Categories.Deleted"));
+            SuccessNotification(("Admin.Catalog.Categories.Deleted"));
             return RedirectToAction("List");
         }
 
 
-        #endregion
-
-        #region Export / Import
-
-        public virtual IActionResult ExportXml()
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
-
-            try
-            {
-                var xml = _exportManager.ExportCategoriesToXml();
-                return File(Encoding.UTF8.GetBytes(xml), "application/xml", "categories.xml");
-            }
-            catch (Exception exc)
-            {
-                ErrorNotification(exc);
-                return RedirectToAction("List");
-            }
-        }
-
-        public virtual IActionResult ExportXlsx()
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
-
-            try
-            {
-                var bytes = _exportManager.ExportCategoriesToXlsx(_categoryService.GetAllCategories(showHidden: true).Where(p => !p.Deleted));
-                return File(bytes, MimeTypes.TextXlsx, "categories.xlsx");
-            }
-            catch (Exception exc)
-            {
-                ErrorNotification(exc);
-                return RedirectToAction("List");
-            }
-        }
-
-        [HttpPost]
-        public virtual IActionResult ImportFromXlsx(IFormFile importexcelfile)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
-
-            //a vendor cannot import categories
-            if (_workContext.CurrentVendor != null)
-                return AccessDeniedView();
-
-            try
-            {
-                if (importexcelfile != null && importexcelfile.Length > 0)
-                {
-                    _importManager.ImportCategoriesFromXlsx(importexcelfile.OpenReadStream());
-                }
-                else
-                {
-                    ErrorNotification(_localizationService.GetResource("Admin.Common.UploadFile"));
-                    return RedirectToAction("List");
-                }
-                SuccessNotification(_localizationService.GetResource("Admin.Catalog.Categories.Imported"));
-                return RedirectToAction("List");
-            }
-            catch (Exception exc)
-            {
-                ErrorNotification(exc);
-                return RedirectToAction("List");
-            }
-        }
         #endregion
         
         #region Products
@@ -701,31 +492,21 @@ namespace Nop.Web.Areas.Admin.Controllers
             
             var model = new CategoryModel.AddCategoryProductModel();
             //categories
-            model.AvailableCategories.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
+            model.AvailableCategories.Add(new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
             var categories = SelectListHelper.GetCategoryList(_categoryService, _cacheManager, true);
             foreach (var c in categories)
                 model.AvailableCategories.Add(c);
 
-            //manufacturers
-            model.AvailableManufacturers.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
-            var manufacturers = SelectListHelper.GetManufacturerList(_manufacturerService, _cacheManager, true);
-            foreach (var m in manufacturers)
-                model.AvailableManufacturers.Add(m);
-
+         
             //stores
-            model.AvailableStores.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
+            model.AvailableStores.Add(new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
             foreach (var s in _storeService.GetAllStores())
                 model.AvailableStores.Add(new SelectListItem { Text = s.Name, Value = s.Id.ToString() });
 
-            //vendors
-            model.AvailableVendors.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
-            var vendors = SelectListHelper.GetVendorList(_vendorService, _cacheManager, true);
-            foreach (var v in vendors)
-                model.AvailableVendors.Add(v);
-
+         
             //product types
             model.AvailableProductTypes = ProductType.SimpleProduct.ToSelectList(false).ToList();
-            model.AvailableProductTypes.Insert(0, new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
+            model.AvailableProductTypes.Insert(0, new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
 
             return View(model);
         }

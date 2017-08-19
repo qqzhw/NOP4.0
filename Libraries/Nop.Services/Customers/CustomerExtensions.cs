@@ -9,7 +9,7 @@ using Nop.Core.Domain.Customers;
 using Nop.Core.Infrastructure;
 using Nop.Services.Common;
 using Nop.Services.Customers.Cache;
-using Nop.Services.Localization;
+
 
 namespace Nop.Services.Customers
 {
@@ -54,7 +54,7 @@ namespace Nop.Services.Customers
 
             if (customer.IsGuest())
             {
-                return EngineContext.Current.Resolve<ILocalizationService>().GetResource("Customer.Guest");
+                return "Guest";
             }
 
             string result = string.Empty;

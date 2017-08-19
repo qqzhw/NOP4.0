@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Template;
 using Nop.Core;
 using Nop.Core.Data;
-using Nop.Core.Domain.Localization;
+
 using Nop.Core.Infrastructure;
 using Nop.Services.Events;
 using Nop.Services.Seo;
@@ -47,8 +47,8 @@ namespace Nop.Web.Framework.Seo
         {
             //remove language code from the path if it's localized URL
             var path = context.HttpContext.Request.Path.Value;
-            if (this.SeoFriendlyUrlsForLanguagesEnabled && path.IsLocalizedUrl(context.HttpContext.Request.PathBase, false, out Language language))
-                path = path.RemoveLanguageSeoCodeFromUrl(context.HttpContext.Request.PathBase, false);
+            //if (this.SeoFriendlyUrlsForLanguagesEnabled && path.IsLocalizedUrl(context.HttpContext.Request.PathBase, false))
+            //    path = path.RemoveLanguageSeoCodeFromUrl(context.HttpContext.Request.PathBase, false);
 
             //parse route data
             var routeValues = new RouteValueDictionary(this.ParsedTemplate.Parameters
@@ -115,7 +115,7 @@ namespace Nop.Web.Framework.Seo
             //ensure that the slug is the same for the current language, 
             //otherwise it can cause some issues when customers choose a new language but a slug stays the same
             var workContext = EngineContext.Current.Resolve<IWorkContext>();
-            var slugForCurrentLanguage = SeoExtensions.GetSeName(urlRecord.EntityId, urlRecord.EntityName, workContext.WorkingLanguage.Id);
+            var slugForCurrentLanguage = SeoExtensions.GetSeName(urlRecord.EntityId, urlRecord.EntityName, 1);
             if (!string.IsNullOrEmpty(slugForCurrentLanguage) && !slugForCurrentLanguage.Equals(slug, StringComparison.InvariantCultureIgnoreCase))
             {
                 //we should make validation above because some entities does not have SeName for standard (Id = 0) language (e.g. news, blog posts)

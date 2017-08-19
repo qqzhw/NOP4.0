@@ -8,9 +8,7 @@ namespace Nop.Web.Controllers
     [HttpsRequirement(SslRequirement.NoMatter)]
     [WwwRequirement]
     [CheckAccessPublicStore]
-    [CheckAccessClosedStore]
-    [CheckLanguageSeoCode]
-    [CheckAffiliate]
+    [CheckAccessClosedStore] 
     public abstract partial class BasePublicController : BaseController
     {
         protected virtual IActionResult InvokeHttp404()

@@ -12,17 +12,16 @@ using Nop.Web.Framework.Mvc.Models;
 namespace Nop.Web.Areas.Admin.Models.Catalog
 {
     [Validator(typeof(ProductValidator))]
-    public partial class ProductModel : BaseNopEntityModel, ILocalizedModel<ProductLocalizedModel>
+    public partial class ProductModel : BaseNopEntityModel
     {
         public ProductModel()
-        {
-            Locales = new List<ProductLocalizedModel>();
+        {           
             ProductPictureModels = new List<ProductPictureModel>();
           
             AddPictureModel = new ProductPictureModel();
             AddSpecificationAttributeModel = new AddProductSpecificationAttributeModel();
             ProductWarehouseInventoryModels = new List<ProductWarehouseInventoryModel>();
-            ProductEditorSettingsModel = new ProductEditorSettingsModel();
+           
             StockQuantityHistory = new StockQuantityHistoryModel();
 
             AvailableBasepriceUnits = new List<SelectListItem>();
@@ -371,10 +370,7 @@ namespace Nop.Web.Areas.Admin.Models.Catalog
         public string PrimaryStoreCurrencyCode { get; set; }
         public string BaseDimensionIn { get; set; }
         public string BaseWeightIn { get; set; }
-
-        public IList<ProductLocalizedModel> Locales { get; set; }
-
-
+        
 
         //ACL (customer roles)
         [NopResourceDisplayName("Admin.Catalog.Products.Fields.AclCustomerRoles")]
@@ -424,9 +420,6 @@ namespace Nop.Web.Areas.Admin.Models.Catalog
         public IList<ProductWarehouseInventoryModel> ProductWarehouseInventoryModels { get; set; }
 
        
-        //editor settings
-        public ProductEditorSettingsModel ProductEditorSettingsModel { get; set; }
-
         //stock quantity history
         public StockQuantityHistoryModel StockQuantityHistory { get; set; }
 
@@ -772,7 +765,7 @@ namespace Nop.Web.Areas.Admin.Models.Catalog
             public string ProductAttributeName { get; set; }
         }
         [Validator(typeof(ProductAttributeValueModelValidator))]
-        public partial class ProductAttributeValueModel : BaseNopEntityModel, ILocalizedModel<ProductAttributeValueLocalizedModel>
+        public partial class ProductAttributeValueModel : BaseNopEntityModel
         {
             public ProductAttributeValueModel()
             {
@@ -879,7 +872,7 @@ namespace Nop.Web.Areas.Admin.Models.Catalog
             }
             #endregion
         }
-        public partial class ProductAttributeValueLocalizedModel : ILocalizedModelLocal
+        public partial class ProductAttributeValueLocalizedModel 
         {
             public int LanguageId { get; set; }
 
@@ -950,30 +943,5 @@ namespace Nop.Web.Areas.Admin.Models.Catalog
 
         #endregion
     }
-
-    public partial class ProductLocalizedModel : ILocalizedModelLocal
-    {
-        public int LanguageId { get; set; }
-
-        [NopResourceDisplayName("Admin.Catalog.Products.Fields.Name")]
-        public string Name { get; set; }
-
-        [NopResourceDisplayName("Admin.Catalog.Products.Fields.ShortDescription")]
-        public string ShortDescription { get; set; }
-
-        [NopResourceDisplayName("Admin.Catalog.Products.Fields.FullDescription")]
-        public string FullDescription { get; set; }
-
-        [NopResourceDisplayName("Admin.Catalog.Products.Fields.MetaKeywords")]
-        public string MetaKeywords { get; set; }
-
-        [NopResourceDisplayName("Admin.Catalog.Products.Fields.MetaDescription")]
-        public string MetaDescription { get; set; }
-
-        [NopResourceDisplayName("Admin.Catalog.Products.Fields.MetaTitle")]
-        public string MetaTitle { get; set; }
-
-        [NopResourceDisplayName("Admin.Catalog.Products.Fields.SeName")]
-        public string SeName { get; set; }
-    }
+      
 }

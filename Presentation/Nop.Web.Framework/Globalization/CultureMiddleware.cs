@@ -52,7 +52,7 @@ namespace Nop.Web.Framework.Globalization
             else
             {
                 //set working language culture
-                var culture = new CultureInfo(workContext.WorkingLanguage.LanguageCulture);
+                var culture = new CultureInfo("zh-CN");
                 CultureInfo.CurrentCulture = culture;
                 CultureInfo.CurrentUICulture = culture;
             }

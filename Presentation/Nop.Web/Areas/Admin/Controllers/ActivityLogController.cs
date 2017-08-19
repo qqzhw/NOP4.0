@@ -8,7 +8,7 @@ using Microsoft.Extensions.Primitives;
 using Nop.Web.Areas.Admin.Extensions;
 using Nop.Web.Areas.Admin.Models.Logging;
 using Nop.Services.Helpers;
-using Nop.Services.Localization;
+
 using Nop.Services.Logging;
 using Nop.Services.Security;
 using Nop.Web.Framework.Kendoui;
@@ -22,7 +22,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         private readonly ICustomerActivityService _customerActivityService;
         private readonly IDateTimeHelper _dateTimeHelper;
-        private readonly ILocalizationService _localizationService;
+       
         private readonly IPermissionService _permissionService;
 
         #endregion Fields
@@ -30,12 +30,12 @@ namespace Nop.Web.Areas.Admin.Controllers
         #region Constructors
 
         public ActivityLogController(ICustomerActivityService customerActivityService,
-            IDateTimeHelper dateTimeHelper, ILocalizationService localizationService,
+            IDateTimeHelper dateTimeHelper,  
             IPermissionService permissionService)
 		{
             this._customerActivityService = customerActivityService;
             this._dateTimeHelper = dateTimeHelper;
-            this._localizationService = localizationService;
+           
             this._permissionService = permissionService;
 		}
 
@@ -62,7 +62,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             //activity log
-            _customerActivityService.InsertActivity("EditActivityLogTypes", _localizationService.GetResource("ActivityLog.EditActivityLogTypes"));
+            _customerActivityService.InsertActivity("EditActivityLogTypes", ("ActivityLog.EditActivityLogTypes"));
 
             string formKey = "checkbox_activity_types";
             var checkedActivityTypes = !StringValues.IsNullOrEmpty(form[formKey]) ?
@@ -76,7 +76,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 _customerActivityService.UpdateActivityType(activityType);
             }
 
-            SuccessNotification(_localizationService.GetResource("Admin.Configuration.ActivityLog.ActivityLogType.Updated"));
+            SuccessNotification(("Admin.Configuration.ActivityLog.ActivityLogType.Updated"));
             return RedirectToAction("ListTypes");
         }
 
@@ -148,7 +148,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             _customerActivityService.DeleteActivity(activityLog);
 
             //activity log
-            _customerActivityService.InsertActivity("DeleteActivityLog", _localizationService.GetResource("ActivityLog.DeleteActivityLog"));
+            _customerActivityService.InsertActivity("DeleteActivityLog", ("ActivityLog.DeleteActivityLog"));
 
             return new NullJsonResult();
         }
@@ -161,7 +161,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             _customerActivityService.ClearAllActivities();
 
             //activity log
-            _customerActivityService.InsertActivity("DeleteActivityLog", _localizationService.GetResource("ActivityLog.DeleteActivityLog"));
+            _customerActivityService.InsertActivity("DeleteActivityLog", ("ActivityLog.DeleteActivityLog"));
 
             return RedirectToAction("ListLogs");
         }

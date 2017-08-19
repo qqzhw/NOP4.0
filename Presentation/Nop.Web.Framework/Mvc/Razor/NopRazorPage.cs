@@ -1,6 +1,6 @@
 ﻿using Nop.Core;
 using Nop.Core.Infrastructure;
-using Nop.Services.Localization;
+
 using Nop.Web.Framework.Localization;
 using Nop.Web.Framework.Themes;
 
@@ -12,7 +12,6 @@ namespace Nop.Web.Framework.Mvc.Razor
     /// <typeparam name="TModel">Model</typeparam>
     public abstract class NopRazorPage<TModel> : Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>
     {
-        private ILocalizationService _localizationService;
         private Localizer _localizer;
 
         /// <summary>
@@ -22,14 +21,12 @@ namespace Nop.Web.Framework.Mvc.Razor
         {
             get
             {
-                if (_localizationService == null)
-                    _localizationService = EngineContext.Current.Resolve<ILocalizationService>();
-
+              
                 if (_localizer == null)
                 {
                     _localizer = (format, args) =>
                     {
-                        var resFormat = _localizationService.GetResource(format);
+                        var resFormat = (format);
                         if (string.IsNullOrEmpty(resFormat))
                         {
                             return new LocalizedString(format);
@@ -41,24 +38,6 @@ namespace Nop.Web.Framework.Mvc.Razor
                 }
                 return _localizer;
             }
-        }
-
-        /// <summary>
-        /// Return a value indicating whether the working language and theme support RTL (right-to-left)
-        /// </summary>
-        /// <returns></returns>
-        public bool ShouldUseRtlTheme()
-        {
-            var workContext = EngineContext.Current.Resolve<IWorkContext>();
-            var supportRtl = workContext.WorkingLanguage.Rtl;
-            if (supportRtl)
-            {
-                //ensure that the active theme also supports it
-                var themeProvider = EngineContext.Current.Resolve<IThemeProvider>();
-                var themeContext = EngineContext.Current.Resolve<IThemeContext>();
-                supportRtl = themeProvider.GetThemeConfiguration(themeContext.WorkingThemeName).SupportRtl;
-            }
-            return supportRtl;
         }
     }
 

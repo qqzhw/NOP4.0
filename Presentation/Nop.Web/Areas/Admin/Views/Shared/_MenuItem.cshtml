@@ -1,11 +1,9 @@
 ﻿@model SiteMapNode
 @using Nop.Core
-@using Nop.Core.Domain.Localization
 @using Nop.Web.Framework.Menu
 @inject IWorkContext workContext
-@inject LocalizationSettings localizationSettings
 @{
-    var supportRtl = workContext.WorkingLanguage.Rtl && !localizationSettings.IgnoreRtlPropertyForAdminArea;
+    
     string url = null;
     if (!string.IsNullOrEmpty(Model.ControllerName) && !string.IsNullOrEmpty(Model.ActionName))
     {
@@ -41,15 +39,8 @@ else
                 <i class="fa @Url.Content(Model.IconClass)"></i>
                 </text>
             }
-            <span>@Model.Title</span>
-            @if (supportRtl)
-            {
-                <i class="fa fa-angle-right pull-right"></i>
-            }
-            else
-            {
-                <i class="fa fa-angle-left pull-right"></i>
-            }
+            <span>@Model.Title</span> 
+                <i class="fa fa-angle-left pull-right"></i>  
         </a>
         @{
             var childNodes = Model.ChildNodes.Where(x => x.Visible).ToList();
@@ -64,4 +55,4 @@ else
             </ul>
         }
     </li>
-            }
+}

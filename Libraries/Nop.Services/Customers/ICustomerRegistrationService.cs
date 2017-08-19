@@ -1,4 +1,9 @@
-using Nop.Core.Domain.Customers;
+﻿using Nop.Core.Domain.Customers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Nop.Services.Customers
 {
@@ -15,13 +20,7 @@ namespace Nop.Services.Customers
         /// <returns>Result</returns>
         CustomerLoginResults ValidateCustomer(string usernameOrEmail, string password);
 
-        /// <summary>
-        /// Register customer
-        /// </summary>
-        /// <param name="request">Request</param>
-        /// <returns>Result</returns>
-        CustomerRegistrationResult RegisterCustomer(CustomerRegistrationRequest request);
-
+       
         /// <summary>
         /// Change password
         /// </summary>

@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 using Nop.Core;
 using Nop.Core.Infrastructure;
-using Nop.Services.Localization;
+
 using Nop.Services.Stores;
 using Nop.Web.Framework.Localization;
 using Nop.Web.Framework.Mvc.ModelBinding;
@@ -25,86 +25,7 @@ namespace Nop.Web.Framework.Extensions
     public static class HtmlExtensions
     {
         #region Admin area extensions
-        
-        public static IHtmlContent LocalizedEditor<T, TLocalizedModelLocal>(this IHtmlHelper<T> helper,
-            string name,
-            Func<int, HelperResult> localizedTemplate,
-            Func<T, HelperResult> standardTemplate,
-            bool ignoreIfSeveralStores = false)
-            where T : ILocalizedModel<TLocalizedModelLocal>
-            where TLocalizedModelLocal : ILocalizedModelLocal
-        {
-            var localizationSupported = helper.ViewData.Model.Locales.Count > 1;
-            if (ignoreIfSeveralStores)
-            {
-                var storeService = EngineContext.Current.Resolve<IStoreService>();
-                if (storeService.GetAllStores().Count >= 2)
-                {
-                    localizationSupported = false;
-                }
-            }
-            if (localizationSupported)
-            {
-                var tabStrip = new StringBuilder();
-                tabStrip.AppendLine(string.Format("<div id=\"{0}\" class=\"nav-tabs-custom nav-tabs-localized-fields\">", name));
-                tabStrip.AppendLine("<ul class=\"nav nav-tabs\">");
-
-                //default tab
-                tabStrip.AppendLine("<li class=\"active\">");
-                tabStrip.AppendLine(string.Format("<a data-tab-name=\"{0}-{1}-tab\" href=\"#{0}-{1}-tab\" data-toggle=\"tab\">{2}</a>",
-                        name, 
-                        "standard",
-                        EngineContext.Current.Resolve<ILocalizationService>().GetResource("Admin.Common.Standard")));
-                tabStrip.AppendLine("</li>");
-
-                var languageService = EngineContext.Current.Resolve<ILanguageService>();
-                foreach (var locale in helper.ViewData.Model.Locales)
-                {
-                    //languages
-                    var language = languageService.GetLanguageById(locale.LanguageId);
-                    if (language == null)
-                        throw new Exception("Language cannot be loaded");
-
-                    tabStrip.AppendLine("<li>");
-                    var urlHelper = new UrlHelper(helper.ViewContext);
-                    var iconUrl = urlHelper.Content("~/images/flags/" + language.FlagImageFileName);
-                    tabStrip.AppendLine(string.Format("<a data-tab-name=\"{0}-{1}-tab\" href=\"#{0}-{1}-tab\" data-toggle=\"tab\"><img alt='' src='{2}'>{3}</a>",
-                            name, 
-                            language.Id,
-                            iconUrl,
-                            WebUtility.HtmlEncode(language.Name)));
-
-                    tabStrip.AppendLine("</li>");
-                }
-                tabStrip.AppendLine("</ul>");
-                    
-                //default tab
-                tabStrip.AppendLine("<div class=\"tab-content\">");
-                tabStrip.AppendLine(string.Format("<div class=\"tab-pane active\" id=\"{0}-{1}-tab\">", name, "standard"));
-                tabStrip.AppendLine(standardTemplate(helper.ViewData.Model).ToHtmlString());
-                tabStrip.AppendLine("</div>");
-
-                for (int i = 0; i < helper.ViewData.Model.Locales.Count; i++)
-                {
-                    //languages
-                    var language = languageService.GetLanguageById(helper.ViewData.Model.Locales[i].LanguageId);
-
-                    tabStrip.AppendLine(string.Format("<div class=\"tab-pane\" id=\"{0}-{1}-tab\">",
-                        name,
-                        language.Id));
-                    tabStrip.AppendLine(localizedTemplate(i).ToHtmlString());
-                    tabStrip.AppendLine("</div>");
-                }
-                tabStrip.AppendLine("</div>");
-                tabStrip.AppendLine("</div>");
-                return new HtmlString(tabStrip.ToString());
-            }
-            else
-            {
-                return standardTemplate(helper.ViewData.Model);
-            }
-        }
-        
+         
         /// <summary>
         /// Gets a selected tab name (used in admin area to store selected tab name)
         /// </summary>
@@ -209,10 +130,10 @@ namespace Nop.Web.Framework.Extensions
             string dayLocale, monthLocale, yearLocale;
             if (localizeLabels)
             {
-                var locService = EngineContext.Current.Resolve<ILocalizationService>();
-                dayLocale = locService.GetResource("Common.Day");
-                monthLocale = locService.GetResource("Common.Month");
-                yearLocale = locService.GetResource("Common.Year");
+               
+                dayLocale = "Common.Day";
+                monthLocale = "Common.Month";
+                yearLocale = "Common.Year";
             }
             else
             {

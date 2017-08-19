@@ -8,26 +8,16 @@ using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Domain;
-using Nop.Core.Domain.Blogs;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Forums;
-using Nop.Core.Domain.Localization;
-using Nop.Core.Domain.News;
-using Nop.Core.Domain.Orders;
-using Nop.Core.Domain.Vendors;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Customers;
-using Nop.Services.Directory;
-using Nop.Services.Forums;
-using Nop.Services.Localization;
 using Nop.Services.Media;
-using Nop.Services.Orders;
+
 using Nop.Services.Security;
-using Nop.Services.Seo;
-using Nop.Services.Topics;
+using Nop.Services.Seo; 
 using Nop.Web.Framework.Security.Captcha;
 using Nop.Web.Framework.Themes;
 using Nop.Web.Framework.UI;
@@ -46,17 +36,13 @@ namespace Nop.Web.Factories
 
         private readonly ICategoryService _categoryService;
         private readonly IProductService _productService;
-        private readonly IManufacturerService _manufacturerService;
-        private readonly ITopicService _topicService;
-        private readonly ILanguageService _languageService;
-        private readonly ICurrencyService _currencyService;
-        private readonly ILocalizationService _localizationService;
+      
         private readonly IWorkContext _workContext;
         private readonly IStoreContext _storeContext;
         private readonly ISitemapGenerator _sitemapGenerator;
         private readonly IThemeContext _themeContext;
         private readonly IThemeProvider _themeProvider;
-        private readonly IForumService _forumservice;
+      
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IWebHelper _webHelper;
         private readonly IPermissionService _permissionService;
@@ -68,30 +54,20 @@ namespace Nop.Web.Factories
         private readonly CatalogSettings _catalogSettings;
         private readonly StoreInformationSettings _storeInformationSettings;
         private readonly CommonSettings _commonSettings;
-        private readonly BlogSettings _blogSettings;
-        private readonly NewsSettings _newsSettings;
-        private readonly ForumSettings _forumSettings;
-        private readonly LocalizationSettings _localizationSettings;
+       
         private readonly CaptchaSettings _captchaSettings;
-        private readonly VendorSettings _vendorSettings;
-
+      
         #endregion
 
         #region Constructors
 
         public CommonModelFactory(ICategoryService categoryService,
-            IProductService productService,
-            IManufacturerService manufacturerService,
-            ITopicService topicService,
-            ILanguageService languageService,
-            ICurrencyService currencyService,
-            ILocalizationService localizationService,
+            IProductService productService, 
             IWorkContext workContext,
             IStoreContext storeContext,
             ISitemapGenerator sitemapGenerator,
             IThemeContext themeContext,
-            IThemeProvider themeProvider,
-            IForumService forumService,
+            IThemeProvider themeProvider, 
             IGenericAttributeService genericAttributeService,
             IWebHelper webHelper,
             IPermissionService permissionService,
@@ -101,27 +77,18 @@ namespace Nop.Web.Factories
             IHostingEnvironment hostingEnvironment,
             CatalogSettings catalogSettings,
             StoreInformationSettings storeInformationSettings,
-            CommonSettings commonSettings,
-            BlogSettings blogSettings,
-            NewsSettings newsSettings,
-            ForumSettings forumSettings,
-            LocalizationSettings localizationSettings,
-            CaptchaSettings captchaSettings,
-            VendorSettings vendorSettings)
+            CommonSettings commonSettings, 
+            CaptchaSettings captchaSettings )
         {
             this._categoryService = categoryService;
             this._productService = productService;
-            this._manufacturerService = manufacturerService;
-            this._topicService = topicService;
-            this._languageService = languageService;
-            this._currencyService = currencyService;
-            this._localizationService = localizationService;
+           
             this._workContext = workContext;
             this._storeContext = storeContext;
             this._sitemapGenerator = sitemapGenerator;
             this._themeContext = themeContext;
             this._themeProvider = themeProvider;
-            this._forumservice = forumService;
+          
             this._genericAttributeService = genericAttributeService;
             this._webHelper = webHelper;
             this._permissionService = permissionService;
@@ -132,42 +99,14 @@ namespace Nop.Web.Factories
             this._catalogSettings = catalogSettings;
             this._storeInformationSettings = storeInformationSettings;
             this._commonSettings = commonSettings;
-            this._blogSettings = blogSettings;
-            this._newsSettings = newsSettings;
-            this._forumSettings = forumSettings;
-            this._localizationSettings = localizationSettings;
+      
             this._captchaSettings = captchaSettings;
-            this._vendorSettings = vendorSettings;
+          
         }
 
         #endregion
 
-        #region Utilities
-
-        /// <summary>
-        /// Get the number of unread private messages
-        /// </summary>
-        /// <returns>Number of private messages</returns>
-        protected virtual int GetUnreadPrivateMessages()
-        {
-            var result = 0;
-            var customer = _workContext.CurrentCustomer;
-            if (_forumSettings.AllowPrivateMessages && !customer.IsGuest())
-            {
-                var privateMessages = _forumservice.GetAllPrivateMessages(_storeContext.CurrentStore.Id,
-                    0, customer.Id, false, null, false, string.Empty, 0, 1);
-
-                if (privateMessages.TotalCount > 0)
-                {
-                    result = privateMessages.TotalCount;
-                }
-            }
-
-            return result;
-        }
-
-        #endregion
-
+        
         #region Methods
 
         /// <summary>
@@ -178,7 +117,7 @@ namespace Nop.Web.Factories
         {
             var model = new LogoModel
             {
-                StoreName = _storeContext.CurrentStore.GetLocalized(x => x.Name)
+                StoreName = _storeContext.CurrentStore.Name
             };
 
             var cacheKey = string.Format(ModelCacheEventConsumer.STORE_LOGO_PATH, _storeContext.CurrentStore.Id, _themeContext.WorkingThemeName, _webHelper.IsCurrentConnectionSecured());
@@ -209,48 +148,20 @@ namespace Nop.Web.Factories
         public virtual HeaderLinksModel PrepareHeaderLinksModel()
         {
             var customer = _workContext.CurrentCustomer;
-
-            var unreadMessageCount = GetUnreadPrivateMessages();
+          
             var unreadMessage = string.Empty;
-            var alertMessage = string.Empty;
-            if (unreadMessageCount > 0)
-            {
-                unreadMessage = string.Format(_localizationService.GetResource("PrivateMessages.TotalUnread"), unreadMessageCount);
-
-                //notifications here
-                if (_forumSettings.ShowAlertForPM &&
-                    !customer.GetAttribute<bool>(SystemCustomerAttributeNames.NotifiedAboutNewPrivateMessages, _storeContext.CurrentStore.Id))
-                {
-                    _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.NotifiedAboutNewPrivateMessages, true, _storeContext.CurrentStore.Id);
-                    alertMessage = string.Format(_localizationService.GetResource("PrivateMessages.YouHaveUnreadPM"), unreadMessageCount);
-                }
-            }
-
+            var alertMessage = string.Empty;          
             var model = new HeaderLinksModel
             {
                 IsAuthenticated = customer.IsRegistered(),
                 CustomerName = customer.IsRegistered() ? customer.FormatUserName() : "",
                 ShoppingCartEnabled = _permissionService.Authorize(StandardPermissionProvider.EnableShoppingCart),
                 WishlistEnabled = _permissionService.Authorize(StandardPermissionProvider.EnableWishlist),
-                AllowPrivateMessages = customer.IsRegistered() && _forumSettings.AllowPrivateMessages,
+                AllowPrivateMessages = customer.IsRegistered() ,
                 UnreadPrivateMessages = unreadMessage,
                 AlertMessage = alertMessage,
             };
-            //performance optimization (use "HasShoppingCartItems" property)
-            if (customer.HasShoppingCartItems)
-            {
-                model.ShoppingCartItems = customer.ShoppingCartItems
-                    .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
-                    .LimitPerStore(_storeContext.CurrentStore.Id)
-                    .ToList()
-                    .GetTotalProducts();
-                model.WishlistItems = customer.ShoppingCartItems
-                    .Where(sci => sci.ShoppingCartType == ShoppingCartType.Wishlist)
-                    .LimitPerStore(_storeContext.CurrentStore.Id)
-                    .ToList()
-                    .GetTotalProducts();
-            }
-
+           
             return model;
         }
 
@@ -282,19 +193,14 @@ namespace Nop.Web.Factories
         {
             //footer topics
             string topicCacheKey = string.Format(ModelCacheEventConsumer.TOPIC_FOOTER_MODEL_KEY,
-                _workContext.WorkingLanguage.Id,
+                1,
                 _storeContext.CurrentStore.Id,
-                string.Join(",", _workContext.CurrentCustomer.GetCustomerRoleIds()));
-            var cachedTopicModel = _cacheManager.Get(topicCacheKey, () =>
-                _topicService.GetAllTopics(_storeContext.CurrentStore.Id)
-                .Where(t => t.IncludeInFooterColumn1 || t.IncludeInFooterColumn2 || t.IncludeInFooterColumn3)                
-                .ToList()
-            );
+                string.Join(",", _workContext.CurrentCustomer.GetCustomerRoleIds()) );
 
             //model
             var model = new FooterModel
             {
-                StoreName = _storeContext.CurrentStore.GetLocalized(x => x.Name),
+                StoreName = _storeContext.CurrentStore.Name,
              
                 SitemapEnabled = _commonSettings.SitemapEnabled,
               
@@ -316,7 +222,7 @@ namespace Nop.Web.Factories
         public virtual string PrepareSitemapXml(IUrlHelper url, int? id)
         {
             string cacheKey = string.Format(ModelCacheEventConsumer.SITEMAP_SEO_MODEL_KEY, id,
-                _workContext.WorkingLanguage.Id,
+               1,
                 string.Join(",", _workContext.CurrentCustomer.GetCustomerRoleIds()),
                 _storeContext.CurrentStore.Id);
             var siteMap = _cacheManager.Get(cacheKey, () => _sitemapGenerator.Generate(url, id));
@@ -382,10 +288,7 @@ namespace Nop.Web.Factories
                     "/setproductreviewhelpfulness",
                 };
                 var localizableDisallowPaths = new List<string>
-                { 
-                    "/customer/avatar",
-                    "/customer/activation",
-                    "/customer/addresses",
+                {                    
                     "/customer/changepassword",
                     "/customer/checkusernameavailability",
                     "/customer/downloadableproducts",
@@ -406,16 +309,7 @@ namespace Nop.Web.Factories
                 sb.Append("User-agent: *");
                 sb.Append(newLine);
                 //sitemaps
-                if (_localizationSettings.SeoFriendlyUrlsForLanguagesEnabled)
-                {
-                    //URLs are localizable. Append SEO code
-                    foreach (var language in _languageService.GetAllLanguages(storeId: _storeContext.CurrentStore.Id))
-                    {
-                        sb.AppendFormat("Sitemap: {0}{1}/sitemap.xml", _storeContext.CurrentStore.Url, language.UniqueSeoCode);
-                        sb.Append(newLine);
-                    }
-                }
-                else
+               
                 {
                     //localizable paths (without SEO code)
                     sb.AppendFormat("Sitemap: {0}sitemap.xml", _storeContext.CurrentStore.Url);
@@ -434,18 +328,7 @@ namespace Nop.Web.Factories
                     sb.AppendFormat("Disallow: {0}", path);
                     sb.Append(newLine);
                 }
-                if (_localizationSettings.SeoFriendlyUrlsForLanguagesEnabled)
-                {
-                    //URLs are localizable. Append SEO code
-                    foreach (var language in _languageService.GetAllLanguages(storeId: _storeContext.CurrentStore.Id))
-                    {
-                        foreach (var path in localizableDisallowPaths)
-                        {
-                            sb.AppendFormat("Disallow: /{0}{1}", language.UniqueSeoCode, path);
-                            sb.Append(newLine);
-                        }
-                    }
-                }
+                
 
                 //load and add robots.txt additions to the end of file.
                 string robotsAdditionsFile = System.IO.Path.Combine(CommonHelper.MapPath("~/"), "robots.additions.txt");

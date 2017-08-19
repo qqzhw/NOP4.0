@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Nop.Core;
 using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Orders;
+ 
 
 namespace Nop.Services.Customers
 {
@@ -42,7 +42,7 @@ namespace Nop.Services.Customers
             string firstName = null, string lastName = null,
             int dayOfBirth = 0, int monthOfBirth = 0,
             string company = null, string phone = null, string zipPostalCode = null,
-            string ipAddress = null, bool loadOnlyWithShoppingCart = false, ShoppingCartType? sct = null,
+            string ipAddress = null, bool loadOnlyWithShoppingCart = false, 
             int pageIndex = 0, int pageSize = int.MaxValue);
 
         /// <summary>

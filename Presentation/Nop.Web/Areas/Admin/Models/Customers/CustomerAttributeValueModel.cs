@@ -8,11 +8,11 @@ using Nop.Web.Framework.Mvc.Models;
 namespace Nop.Web.Areas.Admin.Models.Customers
 {
     [Validator(typeof(CustomerAttributeValueValidator))]
-    public partial class CustomerAttributeValueModel : BaseNopEntityModel, ILocalizedModel<CustomerAttributeValueLocalizedModel>
+    public partial class CustomerAttributeValueModel : BaseNopEntityModel
     {
         public CustomerAttributeValueModel()
         {
-            Locales = new List<CustomerAttributeValueLocalizedModel>();
+            
         }
 
         public int CustomerAttributeId { get; set; }
@@ -26,15 +26,8 @@ namespace Nop.Web.Areas.Admin.Models.Customers
         [NopResourceDisplayName("Admin.Customers.CustomerAttributes.Values.Fields.DisplayOrder")]
         public int DisplayOrder {get;set;}
 
-        public IList<CustomerAttributeValueLocalizedModel> Locales { get; set; }
-
+       
     }
 
-    public partial class CustomerAttributeValueLocalizedModel : ILocalizedModelLocal
-    {
-        public int LanguageId { get; set; }
-
-        [NopResourceDisplayName("Admin.Customers.CustomerAttributes.Values.Fields.Name")]
-        public string Name { get; set; }
-    }
+    
 }

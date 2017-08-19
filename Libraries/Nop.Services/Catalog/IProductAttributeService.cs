@@ -124,85 +124,8 @@ namespace Nop.Services.Catalog
         void UpdateProductAttributeValue(ProductAttributeValue productAttributeValue);
 
         #endregion
+         
 
-        #region Predefined product attribute values
-
-        /// <summary>
-        /// Deletes a predefined product attribute value
-        /// </summary>
-        /// <param name="ppav">Predefined product attribute value</param>
-        void DeletePredefinedProductAttributeValue(PredefinedProductAttributeValue ppav);
-
-        /// <summary>
-        /// Gets predefined product attribute values by product attribute identifier
-        /// </summary>
-        /// <param name="productAttributeId">The product attribute identifier</param>
-        /// <returns>Product attribute mapping collection</returns>
-        IList<PredefinedProductAttributeValue> GetPredefinedProductAttributeValues(int productAttributeId);
-
-        /// <summary>
-        /// Gets a predefined product attribute value
-        /// </summary>
-        /// <param name="id">Predefined product attribute value identifier</param>
-        /// <returns>Predefined product attribute value</returns>
-        PredefinedProductAttributeValue GetPredefinedProductAttributeValueById(int id);
-
-        /// <summary>
-        /// Inserts a predefined product attribute value
-        /// </summary>
-        /// <param name="ppav">The predefined product attribute value</param>
-        void InsertPredefinedProductAttributeValue(PredefinedProductAttributeValue ppav);
-
-        /// <summary>
-        /// Updates the predefined product attribute value
-        /// </summary>
-        /// <param name="ppav">The predefined product attribute value</param>
-        void UpdatePredefinedProductAttributeValue(PredefinedProductAttributeValue ppav);
-
-        #endregion
-
-        #region Product attribute combinations
-
-        /// <summary>
-        /// Deletes a product attribute combination
-        /// </summary>
-        /// <param name="combination">Product attribute combination</param>
-        void DeleteProductAttributeCombination(ProductAttributeCombination combination);
-
-        /// <summary>
-        /// Gets all product attribute combinations
-        /// </summary>
-        /// <param name="productId">Product identifier</param>
-        /// <returns>Product attribute combinations</returns>
-        IList<ProductAttributeCombination> GetAllProductAttributeCombinations(int productId);
-
-        /// <summary>
-        /// Gets a product attribute combination
-        /// </summary>
-        /// <param name="productAttributeCombinationId">Product attribute combination identifier</param>
-        /// <returns>Product attribute combination</returns>
-        ProductAttributeCombination GetProductAttributeCombinationById(int productAttributeCombinationId);
-
-        /// <summary>
-        /// Gets a product attribute combination by SKU
-        /// </summary>
-        /// <param name="sku">SKU</param>
-        /// <returns>Product attribute combination</returns>
-        ProductAttributeCombination GetProductAttributeCombinationBySku(string sku);
-
-        /// <summary>
-        /// Inserts a product attribute combination
-        /// </summary>
-        /// <param name="combination">Product attribute combination</param>
-        void InsertProductAttributeCombination(ProductAttributeCombination combination);
-
-        /// <summary>
-        /// Updates a product attribute combination
-        /// </summary>
-        /// <param name="combination">Product attribute combination</param>
-        void UpdateProductAttributeCombination(ProductAttributeCombination combination);
-
-        #endregion
        
     }
 }

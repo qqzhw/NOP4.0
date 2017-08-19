@@ -15,7 +15,7 @@ using Nop.Core;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Infrastructure;
 using Nop.Services.Common;
-using Nop.Services.Localization;
+
 using Nop.Services.Logging;
 using Nop.Services.Stores;
 using Nop.Web.Framework.Kendoui;
@@ -290,45 +290,6 @@ namespace Nop.Web.Framework.Controllers
 
         #endregion
 
-        #region Localization
-
-        /// <summary>
-        /// Add locales for localizable entities
-        /// </summary>
-        /// <typeparam name="TLocalizedModelLocal">Localizable model</typeparam>
-        /// <param name="languageService">Language service</param>
-        /// <param name="locales">Locales</param>
-        protected virtual void AddLocales<TLocalizedModelLocal>(ILanguageService languageService, 
-            IList<TLocalizedModelLocal> locales) where TLocalizedModelLocal : ILocalizedModelLocal
-        {
-            AddLocales(languageService, locales, null);
-        }
-
-        /// <summary>
-        /// Add locales for localizable entities
-        /// </summary>
-        /// <typeparam name="TLocalizedModelLocal">Localizable model</typeparam>
-        /// <param name="languageService">Language service</param>
-        /// <param name="locales">Locales</param>
-        /// <param name="configure">Configure action</param>
-        protected virtual void AddLocales<TLocalizedModelLocal>(ILanguageService languageService, 
-            IList<TLocalizedModelLocal> locales, Action<TLocalizedModelLocal, int> configure) where TLocalizedModelLocal : ILocalizedModelLocal
-        {
-            foreach (var language in languageService.GetAllLanguages(true))
-            {
-                var locale = Activator.CreateInstance<TLocalizedModelLocal>();
-                locale.LanguageId = language.Id;
-
-                if (configure != null)
-                    configure.Invoke(locale, locale.LanguageId);
-
-                locales.Add(locale);
-            }
-        }
-
-
-        #endregion
-
         #region Security
 
         /// <summary>
@@ -349,9 +310,7 @@ namespace Nop.Web.Framework.Controllers
         /// <returns>Access denied json data</returns>
         protected JsonResult AccessDeniedKendoGridJson()
         {
-            var localizationService = EngineContext.Current.Resolve<ILocalizationService>();
-
-            return ErrorForKendoGridJson(localizationService.GetResource("Admin.AccessDenied.Description"));
+            return ErrorForKendoGridJson(("Admin.AccessDenied.Description"));
         }
         
         #endregion

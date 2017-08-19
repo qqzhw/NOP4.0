@@ -9,11 +9,10 @@ using Nop.Web.Framework.Mvc.Models;
 namespace Nop.Web.Areas.Admin.Models.Stores
 {
     [Validator(typeof(StoreValidator))]
-    public partial class StoreModel : BaseNopEntityModel, ILocalizedModel<StoreLocalizedModel>
+    public partial class StoreModel : BaseNopEntityModel
     {
         public StoreModel()
         {
-            Locales = new List<StoreLocalizedModel>();
             AvailableLanguages = new List<SelectListItem>();
         }
 
@@ -52,15 +51,6 @@ namespace Nop.Web.Areas.Admin.Models.Stores
         [NopResourceDisplayName("Admin.Configuration.Stores.Fields.CompanyVat")]
         public string CompanyVat { get; set; }
 
-
-        public IList<StoreLocalizedModel> Locales { get; set; }
     }
-
-    public partial class StoreLocalizedModel : ILocalizedModelLocal
-    {
-        public int LanguageId { get; set; }
-
-        [NopResourceDisplayName("Admin.Configuration.Stores.Fields.Name")]
-        public string Name { get; set; }
-    }
+    
 }

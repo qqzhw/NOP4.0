@@ -11,13 +11,7 @@ namespace Nop.Services.Authentication.External
     {
         #region External authentication methods
 
-        /// <summary>
-        /// Load active external authentication methods
-        /// </summary>
-        /// <param name="customer">Load records allowed only to a specified customer; pass null to ignore ACL permissions</param>
-        /// <param name="storeId">Load records allowed only in a specified store; pass 0 to load all records</param>
-        /// <returns>Payment methods</returns>
-        IList<IExternalAuthenticationMethod> LoadActiveExternalAuthenticationMethods(Customer customer = null, int storeId = 0);
+      
 
         /// <summary>
         /// Load external authentication method by system name
@@ -55,30 +49,6 @@ namespace Nop.Services.Authentication.External
 
         #endregion
 
-        /// <summary>
-        /// Accociate external account with customer
-        /// </summary>
-        /// <param name="customer">Customer</param>
-        /// <param name="parameters">External authentication parameters</param>
-        void AssociateExternalAccountWithUser(Customer customer, ExternalAuthenticationParameters parameters);
-
-        /// <summary>
-        /// Get the particular user with specified parameters
-        /// </summary>
-        /// <param name="parameters">External authentication parameters</param>
-        /// <returns>Customer</returns>
-        Customer GetUserByExternalAuthenticationParameters(ExternalAuthenticationParameters parameters);
-
-        /// <summary>
-        /// Remove the association
-        /// </summary>
-        /// <param name="parameters">External authentication parameters</param>
-        void RemoveAssociation(ExternalAuthenticationParameters parameters);
-
-        /// <summary>
-        /// Delete the external authentication record
-        /// </summary>
-        /// <param name="externalAuthenticationRecord">External authentication record</param>
-        void DeleteExternalAuthenticationRecord(ExternalAuthenticationRecord externalAuthenticationRecord);
+        
     }
 }

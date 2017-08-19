@@ -1,17 +1,15 @@
-﻿
-using System;
+﻿using System;
 using System.Text;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Core;
 using Nop.Core.Caching;
-using Nop.Core.Infrastructure;
-using Nop.Services.Localization;
-using Nop.Services.Seo;
-using Nop.Services.Topics;
+using Nop.Core.Infrastructure; 
+using Nop.Services.Seo; 
+ 
 using Nop.Web.Framework.Extensions;
 using Nop.Web.Framework.UI.Paging;
-using Nop.Web.Infrastructure.Cache; 
+using Nop.Web.Infrastructure.Cache;
 using Nop.Web.Models.Common;
 
 namespace Nop.Web.Extensions
@@ -51,9 +49,7 @@ namespace Nop.Web.Extensions
         {
             if (model.TotalRecords == 0)
                 return new HtmlString("");
-
-            var localizationService = EngineContext.Current.Resolve<ILocalizationService>();
-
+        
             var links = new StringBuilder();
             if (model.ShowTotalSummary && (model.TotalPages > 0))
             {
@@ -73,12 +69,12 @@ namespace Nop.Web.Extensions
                         links.Append("<li class=\"first-page\">");
                         if (model.UseRouteLinks)
                         {
-                            var link = html.RouteLink(model.FirstButtonText, model.RouteActionName, model.RouteValues, new { title = localizationService.GetResource("Pager.FirstPageTitle") });
+                            var link = html.RouteLink(model.FirstButtonText, model.RouteActionName, model.RouteValues, new { title = ("Pager.FirstPageTitle") });
                             links.Append(link.ToHtmlString());
                         }
                         else
                         {
-                            var link = html.ActionLink(model.FirstButtonText, model.RouteActionName, model.RouteValues, new { title = localizationService.GetResource("Pager.FirstPageTitle") });
+                            var link = html.ActionLink(model.FirstButtonText, model.RouteActionName, model.RouteValues, new { title = ("Pager.FirstPageTitle") });
                             links.Append(link.ToHtmlString());
                         }
                         links.Append("</li>");
@@ -94,12 +90,12 @@ namespace Nop.Web.Extensions
                         links.Append("<li class=\"previous-page\">");
                         if (model.UseRouteLinks)
                         {
-                            var link = html.RouteLink(model.PreviousButtonText, model.RouteActionName, model.RouteValues, new { title = localizationService.GetResource("Pager.PreviousPageTitle") });
+                            var link = html.RouteLink(model.PreviousButtonText, model.RouteActionName, model.RouteValues, new { title = ("Pager.PreviousPageTitle") });
                             links.Append(link.ToHtmlString());
                         }
                         else
                         {
-                            var link = html.ActionLink(model.PreviousButtonText, model.RouteActionName, model.RouteValues, new { title = localizationService.GetResource("Pager.PreviousPageTitle") });
+                            var link = html.ActionLink(model.PreviousButtonText, model.RouteActionName, model.RouteValues, new { title = ("Pager.PreviousPageTitle") });
                             links.Append(link.ToHtmlString());
                         }
                         links.Append("</li>");
@@ -123,12 +119,12 @@ namespace Nop.Web.Extensions
                             links.Append("<li class=\"individual-page\">");
                             if (model.UseRouteLinks)
                             {
-                                var link = html.RouteLink((i + 1).ToString(), model.RouteActionName, model.RouteValues, new { title = String.Format(localizationService.GetResource("Pager.PageLinkTitle"), (i + 1)) });
+                                var link = html.RouteLink((i + 1).ToString(), model.RouteActionName, model.RouteValues, new { title = String.Format("Pager.PageLinkTitle{0}", (i + 1)) });
                                 links.Append(link.ToHtmlString());
                             }
                             else
                             {
-                                var link = html.ActionLink((i + 1).ToString(), model.RouteActionName, model.RouteValues, new { title = String.Format(localizationService.GetResource("Pager.PageLinkTitle"), (i + 1)) });
+                                var link = html.ActionLink((i + 1).ToString(), model.RouteActionName, model.RouteValues, new { title = String.Format(("Pager.PageLinkTitle"), (i + 1)) });
                                 links.Append(link.ToHtmlString());
                             }
                             links.Append("</li>");
@@ -145,12 +141,12 @@ namespace Nop.Web.Extensions
                         links.Append("<li class=\"next-page\">");
                         if (model.UseRouteLinks)
                         {
-                            var link = html.RouteLink(model.NextButtonText, model.RouteActionName, model.RouteValues, new {title = localizationService.GetResource("Pager.NextPageTitle")});
+                            var link = html.RouteLink(model.NextButtonText, model.RouteActionName, model.RouteValues, new { title = ("Pager.NextPageTitle") });
                             links.Append(link.ToHtmlString());
                         }
                         else
                         {
-                            var link = html.ActionLink(model.NextButtonText, model.RouteActionName, model.RouteValues, new { title = localizationService.GetResource("Pager.NextPageTitle") });
+                            var link = html.ActionLink(model.NextButtonText, model.RouteActionName, model.RouteValues, new { title = ("Pager.NextPageTitle") });
                             links.Append(link.ToHtmlString());
                         }
                         links.Append("</li>");
@@ -166,12 +162,12 @@ namespace Nop.Web.Extensions
                         links.Append("<li class=\"last-page\">");
                         if (model.UseRouteLinks)
                         {
-                            var link = html.RouteLink(model.LastButtonText, model.RouteActionName, model.RouteValues, new { title = localizationService.GetResource("Pager.LastPageTitle") });
+                            var link = html.RouteLink(model.LastButtonText, model.RouteActionName, model.RouteValues, new { title = ("Pager.LastPageTitle") });
                             links.Append(link.ToHtmlString());
                         }
                         else
                         {
-                            var link = html.ActionLink(model.LastButtonText, model.RouteActionName, model.RouteValues, new { title = localizationService.GetResource("Pager.LastPageTitle") });
+                            var link = html.ActionLink(model.LastButtonText, model.RouteActionName, model.RouteValues, new { title = ("Pager.LastPageTitle") });
                             links.Append(link.ToHtmlString());
                         }
                         links.Append("</li>");
@@ -204,15 +200,14 @@ namespace Nop.Web.Extensions
 
             //static cache manager
             var cacheManager = EngineContext.Current.Resolve<IStaticCacheManager>();
-            var cacheKey = string.Format(ModelCacheEventConsumer.TOPIC_SENAME_BY_SYSTEMNAME, systemName, workContext.WorkingLanguage.Id, storeContext.CurrentStore.Id);
+            var cacheKey = string.Format(ModelCacheEventConsumer.TOPIC_SENAME_BY_SYSTEMNAME, systemName, 1, storeContext.CurrentStore.Id);
             var cachedSeName = cacheManager.Get(cacheKey, () =>
             {
-                var topicService = EngineContext.Current.Resolve<ITopicService>();
-                var topic = topicService.GetTopicBySystemName(systemName, storeContext.CurrentStore.Id);
-                if (topic == null)
-                    return "";
-
-                return topic.GetSeName();
+                //var topicService = EngineContext.Current.Resolve<ITopicService>();
+                //var topic = topicService.GetTopicBySystemName(systemName, storeContext.CurrentStore.Id);
+                //if (topic == null)
+                //    return "";
+                return "";
             });
             return cachedSeName;
         }

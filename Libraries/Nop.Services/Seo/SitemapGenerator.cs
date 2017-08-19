@@ -6,14 +6,11 @@ using System.Text;
 using System.Xml;
 using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
-using Nop.Core.Domain.Blogs;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
-using Nop.Core.Domain.Forums;
-using Nop.Core.Domain.News;
 using Nop.Core.Domain.Security;
 using Nop.Services.Catalog;
-using Nop.Services.Topics;
+
 
 namespace Nop.Services.Seo
 {
@@ -38,13 +35,10 @@ namespace Nop.Services.Seo
         private readonly IStoreContext _storeContext;
         private readonly ICategoryService _categoryService;
         private readonly IProductService _productService;
-        private readonly IManufacturerService _manufacturerService;
-        private readonly ITopicService _topicService;
+     
         private readonly IWebHelper _webHelper;
         private readonly CommonSettings _commonSettings;
-        private readonly BlogSettings _blogSettings;
-        private readonly NewsSettings _newsSettings;
-        private readonly ForumSettings _forumSettings;
+      
         private readonly SecuritySettings _securitySettings;
 
         #endregion
@@ -53,26 +47,16 @@ namespace Nop.Services.Seo
 
         public SitemapGenerator(IStoreContext storeContext,
             ICategoryService categoryService,
-            IProductService productService,
-            IManufacturerService manufacturerService,
-            ITopicService topicService,
+            IProductService productService,        
             IWebHelper webHelper,
-            CommonSettings commonSettings,
-            BlogSettings blogSettings,
-            NewsSettings newsSettings,
-            ForumSettings forumSettings,
+            CommonSettings commonSettings,        
             SecuritySettings securitySettings)
         {
             this._storeContext = storeContext;
             this._categoryService = categoryService;
-            this._productService = productService;
-            this._manufacturerService = manufacturerService;
-            this._topicService = topicService;
+            this._productService = productService;         
             this._webHelper = webHelper;
-            this._commonSettings = commonSettings;
-            this._blogSettings = blogSettings;
-            this._newsSettings = newsSettings;
-            this._forumSettings = forumSettings;
+            this._commonSettings = commonSettings;     
             this._securitySettings = securitySettings;
         }
 
@@ -142,41 +126,18 @@ namespace Nop.Services.Seo
             var contactUsUrl = urlHelper.RouteUrl("ContactUs", null, GetHttpProtocol());
             sitemapUrls.Add(new SitemapUrl(contactUsUrl, UpdateFrequency.Weekly, DateTime.UtcNow));
 
-            //news
-            if (_newsSettings.Enabled)
-            {
-                var url = urlHelper.RouteUrl("NewsArchive", null, GetHttpProtocol());
-                sitemapUrls.Add(new SitemapUrl(url, UpdateFrequency.Weekly, DateTime.UtcNow));
-            }
+         
 
-            //blog
-            if (_blogSettings.Enabled)
-            {
-                var url = urlHelper.RouteUrl("Blog", null, GetHttpProtocol());
-                sitemapUrls.Add(new SitemapUrl(url, UpdateFrequency.Weekly, DateTime.UtcNow));
-            }
 
-            //blog
-            if (_forumSettings.ForumsEnabled)
-            {
-                var url = urlHelper.RouteUrl("Boards", null, GetHttpProtocol());
-                sitemapUrls.Add(new SitemapUrl(url, UpdateFrequency.Weekly, DateTime.UtcNow));
-            }
 
             //categories
             if (_commonSettings.SitemapIncludeCategories)
                 sitemapUrls.AddRange(GetCategoryUrls(urlHelper, 0));
 
-            //manufacturers
-            if (_commonSettings.SitemapIncludeManufacturers)
-                sitemapUrls.AddRange(GetManufacturerUrls(urlHelper));
-
+        
             //products
             if (_commonSettings.SitemapIncludeProducts)
                 sitemapUrls.AddRange(GetProductUrls(urlHelper));
-
-            //topics
-            sitemapUrls.AddRange(GetTopicUrls(urlHelper));
 
             //custom URLs
             sitemapUrls.AddRange(GetCustomUrls());
@@ -203,20 +164,7 @@ namespace Nop.Services.Seo
             });
         }
 
-        /// <summary>
-        /// Get manufacturer URLs for the sitemap
-        /// </summary>
-        /// <param name="urlHelper">URL helper</param>
-        /// <returns>Collection of sitemap URLs</returns>
-        protected virtual IEnumerable<SitemapUrl> GetManufacturerUrls(IUrlHelper urlHelper)
-        {
-            return _manufacturerService.GetAllManufacturers(storeId: _storeContext.CurrentStore.Id).Select(manufacturer =>
-            {
-                var url = urlHelper.RouteUrl("Manufacturer", new { SeName = manufacturer.GetSeName() }, GetHttpProtocol());
-                return new SitemapUrl(url, UpdateFrequency.Weekly, manufacturer.UpdatedOnUtc);
-            });
-        }
-
+      
         /// <summary>
         /// Get product URLs for the sitemap
         /// </summary>
@@ -232,20 +180,7 @@ namespace Nop.Services.Seo
             });
         }
 
-        /// <summary>
-        /// Get topic URLs for the sitemap
-        /// </summary>
-        /// <param name="urlHelper">URL helper</param>
-        /// <returns>Collection of sitemap URLs</returns>
-        protected virtual IEnumerable<SitemapUrl> GetTopicUrls(IUrlHelper urlHelper)
-        {
-            return _topicService.GetAllTopics(_storeContext.CurrentStore.Id).Where(t => t.IncludeInSitemap).Select(topic =>
-            {
-                var url = urlHelper.RouteUrl("Topic", new { SeName = topic.GetSeName() }, GetHttpProtocol());
-                return new SitemapUrl(url, UpdateFrequency.Weekly, DateTime.UtcNow);
-            });
-        }
-
+       
         /// <summary>
         /// Get custom URLs for the sitemap
         /// </summary>

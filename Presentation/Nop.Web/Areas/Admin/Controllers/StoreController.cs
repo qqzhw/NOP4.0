@@ -6,7 +6,7 @@ using Nop.Web.Areas.Admin.Extensions;
 using Nop.Web.Areas.Admin.Models.Stores;
 using Nop.Core.Domain.Stores;
 using Nop.Services.Configuration;
-using Nop.Services.Localization;
+
 using Nop.Services.Logging;
 using Nop.Services.Security;
 using Nop.Services.Stores;
@@ -21,10 +21,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         #region Fields
 
         private readonly IStoreService _storeService;
-        private readonly ISettingService _settingService;
-        private readonly ILanguageService _languageService;
-        private readonly ILocalizationService _localizationService;
-        private readonly ILocalizedEntityService _localizedEntityService;
+        private readonly ISettingService _settingService;   
         private readonly IPermissionService _permissionService;
         private readonly ICustomerActivityService _customerActivityService;
 
@@ -33,18 +30,12 @@ namespace Nop.Web.Areas.Admin.Controllers
         #region Constructors
 
         public StoreController(IStoreService storeService,
-            ISettingService settingService,
-            ILanguageService languageService,
-            ILocalizationService localizationService,
-            ILocalizedEntityService localizedEntityService,
+            ISettingService settingService,           
             IPermissionService permissionService,
             ICustomerActivityService customerActivityService)
         {
             this._storeService = storeService;
-            this._settingService = settingService;
-            this._languageService = languageService;
-            this._localizationService = localizationService;
-            this._localizedEntityService = localizedEntityService;
+            this._settingService = settingService;        
             this._permissionService = permissionService;
             this._customerActivityService = customerActivityService;
         }
@@ -62,29 +53,10 @@ namespace Nop.Web.Areas.Admin.Controllers
             {
                 Text = "---",
                 Value = "0"
-            });
-            var languages = _languageService.GetAllLanguages(true);
-            foreach (var language in languages)
-            {
-                model.AvailableLanguages.Add(new SelectListItem
-                {
-                    Text = language.Name,
-                    Value = language.Id.ToString()
-                });
-            }
+            });      
         }
 
-        protected virtual void UpdateAttributeLocales(Store store, StoreModel model)
-        {
-            foreach (var localized in model.Locales)
-            {
-                _localizedEntityService.SaveLocalizedValue(store,
-                    x => x.Name,
-                    localized.Name,
-                    localized.LanguageId);
-            }
-        }
-
+       
         #endregion
 
         #region Methods
@@ -124,8 +96,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             var model = new StoreModel();
             //languages
             PrepareLanguagesModel(model);
-            //locales
-            AddLocales(_languageService, model.Locales);
+        
             return View(model);
         }
 
@@ -144,12 +115,10 @@ namespace Nop.Web.Areas.Admin.Controllers
                 _storeService.InsertStore(store);
 
                 //activity log
-                _customerActivityService.InsertActivity("AddNewStore", _localizationService.GetResource("ActivityLog.AddNewStore"), store.Id);
+                _customerActivityService.InsertActivity("AddNewStore", ("ActivityLog.AddNewStore"), store.Id);
 
-                //locales
-                UpdateAttributeLocales(store, model);
-
-                SuccessNotification(_localizationService.GetResource("Admin.Configuration.Stores.Added"));
+             
+                SuccessNotification(("Admin.Configuration.Stores.Added"));
                 return continueEditing ? RedirectToAction("Edit", new { id = store.Id }) : RedirectToAction("List");
             }
 
@@ -173,11 +142,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             var model = store.ToModel();
             //languages
             PrepareLanguagesModel(model);
-            //locales
-            AddLocales(_languageService, model.Locales, (locale, languageId) =>
-            {
-                locale.Name = store.GetLocalized(x => x.Name, languageId, false, false);
-            });
+        
             return View(model);
         }
 
@@ -202,12 +167,10 @@ namespace Nop.Web.Areas.Admin.Controllers
                 _storeService.UpdateStore(store);
 
                 //activity log
-                _customerActivityService.InsertActivity("EditStore", _localizationService.GetResource("ActivityLog.EditStore"), store.Id);
+                _customerActivityService.InsertActivity("EditStore", ("ActivityLog.EditStore"), store.Id);
 
-                //locales
-                UpdateAttributeLocales(store, model);
-
-                SuccessNotification(_localizationService.GetResource("Admin.Configuration.Stores.Updated"));
+               
+                SuccessNotification(("Admin.Configuration.Stores.Updated"));
                 return continueEditing ? RedirectToAction("Edit", new { id = store.Id }) : RedirectToAction("List");
             }
 
@@ -234,7 +197,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 _storeService.DeleteStore(store);
 
                 //activity log
-                _customerActivityService.InsertActivity("DeleteStore", _localizationService.GetResource("ActivityLog.DeleteStore"), store.Id);
+                _customerActivityService.InsertActivity("DeleteStore", ("ActivityLog.DeleteStore"), store.Id);
 
                 //when we delete a store we should also ensure that all "per store" settings will also be deleted
                 var settingsToDelete = _settingService
@@ -254,7 +217,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 }
 
 
-                SuccessNotification(_localizationService.GetResource("Admin.Configuration.Stores.Deleted"));
+                SuccessNotification(("Admin.Configuration.Stores.Deleted"));
                 return RedirectToAction("List");
             }
             catch (Exception exc)

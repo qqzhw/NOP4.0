@@ -4,7 +4,7 @@ using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Plugin.Widgets.NivoSlider.Models;
 using Nop.Services.Configuration;
-using Nop.Services.Localization;
+
 using Nop.Services.Media;
 using Nop.Services.Security;
 using Nop.Services.Stores;
@@ -19,23 +19,19 @@ namespace Nop.Plugin.Widgets.NivoSlider.Controllers
         private readonly IStoreService _storeService;
         private readonly IPermissionService _permissionService;
         private readonly IPictureService _pictureService;
-        private readonly ISettingService _settingService;
-        private readonly ILocalizationService _localizationService;
-
+        private readonly ISettingService _settingService;        
         public WidgetsNivoSliderController(IWorkContext workContext,
             IStoreService storeService,
             IPermissionService permissionService, 
             IPictureService pictureService,
             ISettingService settingService,
-            ICacheManager cacheManager,
-            ILocalizationService localizationService)
+            ICacheManager cacheManager)
         {
             this._workContext = workContext;
             this._storeService = storeService;
             this._permissionService = permissionService;
             this._pictureService = pictureService;
-            this._settingService = settingService;
-            this._localizationService = localizationService;
+            this._settingService = settingService;          
         }
 
         public IActionResult Configure()
@@ -162,7 +158,7 @@ namespace Nop.Plugin.Widgets.NivoSlider.Controllers
                     _pictureService.DeletePicture(previousPicture);
             }
 
-            SuccessNotification(_localizationService.GetResource("Admin.Plugins.Saved"));
+            SuccessNotification(("Admin.Plugins.Saved"));
             return Configure();
         }
     }

@@ -23,7 +23,7 @@ namespace Nop.Web.Areas.Admin.Helpers
             var workContext = EngineContext.Current.Resolve<IWorkContext>();
             var hostingEnvironment = EngineContext.Current.Resolve<IHostingEnvironment>();
 
-            var languageCulture = workContext.WorkingLanguage.LanguageCulture;
+            var languageCulture = "zh-CN";
 
             var langFile = string.Format("{0}.js", languageCulture);
             var path = Path.Combine(hostingEnvironment.WebRootPath, "lib\\tinymce\\langs");

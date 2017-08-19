@@ -12,7 +12,7 @@ namespace Nop.Web.Framework.Validators
             decimal value;
             if (decimal.TryParse(context.PropertyValue.ToString(), out value))
             {
-                return RoundingHelper.RoundPrice(value) < _maxValue;
+                return (value) < _maxValue;
             }
             return false;
         }

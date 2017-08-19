@@ -9,7 +9,7 @@ using Nop.Web.Areas.Admin.Models.Security;
 using Nop.Core;
 using Nop.Core.Domain.Customers;
 using Nop.Services.Customers;
-using Nop.Services.Localization;
+
 using Nop.Services.Logging;
 using Nop.Services.Security;
 
@@ -23,21 +23,20 @@ namespace Nop.Web.Areas.Admin.Controllers
         private readonly IWorkContext _workContext;
         private readonly IPermissionService _permissionService;
         private readonly ICustomerService _customerService;
-        private readonly ILocalizationService _localizationService;
-
+      
 		#endregion
 
 		#region Constructors
 
         public SecurityController(ILogger logger, IWorkContext workContext,
             IPermissionService permissionService,
-            ICustomerService customerService, ILocalizationService localizationService)
+            ICustomerService customerService)
 		{
             this._logger = logger;
             this._workContext = workContext;
             this._permissionService = permissionService;
             this._customerService = customerService;
-            this._localizationService = localizationService;
+       
 		}
 
 		#endregion 
@@ -73,7 +72,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 model.AvailablePermissions.Add(new PermissionRecordModel
                 {
                     //Name = pr.Name,
-                    Name = pr.GetLocalizedPermissionName(_localizationService, _workContext),
+                    Name = pr.Name,
                     SystemName = pr.SystemName
                 });
             }
@@ -137,7 +136,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 }
             }
 
-            SuccessNotification(_localizationService.GetResource("Admin.Configuration.ACL.Updated"));
+            SuccessNotification(("Admin.Configuration.ACL.Updated"));
             return RedirectToAction("Permissions");
         }
 

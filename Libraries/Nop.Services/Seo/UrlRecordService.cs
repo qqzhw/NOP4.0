@@ -4,7 +4,7 @@ using System.Linq;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Data;
-using Nop.Core.Domain.Localization;
+
 using Nop.Core.Domain.Seo;
 
 namespace Nop.Services.Seo
@@ -47,8 +47,7 @@ namespace Nop.Services.Seo
 
         private readonly IRepository<UrlRecord> _urlRecordRepository;
         private readonly IStaticCacheManager _cacheManager;
-        private readonly LocalizationSettings _localizationSettings;
-
+       
         #endregion
 
         #region Ctor
@@ -60,13 +59,11 @@ namespace Nop.Services.Seo
         /// <param name="urlRecordRepository">URL record repository</param>
         /// <param name="localizationSettings">Localization settings</param>
         public UrlRecordService(IStaticCacheManager cacheManager,
-            IRepository<UrlRecord> urlRecordRepository,
-            LocalizationSettings localizationSettings)
+            IRepository<UrlRecord> urlRecordRepository)
         {
             this._cacheManager = cacheManager;
             this._urlRecordRepository = urlRecordRepository;
-            this._localizationSettings = localizationSettings;
-        }
+                }
 
         #endregion
 
@@ -249,8 +246,7 @@ namespace Nop.Services.Seo
             if (String.IsNullOrEmpty(slug))
                 return null;
 
-            if (_localizationSettings.LoadAllUrlRecordsOnStartup)
-            {
+                {
                 //load all records (we know they are cached)
                 var source = GetAllUrlRecordsCached();
                 var query = from ur in source
@@ -302,29 +298,8 @@ namespace Nop.Services.Seo
         /// <returns>Found slug</returns>
         public virtual string GetActiveSlug(int entityId, string entityName, int languageId)
         {
-            if (_localizationSettings.LoadAllUrlRecordsOnStartup)
-            {
-                string key = string.Format(URLRECORD_ACTIVE_BY_ID_NAME_LANGUAGE_KEY, entityId, entityName, languageId);
-                return _cacheManager.Get(key, () =>
-                {
-                    //load all records (we know they are cached)
-                    var source = GetAllUrlRecordsCached();
-                    var query = from ur in source
-                                where ur.EntityId == entityId &&
-                                ur.EntityName == entityName &&
-                                ur.LanguageId == languageId &&
-                                ur.IsActive
-                                orderby ur.Id descending
-                                select ur.Slug;
-                    var slug = query.FirstOrDefault();
-                    //little hack here. nulls aren't cacheable so set it to ""
-                    if (slug == null)
-                        slug = "";
-                    return slug;
-                });
-            }
-            else
-            {
+           // if (_localizationSettings.LoadAllUrlRecordsOnStartup)
+               {
                 //gradual loading
                 string key = string.Format(URLRECORD_ACTIVE_BY_ID_NAME_LANGUAGE_KEY, entityId, entityName, languageId);
                 return _cacheManager.Get(key, () =>

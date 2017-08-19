@@ -10,15 +10,14 @@ using Nop.Web.Framework.Mvc.Models;
 namespace Nop.Web.Areas.Admin.Models.Catalog
 {
     [Validator(typeof(CategoryValidator))]
-    public partial class CategoryModel : BaseNopEntityModel, ILocalizedModel<CategoryLocalizedModel>
+    public partial class CategoryModel : BaseNopEntityModel
     {
         public CategoryModel()
         {
             if (PageSize < 1)
             {
                 PageSize = 5;
-            }
-            Locales = new List<CategoryLocalizedModel>();
+            }          
             AvailableCategoryTemplates = new List<SelectListItem>();
             AvailableCategories = new List<SelectListItem>();
             AvailableDiscounts = new List<SelectListItem>();
@@ -87,8 +86,7 @@ namespace Nop.Web.Areas.Admin.Models.Catalog
         [NopResourceDisplayName("Admin.Catalog.Categories.Fields.DisplayOrder")]
         public int DisplayOrder { get; set; }
         
-        public IList<CategoryLocalizedModel> Locales { get; set; }
-
+      
         public string Breadcrumb { get; set; }
 
         //ACL (customer roles)
@@ -166,27 +164,5 @@ namespace Nop.Web.Areas.Admin.Models.Catalog
 
         #endregion
     }
-
-    public partial class CategoryLocalizedModel : ILocalizedModelLocal
-    {
-        public int LanguageId { get; set; }
-
-        [NopResourceDisplayName("Admin.Catalog.Categories.Fields.Name")]
-        public string Name { get; set; }
-
-        [NopResourceDisplayName("Admin.Catalog.Categories.Fields.Description")]
-        public string Description {get;set;}
-
-        [NopResourceDisplayName("Admin.Catalog.Categories.Fields.MetaKeywords")]
-        public string MetaKeywords { get; set; }
-
-        [NopResourceDisplayName("Admin.Catalog.Categories.Fields.MetaDescription")]
-        public string MetaDescription { get; set; }
-
-        [NopResourceDisplayName("Admin.Catalog.Categories.Fields.MetaTitle")]
-        public string MetaTitle { get; set; }
-
-        [NopResourceDisplayName("Admin.Catalog.Categories.Fields.SeName")]
-        public string SeName { get; set; }
-    }
+    
 }

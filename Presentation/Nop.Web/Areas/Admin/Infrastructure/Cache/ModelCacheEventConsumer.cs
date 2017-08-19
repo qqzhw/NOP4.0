@@ -1,7 +1,7 @@
 ﻿using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Configuration;
-using Nop.Core.Domain.Vendors;
+ 
 using Nop.Core.Events;
 using Nop.Services.Events;
 
@@ -13,22 +13,12 @@ namespace Nop.Web.Areas.Admin.Infrastructure.Cache
     public partial class ModelCacheEventConsumer: 
         //settings
         IConsumer<EntityUpdated<Setting>>,
-        //specification attributes
-        IConsumer<EntityInserted<SpecificationAttribute>>,
-        IConsumer<EntityUpdated<SpecificationAttribute>>,
-        IConsumer<EntityDeleted<SpecificationAttribute>>,
+      
         //categories
         IConsumer<EntityInserted<Category>>,
         IConsumer<EntityUpdated<Category>>,
-        IConsumer<EntityDeleted<Category>>,
-        //manufacturers
-        IConsumer<EntityInserted<Manufacturer>>,
-        IConsumer<EntityUpdated<Manufacturer>>,
-        IConsumer<EntityDeleted<Manufacturer>>,
-        //vendors
-        IConsumer<EntityInserted<Vendor>>,
-        IConsumer<EntityUpdated<Vendor>>,
-        IConsumer<EntityDeleted<Vendor>>
+        IConsumer<EntityDeleted<Category>>   
+    
     {
         /// <summary>
         /// Key for nopCommerce.com news cache
@@ -82,21 +72,7 @@ namespace Nop.Web.Areas.Admin.Infrastructure.Cache
             //clear models which depend on settings
             _cacheManager.RemoveByPattern(OFFICIAL_NEWS_PATTERN_KEY); //depends on AdminAreaSettings.HideAdvertisementsOnAdminArea
         }
-        
-        //specification attributes
-        public void HandleEvent(EntityInserted<SpecificationAttribute> eventMessage)
-        {
-            _cacheManager.RemoveByPattern(SPEC_ATTRIBUTES_PATTERN_KEY);
-        }
-        public void HandleEvent(EntityUpdated<SpecificationAttribute> eventMessage)
-        {
-            _cacheManager.RemoveByPattern(SPEC_ATTRIBUTES_PATTERN_KEY);
-        }
-        public void HandleEvent(EntityDeleted<SpecificationAttribute> eventMessage)
-        {
-            _cacheManager.RemoveByPattern(SPEC_ATTRIBUTES_PATTERN_KEY);
-        }
-
+         
         //categories
         public void HandleEvent(EntityInserted<Category> eventMessage)
         {
@@ -109,34 +85,7 @@ namespace Nop.Web.Areas.Admin.Infrastructure.Cache
         public void HandleEvent(EntityDeleted<Category> eventMessage)
         {
             _cacheManager.RemoveByPattern(CATEGORIES_LIST_PATTERN_KEY);
-        }
-
-        //manufacturers
-        public void HandleEvent(EntityInserted<Manufacturer> eventMessage)
-        {
-            _cacheManager.RemoveByPattern(MANUFACTURERS_LIST_PATTERN_KEY);
-        }
-        public void HandleEvent(EntityUpdated<Manufacturer> eventMessage)
-        {
-            _cacheManager.RemoveByPattern(MANUFACTURERS_LIST_PATTERN_KEY);
-        }
-        public void HandleEvent(EntityDeleted<Manufacturer> eventMessage)
-        {
-            _cacheManager.RemoveByPattern(MANUFACTURERS_LIST_PATTERN_KEY);
-        }
-
-        //vendors
-        public void HandleEvent(EntityInserted<Vendor> eventMessage)
-        {
-            _cacheManager.RemoveByPattern(VENDORS_LIST_PATTERN_KEY);
-        }
-        public void HandleEvent(EntityUpdated<Vendor> eventMessage)
-        {
-            _cacheManager.RemoveByPattern(VENDORS_LIST_PATTERN_KEY);
-        }
-        public void HandleEvent(EntityDeleted<Vendor> eventMessage)
-        {
-            _cacheManager.RemoveByPattern(VENDORS_LIST_PATTERN_KEY);
-        }
+        } 
+      
     }
 }

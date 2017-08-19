@@ -30,17 +30,9 @@ namespace Nop.Data.Mapping.Catalog
             this.Property(p => p.BasepriceBaseAmount).HasPrecision(18, 4);
 
             this.Ignore(p => p.ProductType);
-            this.Ignore(p => p.BackorderMode);
+        
             this.Ignore(p => p.DownloadActivationType);
-            this.Ignore(p => p.GiftCardType);
-            this.Ignore(p => p.LowStockActivity);
-            this.Ignore(p => p.ManageInventoryMethod);
-            this.Ignore(p => p.RecurringCyclePeriod);
-            this.Ignore(p => p.RentalPricePeriod);
-
-            this.HasMany(p => p.ProductTags)
-                .WithMany(pt => pt.Products)
-                .Map(m => m.ToTable("Product_ProductTag_Mapping"));
+            
         }
     }
 }

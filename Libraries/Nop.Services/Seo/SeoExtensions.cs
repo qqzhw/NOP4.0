@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Forums;
 using Nop.Core.Domain.Seo;
 using Nop.Core.Infrastructure;
-using Nop.Services.Localization;
+
 
 namespace Nop.Services.Seo
 {
@@ -20,85 +19,7 @@ namespace Nop.Services.Seo
 
         #endregion
         
-        #region Product tag
-
-        /// <summary>
-        /// Gets product tag SE (search engine) name
-        /// </summary>
-        /// <param name="productTag">Product tag</param>
-        /// <returns>Product tag SE (search engine) name</returns>
-        public static string GetSeName(this ProductTag productTag)
-        {
-            var workContext = EngineContext.Current.Resolve<IWorkContext>();
-            return GetSeName(productTag, workContext.WorkingLanguage.Id);
-        }
-
-        /// <summary>
-        /// Gets product tag SE (search engine) name
-        /// </summary>
-        /// <param name="productTag">Product tag</param>
-        /// <param name="languageId">Language identifier</param>
-        /// <returns>Product tag SE (search engine) name</returns>
-        public static string GetSeName(this ProductTag productTag, int languageId)
-        {
-            if (productTag == null)
-                throw new ArgumentNullException(nameof(productTag));
-            string seName = GetSeName(productTag.GetLocalized(x => x.Name, languageId));
-            return seName;
-        }
-
-        #endregion
-
-        #region Forum
-
-        /// <summary>
-        /// Gets ForumGroup SE (search engine) name
-        /// </summary>
-        /// <param name="forumGroup">ForumGroup</param>
-        /// <returns>ForumGroup SE (search engine) name</returns>
-        public static string GetSeName(this ForumGroup forumGroup)
-        {
-            if (forumGroup == null)
-                throw new ArgumentNullException(nameof(forumGroup));
-            string seName = GetSeName(forumGroup.Name);
-            return seName;
-        }
-
-        /// <summary>
-        /// Gets Forum SE (search engine) name
-        /// </summary>
-        /// <param name="forum">Forum</param>
-        /// <returns>Forum SE (search engine) name</returns>
-        public static string GetSeName(this Forum forum)
-        {
-            if (forum == null)
-                throw new ArgumentNullException(nameof(forum));
-            string seName = GetSeName(forum.Name);
-            return seName;
-        }
-
-        /// <summary>
-        /// Gets ForumTopic SE (search engine) name
-        /// </summary>
-        /// <param name="forumTopic">ForumTopic</param>
-        /// <returns>ForumTopic SE (search engine) name</returns>
-        public static string GetSeName(this ForumTopic forumTopic)
-        {
-            if (forumTopic == null)
-                throw new ArgumentNullException(nameof(forumTopic));
-            string seName = GetSeName(forumTopic.Subject);
-
-            // Trim SE name to avoid URLs that are too long
-            var maxLength = 100;
-            if (seName.Length > maxLength)
-            {
-                seName = seName.Substring(0, maxLength);
-            }
-
-            return seName;
-        }
-
-        #endregion
+    
 
         #region General
 
@@ -112,7 +33,7 @@ namespace Nop.Services.Seo
             where T : BaseEntity, ISlugSupported
         {
             var workContext = EngineContext.Current.Resolve<IWorkContext>();
-            return GetSeName(entity, workContext.WorkingLanguage.Id);
+            return GetSeName(entity, 1);
         }
 
         /// <summary>
@@ -154,12 +75,7 @@ namespace Nop.Services.Seo
             {
                 //ensure that we have at least two published languages
                 bool loadLocalizedValue = true;
-                if (ensureTwoPublishedLanguages)
-                {
-                    var lService = EngineContext.Current.Resolve<ILanguageService>();
-                    var totalPublishedLanguages = lService.GetAllLanguages().Count;
-                    loadLocalizedValue = totalPublishedLanguages >= 2;
-                }
+             
                 //localized value
                 if (loadLocalizedValue)
                 {
@@ -233,7 +149,7 @@ namespace Nop.Services.Seo
             //ensure this sename is not reserved yet
             var urlRecordService = EngineContext.Current.Resolve<IUrlRecordService>();
             var seoSettings = EngineContext.Current.Resolve<SeoSettings>();
-            var languageService = EngineContext.Current.Resolve<ILanguageService>();
+         
             int i = 2;
             var tempSeName = seName;
             while (true)
@@ -243,9 +159,9 @@ namespace Nop.Services.Seo
                 var reserved1 = urlRecord != null && !(urlRecord.EntityId == entityId && urlRecord.EntityName.Equals(entityName, StringComparison.InvariantCultureIgnoreCase));
                 //and it's not in the list of reserved slugs
                 var reserved2 = seoSettings.ReservedUrlRecordSlugs.Contains(tempSeName, StringComparer.InvariantCultureIgnoreCase);
-                //and it's not equal to a language code
-                var reserved3 = languageService.GetAllLanguages(true).Any(language => language.UniqueSeoCode.Equals(tempSeName, StringComparison.InvariantCultureIgnoreCase));
-                if (!reserved1 && !reserved2 && !reserved3)
+                //and it's not equal to a language 
+            
+                if (!reserved1 && !reserved2 )
                     break;
 
                 tempSeName = string.Format("{0}-{1}", seName, i);

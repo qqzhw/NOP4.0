@@ -8,25 +8,15 @@ using System.Xml;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Directory;
-using Nop.Core.Domain.Messages;
-using Nop.Core.Domain.Orders;
-using Nop.Core.Domain.Shipping;
-using Nop.Core.Domain.Tax;
-using Nop.Core.Domain.Vendors;
+ 
 using Nop.Core.Extensions;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
-using Nop.Services.Customers;
-using Nop.Services.Directory;
+using Nop.Services.Customers; 
 using Nop.Services.ExportImport.Help;
-using Nop.Services.Media;
-using Nop.Services.Messages;
-using Nop.Services.Seo;
-using Nop.Services.Shipping.Date;
-using Nop.Services.Stores;
-using Nop.Services.Tax;
-using Nop.Services.Vendors;
+using Nop.Services.Media; 
+using Nop.Services.Seo; 
+using Nop.Services.Stores; 
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 
@@ -1269,77 +1259,7 @@ namespace Nop.Services.ExportImport
             return stringWriter.ToString();
         }
 
-        /// <summary>
-        /// Export orders to XLSX
-        /// </summary>
-        /// <param name="orders">Orders</param>
-        public virtual byte[] ExportOrdersToXlsx(IList<Order> orders)
-        {
-            //a vendor should have access only to part of order information
-            var ignore = _workContext.CurrentVendor != null;
-
-            //property array
-            var properties = new[]
-            {
-                new PropertyByName<Order>("OrderId", p => p.Id),
-                new PropertyByName<Order>("StoreId", p => p.StoreId),
-                new PropertyByName<Order>("OrderGuid", p => p.OrderGuid, ignore),
-                new PropertyByName<Order>("CustomerId", p => p.CustomerId, ignore),
-                new PropertyByName<Order>("OrderStatusId", p => p.OrderStatusId, ignore),
-                new PropertyByName<Order>("PaymentStatusId", p => p.PaymentStatusId),
-                new PropertyByName<Order>("ShippingStatusId", p => p.ShippingStatusId, ignore),
-                new PropertyByName<Order>("OrderSubtotalInclTax", p => p.OrderSubtotalInclTax, ignore),
-                new PropertyByName<Order>("OrderSubtotalExclTax", p => p.OrderSubtotalExclTax, ignore),
-                new PropertyByName<Order>("OrderSubTotalDiscountInclTax", p => p.OrderSubTotalDiscountInclTax, ignore),
-                new PropertyByName<Order>("OrderSubTotalDiscountExclTax", p => p.OrderSubTotalDiscountExclTax, ignore),
-                new PropertyByName<Order>("OrderShippingInclTax", p => p.OrderShippingInclTax, ignore),
-                new PropertyByName<Order>("OrderShippingExclTax", p => p.OrderShippingExclTax, ignore),
-                new PropertyByName<Order>("PaymentMethodAdditionalFeeInclTax", p => p.PaymentMethodAdditionalFeeInclTax, ignore),
-                new PropertyByName<Order>("PaymentMethodAdditionalFeeExclTax", p => p.PaymentMethodAdditionalFeeExclTax, ignore),
-                new PropertyByName<Order>("TaxRates", p => p.TaxRates, ignore),
-                new PropertyByName<Order>("OrderTax", p => p.OrderTax, ignore),
-                new PropertyByName<Order>("OrderTotal", p => p.OrderTotal, ignore),
-                new PropertyByName<Order>("RefundedAmount", p => p.RefundedAmount, ignore),
-                new PropertyByName<Order>("OrderDiscount", p => p.OrderDiscount, ignore),
-                new PropertyByName<Order>("CurrencyRate", p => p.CurrencyRate),
-                new PropertyByName<Order>("CustomerCurrencyCode", p => p.CustomerCurrencyCode),
-                new PropertyByName<Order>("AffiliateId", p => p.AffiliateId, ignore),
-                new PropertyByName<Order>("PaymentMethodSystemName", p => p.PaymentMethodSystemName, ignore),
-                new PropertyByName<Order>("ShippingPickUpInStore", p => p.PickUpInStore, ignore),
-                new PropertyByName<Order>("ShippingMethod", p => p.ShippingMethod),
-                new PropertyByName<Order>("ShippingRateComputationMethodSystemName", p => p.ShippingRateComputationMethodSystemName, ignore),
-                new PropertyByName<Order>("CustomValuesXml", p => p.CustomValuesXml, ignore),
-                new PropertyByName<Order>("VatNumber", p => p.VatNumber, ignore),
-                new PropertyByName<Order>("CreatedOnUtc", p => p.CreatedOnUtc.ToOADate()),
-                new PropertyByName<Order>("BillingFirstName", p => p.BillingAddress.Return(billingAddress => billingAddress.FirstName, String.Empty)),
-                new PropertyByName<Order>("BillingLastName", p => p.BillingAddress.Return(billingAddress => billingAddress.LastName, String.Empty)),
-                new PropertyByName<Order>("BillingEmail", p => p.BillingAddress.Return(billingAddress => billingAddress.Email, String.Empty)),
-                new PropertyByName<Order>("BillingCompany", p => p.BillingAddress.Return(billingAddress => billingAddress.Company, String.Empty)),
-                new PropertyByName<Order>("BillingCountry", p => p.BillingAddress.Return(billingAddress => billingAddress.Country, null).Return(country => country.Name, String.Empty)),
-                new PropertyByName<Order>("BillingStateProvince", p => p.BillingAddress.Return(billingAddress => billingAddress.StateProvince, null).Return(stateProvince => stateProvince.Name, String.Empty)),
-                new PropertyByName<Order>("BillingCity", p => p.BillingAddress.Return(billingAddress => billingAddress.City, String.Empty)),
-                new PropertyByName<Order>("BillingAddress1", p => p.BillingAddress.Return(billingAddress => billingAddress.Address1, String.Empty)),
-                new PropertyByName<Order>("BillingAddress2", p => p.BillingAddress.Return(billingAddress => billingAddress.Address2, String.Empty)),
-                new PropertyByName<Order>("BillingZipPostalCode", p => p.BillingAddress.Return(billingAddress => billingAddress.ZipPostalCode, String.Empty)),
-                new PropertyByName<Order>("BillingPhoneNumber", p => p.BillingAddress.Return(billingAddress => billingAddress.PhoneNumber, String.Empty)),
-                new PropertyByName<Order>("BillingFaxNumber", p => p.BillingAddress.Return(billingAddress => billingAddress.FaxNumber, String.Empty)),
-                new PropertyByName<Order>("ShippingFirstName", p => p.ShippingAddress.Return(shippingAddress => shippingAddress.FirstName, String.Empty)),
-                new PropertyByName<Order>("ShippingLastName", p => p.ShippingAddress.Return(shippingAddress => shippingAddress.LastName, String.Empty)),
-                new PropertyByName<Order>("ShippingEmail", p => p.ShippingAddress.Return(shippingAddress => shippingAddress.Email, String.Empty)),
-                new PropertyByName<Order>("ShippingCompany", p => p.ShippingAddress.Return(shippingAddress => shippingAddress.Company, String.Empty)),
-                new PropertyByName<Order>("ShippingCountry", p => p.ShippingAddress.Return(shippingAddress => shippingAddress.Country, null).Return(country => country.Name, String.Empty)),
-                new PropertyByName<Order>("ShippingStateProvince", p => p.ShippingAddress.Return(shippingAddress => shippingAddress.StateProvince, null).Return(stateProvince => stateProvince.Name, String.Empty)),
-                new PropertyByName<Order>("ShippingCity", p => p.ShippingAddress.Return(shippingAddress => shippingAddress.City, String.Empty)),
-                new PropertyByName<Order>("ShippingAddress1", p => p.ShippingAddress.Return(shippingAddress => shippingAddress.Address1, String.Empty)),
-                new PropertyByName<Order>("ShippingAddress2", p => p.ShippingAddress.Return(shippingAddress => shippingAddress.Address2, String.Empty)),
-                new PropertyByName<Order>("ShippingZipPostalCode", p => p.ShippingAddress.Return(shippingAddress => shippingAddress.ZipPostalCode, String.Empty)),
-                new PropertyByName<Order>("ShippingPhoneNumber", p => p.ShippingAddress.Return(shippingAddress => shippingAddress.PhoneNumber, String.Empty)),
-                new PropertyByName<Order>("ShippingFaxNumber", p => p.ShippingAddress.Return(shippingAddress => shippingAddress.FaxNumber, String.Empty))
-            };
-
-            return _orderSettings.ExportWithProducts ? ExportOrderToXlsxWithProducts(properties, orders) : ExportToXlsx(properties, orders);
-        }
-
+       
         /// <summary>
         /// Export customer list to XLSX
         /// </summary>

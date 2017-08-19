@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Routing;
 using Nop.Core.Data;
-using Nop.Core.Domain.Localization;
+
 using Nop.Core.Infrastructure;
 
 namespace Nop.Web.Framework.Localization
@@ -49,9 +49,9 @@ namespace Nop.Web.Framework.Localization
                 return data;
 
             //add language code to page URL in case if it's localized URL
-            var path = context.HttpContext.Request.Path.Value;
-            if (path.IsLocalizedUrl(context.HttpContext.Request.PathBase, false, out Language language))
-                data.VirtualPath = $"/{language.UniqueSeoCode}{data.VirtualPath}";
+            //var path = context.HttpContext.Request.Path.Value;
+            //if (path.IsLocalizedUrl(context.HttpContext.Request.PathBase, false))
+            //    data.VirtualPath = $"/{data.VirtualPath}";
 
             return data;
         }
@@ -67,20 +67,16 @@ namespace Nop.Web.Framework.Localization
                 return base.RouteAsync(context);
 
             //if path isn't localized, no special action required
-            var path = context.HttpContext.Request.Path.Value;
-            if (!path.IsLocalizedUrl(context.HttpContext.Request.PathBase, false, out Language language))
+            var path = context.HttpContext.Request.Path.Value;          
                 return base.RouteAsync(context);
 
-            //remove language code and application path from the path
-            var newPath = path.RemoveLanguageSeoCodeFromUrl(context.HttpContext.Request.PathBase, false);
-
-            //set new request path and try to get route handler
-            context.HttpContext.Request.Path = newPath;
-            base.RouteAsync(context).Wait();
+                       //set new request path and try to get route handler
+           // context.HttpContext.Request.Path = newPath;
+            //base.RouteAsync(context).Wait();
 
             //then return the original request path
-            context.HttpContext.Request.Path = path;
-            return _target.RouteAsync(context);
+          //  context.HttpContext.Request.Path = path;
+           // return _target.RouteAsync(context);
         }
 
         /// <summary>
@@ -103,7 +99,7 @@ namespace Nop.Web.Framework.Localization
             get
             {
                 if (!_seoFriendlyUrlsForLanguagesEnabled.HasValue)
-                    _seoFriendlyUrlsForLanguagesEnabled = EngineContext.Current.Resolve<LocalizationSettings>().SeoFriendlyUrlsForLanguagesEnabled;
+                    _seoFriendlyUrlsForLanguagesEnabled = true;
 
                 return _seoFriendlyUrlsForLanguagesEnabled.Value;
             }

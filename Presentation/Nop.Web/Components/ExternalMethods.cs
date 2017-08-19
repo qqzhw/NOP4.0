@@ -26,7 +26,7 @@ namespace Nop.Web.Components
         {
             var model = _externalAuthenticationModelFactory.PrepareExternalMethodsModel();
 
-            return View(model);
+            return View();
         }
 
         #endregion

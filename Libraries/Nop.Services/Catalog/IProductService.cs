@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Orders;
-using Nop.Core.Domain.Shipping;
+ 
 
 namespace Nop.Services.Catalog
 {
@@ -213,32 +212,7 @@ namespace Nop.Services.Catalog
         IList<Product> GetAssociatedProducts(int parentGroupedProductId,
             int storeId = 0, int vendorId = 0, bool showHidden = false);
 
-        /// <summary>
-        /// Update product review totals
-        /// </summary>
-        /// <param name="product">Product</param>
-        void UpdateProductReviewTotals(Product product);
-
-        /// <summary>
-        /// Get low stock products
-        /// </summary>
-        /// <param name="vendorId">Vendor identifier; 0 to load all records</param>
-        /// <param name="pageIndex">Page index</param>
-        /// <param name="pageSize">Page size</param>
-        /// <returns>Products</returns>
-        IPagedList<Product> GetLowStockProducts(int vendorId = 0,
-            int pageIndex = 0, int pageSize = int.MaxValue);
-
-        /// <summary>
-        /// Get low stock product combinations
-        /// </summary>
-        /// <param name="vendorId">Vendor identifier; 0 to load all records</param>
-        /// <param name="pageIndex">Page index</param>
-        /// <param name="pageSize">Page size</param>
-        /// <returns>Product combinations</returns>
-        IPagedList<ProductAttributeCombination> GetLowStockProductCombinations(int vendorId = 0,
-            int pageIndex = 0, int pageSize = int.MaxValue);
-
+       
         /// <summary>
         /// Gets a product by SKU
         /// </summary>
@@ -254,18 +228,7 @@ namespace Nop.Services.Catalog
         /// <returns>Products</returns>
         IList<Product> GetProductsBySku(string[] skuArray, int vendorId = 0);
 
-        /// <summary>
-        /// Update HasTierPrices property (used for performance optimization)
-        /// </summary>
-        /// <param name="product">Product</param>
-        void UpdateHasTierPricesProperty(Product product);
-
-        /// <summary>
-        /// Update HasDiscountsApplied property (used for performance optimization)
-        /// </summary>
-        /// <param name="product">Product</param>
-        void UpdateHasDiscountsApplied(Product product);
-
+       
         /// <summary>
         /// Gets number of products by vendor identifier
         /// </summary>
@@ -274,162 +237,7 @@ namespace Nop.Services.Catalog
         int GetNumberOfProductsByVendorId(int vendorId);
 
         #endregion
-
-        #region Inventory management methods
-
-        /// <summary>
-        /// Adjust inventory
-        /// </summary>
-        /// <param name="product">Product</param>
-        /// <param name="quantityToChange">Quantity to increase or decrease</param>
-        /// <param name="attributesXml">Attributes in XML format</param>
-        /// <param name="message">Message for the stock quantity history</param>
-        void AdjustInventory(Product product, int quantityToChange, string attributesXml = "", string message = "");
-
-        /// <summary>
-        /// Reserve the given quantity in the warehouses.
-        /// </summary>
-        /// <param name="product">Product</param>
-        /// <param name="quantity">Quantity, must be negative</param>
-        void ReserveInventory(Product product, int quantity);
-
-        /// <summary>
-        /// Unblocks the given quantity reserved items in the warehouses
-        /// </summary>
-        /// <param name="product">Product</param>
-        /// <param name="quantity">Quantity, must be positive</param>
-        void UnblockReservedInventory(Product product, int quantity);
-
-        /// <summary>
-        /// Book the reserved quantity
-        /// </summary>
-        /// <param name="product">Product</param>
-        /// <param name="warehouseId">Warehouse identifier</param>
-        /// <param name="quantity">Quantity, must be negative</param>
-        /// <param name="message">Message for the stock quantity history</param>
-        void BookReservedInventory(Product product, int warehouseId, int quantity, string message = "");
-
-        /// <summary>
-        /// Reverse booked inventory (if acceptable)
-        /// </summary>
-        /// <param name="product">product</param>
-        /// <param name="shipmentItem">Shipment item</param>
-        /// <returns>Quantity reversed</returns>
-        /// <param name="message">Message for the stock quantity history</param>
-        int ReverseBookedInventory(Product product, ShipmentItem shipmentItem, string message = "");
-
-        #endregion
-
-        #region Related products
-
-        /// <summary>
-        /// Deletes a related product
-        /// </summary>
-        /// <param name="relatedProduct">Related product</param>
-        void DeleteRelatedProduct(RelatedProduct relatedProduct);
-
-        /// <summary>
-        /// Gets related products by product identifier
-        /// </summary>
-        /// <param name="productId1">The first product identifier</param>
-        /// <param name="showHidden">A value indicating whether to show hidden records</param>
-        /// <returns>Related products</returns>
-        IList<RelatedProduct> GetRelatedProductsByProductId1(int productId1, bool showHidden = false);
-
-        /// <summary>
-        /// Gets a related product
-        /// </summary>
-        /// <param name="relatedProductId">Related product identifier</param>
-        /// <returns>Related product</returns>
-        RelatedProduct GetRelatedProductById(int relatedProductId);
-
-        /// <summary>
-        /// Inserts a related product
-        /// </summary>
-        /// <param name="relatedProduct">Related product</param>
-        void InsertRelatedProduct(RelatedProduct relatedProduct);
-
-        /// <summary>
-        /// Updates a related product
-        /// </summary>
-        /// <param name="relatedProduct">Related product</param>
-        void UpdateRelatedProduct(RelatedProduct relatedProduct);
-
-        #endregion
-
-        #region Cross-sell products
-
-        /// <summary>
-        /// Deletes a cross-sell product
-        /// </summary>
-        /// <param name="crossSellProduct">Cross-sell</param>
-        void DeleteCrossSellProduct(CrossSellProduct crossSellProduct);
-
-        /// <summary>
-        /// Gets cross-sell products by product identifier
-        /// </summary>
-        /// <param name="productId1">The first product identifier</param>
-        /// <param name="showHidden">A value indicating whether to show hidden records</param>
-        /// <returns>Cross-sell products</returns>
-        IList<CrossSellProduct> GetCrossSellProductsByProductId1(int productId1, bool showHidden = false);
-
-        /// <summary>
-        /// Gets a cross-sell product
-        /// </summary>
-        /// <param name="crossSellProductId">Cross-sell product identifier</param>
-        /// <returns>Cross-sell product</returns>
-        CrossSellProduct GetCrossSellProductById(int crossSellProductId);
-
-        /// <summary>
-        /// Inserts a cross-sell product
-        /// </summary>
-        /// <param name="crossSellProduct">Cross-sell product</param>
-        void InsertCrossSellProduct(CrossSellProduct crossSellProduct);
-
-        /// <summary>
-        /// Updates a cross-sell product
-        /// </summary>
-        /// <param name="crossSellProduct">Cross-sell product</param>
-        void UpdateCrossSellProduct(CrossSellProduct crossSellProduct);
-        
-        /// <summary>
-        /// Gets a cross-sells
-        /// </summary>
-        /// <param name="cart">Shopping cart</param>
-        /// <param name="numberOfProducts">Number of products to return</param>
-        /// <returns>Cross-sells</returns>
-        IList<Product> GetCrosssellProductsByShoppingCart(IList<ShoppingCartItem> cart, int numberOfProducts);
-
-        #endregion
-        
-        #region Tier prices
-
-        /// <summary>
-        /// Deletes a tier price
-        /// </summary>
-        /// <param name="tierPrice">Tier price</param>
-        void DeleteTierPrice(TierPrice tierPrice);
-
-        /// <summary>
-        /// Gets a tier price
-        /// </summary>
-        /// <param name="tierPriceId">Tier price identifier</param>
-        /// <returns>Tier price</returns>
-        TierPrice GetTierPriceById(int tierPriceId);
-
-        /// <summary>
-        /// Inserts a tier price
-        /// </summary>
-        /// <param name="tierPrice">Tier price</param>
-        void InsertTierPrice(TierPrice tierPrice);
-
-        /// <summary>
-        /// Updates the tier price
-        /// </summary>
-        /// <param name="tierPrice">Tier price</param>
-        void UpdateTierPrice(TierPrice tierPrice);
-
-        #endregion
+         
 
         #region Product pictures
 
@@ -473,92 +281,7 @@ namespace Nop.Services.Catalog
         IDictionary<int, int[]> GetProductsImagesIds(int [] productsIds);
 
         #endregion
-
-        #region Product reviews
-
-        /// <summary>
-        /// Gets all product reviews
-        /// </summary>
-        /// <param name="customerId">Customer identifier (who wrote a review); 0 to load all records</param>
-        /// <param name="approved">A value indicating whether to content is approved; null to load all records</param> 
-        /// <param name="fromUtc">Item creation from; null to load all records</param>
-        /// <param name="toUtc">Item item creation to; null to load all records</param>
-        /// <param name="message">Search title or review text; null to load all records</param>
-        /// <param name="storeId">The store identifier; pass 0 to load all records</param>
-        /// <param name="productId">The product identifier; pass 0 to load all records</param>
-        /// <param name="vendorId">The vendor identifier (limit to products of this vendor); pass 0 to load all records</param>
-        /// <param name="pageIndex">Page index</param>
-        /// <param name="pageSize">Page size</param>
-        /// <returns>Reviews</returns>
-        IPagedList<ProductReview> GetAllProductReviews(int customerId, bool? approved,
-            DateTime? fromUtc = null, DateTime? toUtc = null,
-            string message = null, int storeId = 0, int productId = 0, int vendorId = 0,
-            int pageIndex = 0, int pageSize = int.MaxValue);
-
-        /// <summary>
-        /// Gets product review
-        /// </summary>
-        /// <param name="productReviewId">Product review identifier</param>
-        /// <returns>Product review</returns>
-        ProductReview GetProductReviewById(int productReviewId);
-
-        /// <summary>
-        /// Get product reviews by identifiers
-        /// </summary>
-        /// <param name="productReviewIds">Product review identifiers</param>
-        /// <returns>Product reviews</returns>
-        IList<ProductReview> GetProducReviewsByIds(int[] productReviewIds);
-
-        /// <summary>
-        /// Deletes a product review
-        /// </summary>
-        /// <param name="productReview">Product review</param>
-        void DeleteProductReview(ProductReview productReview);
-
-        /// <summary>
-        /// Deletes product reviews
-        /// </summary>
-        /// <param name="productReviews">Product reviews</param>
-        void DeleteProductReviews(IList<ProductReview> productReviews);
-
-        #endregion
-
-        #region Product warehouse inventory
-
-        /// <summary>
-        /// Deletes a ProductWarehouseInventory
-        /// </summary>
-        /// <param name="pwi">ProductWarehouseInventory</param>
-        void DeleteProductWarehouseInventory(ProductWarehouseInventory pwi);
-
-        #endregion
-
-        #region Stock quantity history
-
-        /// <summary>
-        /// Add stock quantity change entry
-        /// </summary>
-        /// <param name="product">Product</param>
-        /// <param name="quantityAdjustment">Quantity adjustment</param>
-        /// <param name="stockQuantity">Current stock quantity</param>
-        /// <param name="warehouseId">Warehouse identifier</param>
-        /// <param name="message">Message</param>
-        /// <param name="combinationId">Product attribute combination identifier</param>
-        void AddStockQuantityHistoryEntry(Product product, int quantityAdjustment, int stockQuantity,
-            int warehouseId = 0, string message = "", int? combinationId = null);
-
-        /// <summary>
-        /// Get the history of the product stock quantity changes
-        /// </summary>
-        /// <param name="product">Product</param>
-        /// <param name="warehouseId">Warehouse identifier; pass 0 to load all entries</param>
-        /// <param name="combinationId">Product attribute combination identifier; pass 0 to load all entries</param>
-        /// <param name="pageIndex">Page index</param>
-        /// <param name="pageSize">Page size</param>
-        /// <returns>List of stock quantity change entries</returns>
-        IPagedList<StockQuantityHistory> GetStockQuantityHistory(Product product, int warehouseId = 0, int combinationId = 0,
-            int pageIndex = 0, int pageSize = int.MaxValue);
-
-        #endregion
+         
+       
     }
 }

@@ -7,7 +7,7 @@ using System.Xml;
 using Microsoft.AspNetCore.Routing;
 using Nop.Core;
 using Nop.Core.Infrastructure;
-using Nop.Services.Localization;
+
 using Nop.Services.Security;
 
 namespace Nop.Web.Framework.Menu
@@ -75,8 +75,8 @@ namespace Nop.Web.Framework.Menu
 
             //title
             var nopResource = GetStringValueFromAttribute(xmlNode, "nopResource");
-            var localizationService = EngineContext.Current.Resolve<ILocalizationService>();
-            siteMapNode.Title = localizationService.GetResource(nopResource);
+         
+            siteMapNode.Title = (nopResource);
 
             //routes, url
             string controllerName = GetStringValueFromAttribute(xmlNode, "controller");

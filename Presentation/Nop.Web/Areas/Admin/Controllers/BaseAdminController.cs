@@ -12,8 +12,7 @@ namespace Nop.Web.Areas.Admin.Controllers
     [HttpsRequirement(SslRequirement.Yes)]
     [AdminAntiForgery]
     [ValidateIpAddress]
-    [AuthorizeAdmin]
-    [ValidateVendor]
+    [AuthorizeAdmin] 
     public abstract partial class BaseAdminController : BaseController
     {
         /// <summary>

@@ -8,7 +8,7 @@ using Nop.Core;
 using Nop.Core.Domain.Logging;
 using Nop.Services;
 using Nop.Services.Helpers;
-using Nop.Services.Localization;
+
 using Nop.Services.Logging;
 using Nop.Services.Security;
 using Nop.Web.Framework.Controllers;
@@ -22,7 +22,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         private readonly ILogger _logger;
         private readonly IWorkContext _workContext;
-        private readonly ILocalizationService _localizationService;
+        
         private readonly IDateTimeHelper _dateTimeHelper;
         private readonly IPermissionService _permissionService;
 
@@ -31,12 +31,12 @@ namespace Nop.Web.Areas.Admin.Controllers
         #region Ctor
 
         public LogController(ILogger logger, IWorkContext workContext,
-            ILocalizationService localizationService, IDateTimeHelper dateTimeHelper,
+           IDateTimeHelper dateTimeHelper,
             IPermissionService permissionService)
         {
             this._logger = logger;
             this._workContext = workContext;
-            this._localizationService = localizationService;
+           
             this._dateTimeHelper = dateTimeHelper;
             this._permissionService = permissionService;
         }
@@ -57,7 +57,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
             var model = new LogListModel();
             model.AvailableLogLevels = LogLevel.Debug.ToSelectList(false).ToList();
-            model.AvailableLogLevels.Insert(0, new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
+            model.AvailableLogLevels.Insert(0, new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
 
             return View(model);
         }
@@ -84,7 +84,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 Data = logItems.Select(x => new LogModel
                 {
                     Id = x.Id,
-                    LogLevel = x.LogLevel.GetLocalizedEnum(_localizationService, _workContext),
+                    LogLevel = x.LogLevel.ToString(),
                     ShortMessage = x.ShortMessage,
                     //little performance optimization: ensure that "FullMessage" is not returned
                     FullMessage = "",
@@ -110,7 +110,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
             _logger.ClearLog();
 
-            SuccessNotification(_localizationService.GetResource("Admin.System.Log.Cleared"));
+            SuccessNotification(("Admin.System.Log.Cleared"));
             return RedirectToAction("List");
         }
 
@@ -127,7 +127,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             var model = new LogModel
             {
                 Id = log.Id,
-                LogLevel = log.LogLevel.GetLocalizedEnum(_localizationService, _workContext),
+                LogLevel = log.LogLevel.ToString(),
                 ShortMessage = log.ShortMessage,
                 FullMessage = log.FullMessage,
                 IpAddress = log.IpAddress,
@@ -155,7 +155,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             _logger.DeleteLog(log);
 
 
-            SuccessNotification(_localizationService.GetResource("Admin.System.Log.Deleted"));
+            SuccessNotification(("Admin.System.Log.Deleted"));
             return RedirectToAction("List");
         }
 

@@ -483,23 +483,7 @@ namespace Nop.Services.Catalog
             return allFound;
         }
         
-        /// <summary>
-        /// Finds a product attribute combination by attributes stored in XML 
-        /// </summary>
-        /// <param name="product">Product</param>
-        /// <param name="attributesXml">Attributes in XML format</param>
-        /// <param name="ignoreNonCombinableAttributes">A value indicating whether we should ignore non-combinable attributes</param>
-        /// <returns>Found product attribute combination</returns>
-        public virtual ProductAttributeCombination FindProductAttributeCombination(Product product,
-            string attributesXml, bool ignoreNonCombinableAttributes = true)
-        {
-            if (product == null)
-                throw new ArgumentNullException(nameof(product));
-
-            var combinations = _productAttributeService.GetAllProductAttributeCombinations(product.Id);
-            return combinations.FirstOrDefault(x => 
-                AreProductAttributesEqual(x.AttributesXml, attributesXml, ignoreNonCombinableAttributes));
-        }
+        
 
         /// <summary>
         /// Generate all combinations

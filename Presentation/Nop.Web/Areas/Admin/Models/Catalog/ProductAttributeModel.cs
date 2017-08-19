@@ -8,11 +8,11 @@ using Nop.Web.Framework.Mvc.Models;
 namespace Nop.Web.Areas.Admin.Models.Catalog
 {
     [Validator(typeof(ProductAttributeValidator))]
-    public partial class ProductAttributeModel : BaseNopEntityModel, ILocalizedModel<ProductAttributeLocalizedModel>
+    public partial class ProductAttributeModel : BaseNopEntityModel
     {
         public ProductAttributeModel()
         {
-            Locales = new List<ProductAttributeLocalizedModel>();
+         
         }
 
         [NopResourceDisplayName("Admin.Catalog.Attributes.ProductAttributes.Fields.Name")]
@@ -21,10 +21,7 @@ namespace Nop.Web.Areas.Admin.Models.Catalog
         [NopResourceDisplayName("Admin.Catalog.Attributes.ProductAttributes.Fields.Description")]
         public string Description {get;set;}
         
-
-
-        public IList<ProductAttributeLocalizedModel> Locales { get; set; }
-
+      
         #region Nested classes
 
         public partial class UsedByProductModel : BaseNopEntityModel
@@ -37,25 +34,13 @@ namespace Nop.Web.Areas.Admin.Models.Catalog
 
         #endregion
     }
-
-    public partial class ProductAttributeLocalizedModel : ILocalizedModelLocal
-    {
-        public int LanguageId { get; set; }
-
-        [NopResourceDisplayName("Admin.Catalog.Attributes.ProductAttributes.Fields.Name")]
-        public string Name { get; set; }
-
-        [NopResourceDisplayName("Admin.Catalog.Attributes.ProductAttributes.Fields.Description")]
-        public string Description {get;set;}
-    }
-
-
+    
     [Validator(typeof(PredefinedProductAttributeValueModelValidator))]
-    public partial class PredefinedProductAttributeValueModel : BaseNopEntityModel, ILocalizedModel<PredefinedProductAttributeValueLocalizedModel>
+    public partial class PredefinedProductAttributeValueModel : BaseNopEntityModel
     {
         public PredefinedProductAttributeValueModel()
         {
-            Locales = new List<PredefinedProductAttributeValueLocalizedModel>();
+         
         }
 
         public int ProductAttributeId { get; set; }
@@ -84,13 +69,7 @@ namespace Nop.Web.Areas.Admin.Models.Catalog
         [NopResourceDisplayName("Admin.Catalog.Attributes.ProductAttributes.PredefinedValues.Fields.DisplayOrder")]
         public int DisplayOrder { get; set; }
 
-        public IList<PredefinedProductAttributeValueLocalizedModel> Locales { get; set; }
+        
     }
-    public partial class PredefinedProductAttributeValueLocalizedModel : ILocalizedModelLocal
-    {
-        public int LanguageId { get; set; }
-
-        [NopResourceDisplayName("Admin.Catalog.Attributes.ProductAttributes.PredefinedValues.Fields.Name")]
-        public string Name { get; set; }
-    }
+     
 }

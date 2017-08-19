@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using Nop.Core;
 using Nop.Core.Infrastructure;
-using Nop.Services.Localization;
+
 
 namespace Nop.Web.Framework.Mvc.ModelBinding
 {
@@ -43,11 +43,9 @@ namespace Nop.Web.Framework.Mvc.ModelBinding
         {
             get
             {
-                //get working language identifier
-                var workingLanguageId = EngineContext.Current.Resolve<IWorkContext>().WorkingLanguage.Id;
-
+                 
                 //get locale resource value
-                _resourceValue = EngineContext.Current.Resolve<ILocalizationService>().GetResource(ResourceKey, workingLanguageId, true, ResourceKey);
+                _resourceValue =ResourceKey;
 
                 return _resourceValue;
             }

@@ -6,19 +6,14 @@ using System.Globalization;
 using System.Linq;
 using Nop.Core;
 using Nop.Core.Caching;
-using Nop.Core.Data;
-using Nop.Core.Domain.Blogs;
+using Nop.Core.Data; 
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Forums;
-using Nop.Core.Domain.News;
-using Nop.Core.Domain.Orders;
-using Nop.Core.Domain.Polls;
-using Nop.Core.Domain.Shipping;
-using Nop.Data;
+ 
 using Nop.Services.Common;
 using Nop.Services.Events;
+using Nop.Data;
 
 namespace Nop.Services.Customers
 {
@@ -56,14 +51,7 @@ namespace Nop.Services.Customers
         private readonly IRepository<CustomerPassword> _customerPasswordRepository;
         private readonly IRepository<CustomerRole> _customerRoleRepository;
         private readonly IRepository<GenericAttribute> _gaRepository;
-        private readonly IRepository<Order> _orderRepository;
-        private readonly IRepository<ForumPost> _forumPostRepository;
-        private readonly IRepository<ForumTopic> _forumTopicRepository;
-        private readonly IRepository<BlogComment> _blogCommentRepository;
-        private readonly IRepository<NewsComment> _newsCommentRepository;
-        private readonly IRepository<PollVotingRecord> _pollVotingRecordRepository;
-        private readonly IRepository<ProductReview> _productReviewRepository;
-        private readonly IRepository<ProductReviewHelpfulness> _productReviewHelpfulnessRepository;
+      
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IDataProvider _dataProvider;
         private readonly IDbContext _dbContext;
@@ -80,16 +68,8 @@ namespace Nop.Services.Customers
             IRepository<Customer> customerRepository,
             IRepository<CustomerPassword> customerPasswordRepository,
             IRepository<CustomerRole> customerRoleRepository,
-            IRepository<GenericAttribute> gaRepository,
-            IRepository<Order> orderRepository,
-            IRepository<ForumPost> forumPostRepository,
-            IRepository<ForumTopic> forumTopicRepository,
-            IRepository<BlogComment> blogCommentRepository,
-            IRepository<NewsComment> newsCommentRepository,
-            IRepository<PollVotingRecord> pollVotingRecordRepository,
-            IRepository<ProductReview> productReviewRepository,
-            IRepository<ProductReviewHelpfulness> productReviewHelpfulnessRepository,
-            IGenericAttributeService genericAttributeService,
+            IRepository<GenericAttribute> gaRepository,         
+          IGenericAttributeService genericAttributeService,
             IDataProvider dataProvider,
             IDbContext dbContext,
             IEventPublisher eventPublisher, 
@@ -100,16 +80,8 @@ namespace Nop.Services.Customers
             this._customerRepository = customerRepository;
             this._customerPasswordRepository = customerPasswordRepository;
             this._customerRoleRepository = customerRoleRepository;
-            this._gaRepository = gaRepository;
-            this._orderRepository = orderRepository;
-            this._forumPostRepository = forumPostRepository;
-            this._forumTopicRepository = forumTopicRepository;
-            this._blogCommentRepository = blogCommentRepository;
-            this._newsCommentRepository = newsCommentRepository;
-            this._pollVotingRecordRepository = pollVotingRecordRepository;
-            this._productReviewRepository = productReviewRepository;
-            this._productReviewHelpfulnessRepository = productReviewHelpfulnessRepository;
-            this._genericAttributeService = genericAttributeService;
+            this._gaRepository = gaRepository;         
+          this._genericAttributeService = genericAttributeService;
             this._dataProvider = dataProvider;
             this._dbContext = dbContext;
             this._eventPublisher = eventPublisher;
@@ -152,7 +124,7 @@ namespace Nop.Services.Customers
             string firstName = null, string lastName = null,
             int dayOfBirth = 0, int monthOfBirth = 0,
             string company = null, string phone = null, string zipPostalCode = null,
-            string ipAddress = null, bool loadOnlyWithShoppingCart = false, ShoppingCartType? sct = null,
+            string ipAddress = null, bool loadOnlyWithShoppingCart = false, 
             int pageIndex = 0, int pageSize = int.MaxValue)
         {
             var query = _customerRepository.Table;
@@ -276,13 +248,7 @@ namespace Nop.Services.Customers
 
             if (loadOnlyWithShoppingCart)
             {
-                int? sctId = null;
-                if (sct.HasValue)
-                    sctId = (int)sct.Value;
-
-                query = sct.HasValue ?
-                    query.Where(c => c.ShoppingCartItems.Any(x => x.ShoppingCartTypeId == sctId)) :
-                    query.Where(c => c.ShoppingCartItems.Any());
+              
             }
             
             query = query.OrderByDescending(c => c.CreatedOnUtc);
@@ -543,20 +509,8 @@ namespace Nop.Services.Customers
                 _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.UseRewardPointsDuringCheckout, false, storeId);
             }
 
-            //clear selected shipping method
-            if (clearShippingMethod)
-            {
-                _genericAttributeService.SaveAttribute<ShippingOption>(customer, SystemCustomerAttributeNames.SelectedShippingOption, null, storeId);
-                _genericAttributeService.SaveAttribute<ShippingOption>(customer, SystemCustomerAttributeNames.OfferedShippingOptions, null, storeId);
-                _genericAttributeService.SaveAttribute<PickupPoint>(customer, SystemCustomerAttributeNames.SelectedPickupPoint, null, storeId);
-            }
-
-            //clear selected payment method
-            if (clearPaymentMethod)
-            {
-                _genericAttributeService.SaveAttribute<string>(customer, SystemCustomerAttributeNames.SelectedPaymentMethod, null, storeId);
-            }
-            
+          
+         
             UpdateCustomer(customer);
         }
         
@@ -627,56 +581,7 @@ namespace Nop.Services.Customers
                 if (createdToUtc.HasValue)
                     query = query.Where(c => createdToUtc.Value >= c.CreatedOnUtc);
                 query = query.Where(c => c.CustomerRoles.Select(cr => cr.Id).Contains(guestRole.Id));
-                if (onlyWithoutShoppingCart)
-                    query = query.Where(c => !c.ShoppingCartItems.Any());
-                //no orders
-                query = from c in query
-                        join o in _orderRepository.Table on c.Id equals o.CustomerId into c_o
-                        from o in c_o.DefaultIfEmpty()
-                        where !c_o.Any()
-                        select c;
-                //no blog comments
-                query = from c in query
-                        join bc in _blogCommentRepository.Table on c.Id equals bc.CustomerId into c_bc
-                        from bc in c_bc.DefaultIfEmpty()
-                        where !c_bc.Any()
-                        select c;
-                //no news comments
-                query = from c in query
-                        join nc in _newsCommentRepository.Table on c.Id equals nc.CustomerId into c_nc
-                        from nc in c_nc.DefaultIfEmpty()
-                        where !c_nc.Any()
-                        select c;
-                //no product reviews
-                query = from c in query
-                        join pr in _productReviewRepository.Table on c.Id equals pr.CustomerId into c_pr
-                        from pr in c_pr.DefaultIfEmpty()
-                        where !c_pr.Any()
-                        select c;
-                //no product reviews helpfulness
-                query = from c in query
-                        join prh in _productReviewHelpfulnessRepository.Table on c.Id equals prh.CustomerId into c_prh
-                        from prh in c_prh.DefaultIfEmpty()
-                        where !c_prh.Any()
-                        select c;
-                //no poll voting
-                query = from c in query
-                        join pvr in _pollVotingRecordRepository.Table on c.Id equals pvr.CustomerId into c_pvr
-                        from pvr in c_pvr.DefaultIfEmpty()
-                        where !c_pvr.Any()
-                        select c;
-                //no forum posts 
-                query = from c in query
-                        join fp in _forumPostRepository.Table on c.Id equals fp.CustomerId into c_fp
-                        from fp in c_fp.DefaultIfEmpty()
-                        where !c_fp.Any()
-                        select c;
-                //no forum topics
-                query = from c in query
-                        join ft in _forumTopicRepository.Table on c.Id equals ft.CustomerId into c_ft
-                        from ft in c_ft.DefaultIfEmpty()
-                        where !c_ft.Any()
-                        select c;
+                
                 //don't delete system accounts
                 query = query.Where(c => !c.IsSystemAccount);
 

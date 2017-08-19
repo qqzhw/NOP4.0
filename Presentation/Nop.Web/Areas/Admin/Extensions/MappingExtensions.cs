@@ -9,42 +9,23 @@ using Nop.Web.Areas.Admin.Models.Customers;
 using Nop.Web.Areas.Admin.Models.ExternalAuthentication;
  
 using Nop.Web.Areas.Admin.Models.Logging;
-using Nop.Web.Areas.Admin.Models.Messages;
+ 
  
 using Nop.Web.Areas.Admin.Models.Plugins;
  
-using Nop.Web.Areas.Admin.Models.Settings;
- 
-using Nop.Web.Areas.Admin.Models.Stores;
- 
-using Nop.Core.Domain.Blogs;
+using Nop.Web.Areas.Admin.Models.Settings; 
+using Nop.Web.Areas.Admin.Models.Stores; 
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
-using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Directory;
-using Nop.Core.Domain.Discounts;
-using Nop.Core.Domain.Forums;
-using Nop.Core.Domain.Localization;
+using Nop.Core.Domain.Customers; 
 using Nop.Core.Domain.Logging;
-using Nop.Core.Domain.Media;
-using Nop.Core.Domain.Messages;
-using Nop.Core.Domain.News;
-using Nop.Core.Domain.Orders;
-using Nop.Core.Domain.Polls;
-using Nop.Core.Domain.Shipping;
-using Nop.Core.Domain.Stores;
-using Nop.Core.Domain.Tax;
-using Nop.Core.Domain.Topics;
-using Nop.Core.Domain.Vendors;
+using Nop.Core.Domain.Media;  
+using Nop.Core.Domain.Stores; 
 using Nop.Core.Infrastructure.Mapper;
 using Nop.Core.Plugins;
 using Nop.Services.Authentication.External;
 using Nop.Services.Cms;
-using Nop.Services.Common;
-using Nop.Services.Payments;
-using Nop.Services.Shipping;
-using Nop.Services.Shipping.Pickup;
-using Nop.Services.Tax;
+ 
 using Nop.Web.Framework.Security.Captcha;
 
 namespace Nop.Web.Areas.Admin.Extensions
@@ -140,66 +121,7 @@ namespace Nop.Web.Areas.Admin.Extensions
         }
 
         #endregion
-
-       
-		 
-
-        #region Email account
-
-        public static EmailAccountModel ToModel(this EmailAccount entity)
-        {
-            return entity.MapTo<EmailAccount, EmailAccountModel>();
-        }
-
-        public static EmailAccount ToEntity(this EmailAccountModel model)
-        {
-            return model.MapTo<EmailAccountModel, EmailAccount>();
-        }
-
-        public static EmailAccount ToEntity(this EmailAccountModel model, EmailAccount destination)
-        {
-            return model.MapTo(destination);
-        }
-
-        #endregion
-
-        #region Message templates
-
-        public static MessageTemplateModel ToModel(this MessageTemplate entity)
-        {
-            return entity.MapTo<MessageTemplate, MessageTemplateModel>();
-        }
-
-        public static MessageTemplate ToEntity(this MessageTemplateModel model)
-        {
-            return model.MapTo<MessageTemplateModel, MessageTemplate>();
-        }
-
-        public static MessageTemplate ToEntity(this MessageTemplateModel model, MessageTemplate destination)
-        {
-            return model.MapTo(destination);
-        }
-
-        #endregion
-
-        #region Queued email
-
-        public static QueuedEmailModel ToModel(this QueuedEmail entity)
-        {
-            return entity.MapTo<QueuedEmail, QueuedEmailModel>();
-        }
-
-        public static QueuedEmail ToEntity(this QueuedEmailModel model)
-        {
-            return model.MapTo<QueuedEmailModel, QueuedEmail>();
-        }
-
-        public static QueuedEmail ToEntity(this QueuedEmailModel model, QueuedEmail destination)
-        {
-            return model.MapTo(destination);
-        }
-
-        #endregion
+         
 		 
         #region Log
 
@@ -273,66 +195,7 @@ namespace Nop.Web.Areas.Admin.Extensions
 
         #region Settings
 
-        public static TaxSettingsModel ToModel(this TaxSettings entity)
-        {
-            return entity.MapTo<TaxSettings, TaxSettingsModel>();
-        }
-        public static TaxSettings ToEntity(this TaxSettingsModel model, TaxSettings destination)
-        {
-            return model.MapTo(destination);
-        }
-
-
-        public static ShippingSettingsModel ToModel(this ShippingSettings entity)
-        {
-            return entity.MapTo<ShippingSettings, ShippingSettingsModel>();
-        }
-        public static ShippingSettings ToEntity(this ShippingSettingsModel model, ShippingSettings destination)
-        {
-            return model.MapTo(destination);
-        }
-
-
-        public static ForumSettingsModel ToModel(this ForumSettings entity)
-        {
-            return entity.MapTo<ForumSettings, ForumSettingsModel>();
-        }
-        public static ForumSettings ToEntity(this ForumSettingsModel model, ForumSettings destination)
-        {
-            return model.MapTo(destination);
-        }
-
-
-        public static BlogSettingsModel ToModel(this BlogSettings entity)
-        {
-            return entity.MapTo<BlogSettings, BlogSettingsModel>();
-        }
-        public static BlogSettings ToEntity(this BlogSettingsModel model, BlogSettings destination)
-        {
-            return model.MapTo(destination);
-        }
-
-
-        public static VendorSettingsModel ToModel(this VendorSettings entity)
-        {
-            return entity.MapTo<VendorSettings, VendorSettingsModel>();
-        }
-        public static VendorSettings ToEntity(this VendorSettingsModel model, VendorSettings destination)
-        {
-            return model.MapTo(destination);
-        }
-
-
-        public static NewsSettingsModel ToModel(this NewsSettings entity)
-        {
-            return entity.MapTo<NewsSettings, NewsSettingsModel>();
-        }
-        public static NewsSettings ToEntity(this NewsSettingsModel model, NewsSettings destination)
-        {
-            return model.MapTo(destination);
-        }
-
-
+  
         public static CatalogSettingsModel ToModel(this CatalogSettings entity)
         {
             return entity.MapTo<CatalogSettings, CatalogSettingsModel>();
@@ -342,36 +205,8 @@ namespace Nop.Web.Areas.Admin.Extensions
             return model.MapTo(destination);
         }
 
-
-        public static RewardPointsSettingsModel ToModel(this RewardPointsSettings entity)
-        {
-            return entity.MapTo<RewardPointsSettings, RewardPointsSettingsModel>();
-        }
-        public static RewardPointsSettings ToEntity(this RewardPointsSettingsModel model, RewardPointsSettings destination)
-        {
-            return model.MapTo(destination);
-        }
-
-
-        public static OrderSettingsModel ToModel(this OrderSettings entity)
-        {
-            return entity.MapTo<OrderSettings, OrderSettingsModel>();
-        }
-        public static OrderSettings ToEntity(this OrderSettingsModel model, OrderSettings destination)
-        {
-            return model.MapTo(destination);
-        }
-
-
-        public static ShoppingCartSettingsModel ToModel(this ShoppingCartSettings entity)
-        {
-            return entity.MapTo<ShoppingCartSettings, ShoppingCartSettingsModel>();
-        }
-        public static ShoppingCartSettings ToEntity(this ShoppingCartSettingsModel model, ShoppingCartSettings destination)
-        {
-            return model.MapTo(destination);
-        }
-
+ 
+         
 
         public static MediaSettingsModel ToModel(this MediaSettings entity)
         {
@@ -391,14 +226,7 @@ namespace Nop.Web.Areas.Admin.Extensions
         {
             return model.MapTo(destination);
         }
-        public static CustomerUserSettingsModel.AddressSettingsModel ToModel(this AddressSettings entity)
-        {
-            return entity.MapTo<AddressSettings, CustomerUserSettingsModel.AddressSettingsModel>();
-        }
-        public static AddressSettings ToEntity(this CustomerUserSettingsModel.AddressSettingsModel model, AddressSettings destination)
-        {
-            return model.MapTo(destination);
-        }
+      
 
 
 
@@ -414,15 +242,7 @@ namespace Nop.Web.Areas.Admin.Extensions
 
 
 
-        //product editor settings
-        public static ProductEditorSettingsModel ToModel(this ProductEditorSettings entity)
-        {
-            return entity.MapTo<ProductEditorSettings, ProductEditorSettingsModel>();
-        }
-        public static ProductEditorSettings ToEntity(this ProductEditorSettingsModel model, ProductEditorSettings destination)
-        {
-            return model.MapTo(destination);
-        }
+       
         #endregion
 
         #region Plugins
@@ -452,46 +272,6 @@ namespace Nop.Web.Areas.Admin.Extensions
         }
 
         #endregion
-
-        
-
-        #region Return request reason
-
-        public static ReturnRequestReasonModel ToModel(this ReturnRequestReason entity)
-        {
-            return entity.MapTo<ReturnRequestReason, ReturnRequestReasonModel>();
-        }
-
-        public static ReturnRequestReason ToEntity(this ReturnRequestReasonModel model)
-        {
-            return model.MapTo<ReturnRequestReasonModel, ReturnRequestReason>();
-        }
-
-        public static ReturnRequestReason ToEntity(this ReturnRequestReasonModel model, ReturnRequestReason destination)
-        {
-            return model.MapTo(destination);
-        }
-
-        #endregion
-
-        #region Return request action
-
-        public static ReturnRequestActionModel ToModel(this ReturnRequestAction entity)
-        {
-            return entity.MapTo<ReturnRequestAction, ReturnRequestActionModel>();
-        }
-
-        public static ReturnRequestAction ToEntity(this ReturnRequestActionModel model)
-        {
-            return model.MapTo<ReturnRequestActionModel, ReturnRequestAction>();
-        }
-
-        public static ReturnRequestAction ToEntity(this ReturnRequestActionModel model, ReturnRequestAction destination)
-        {
-            return model.MapTo(destination);
-        }
-
-        #endregion
-
+         
     }
 }

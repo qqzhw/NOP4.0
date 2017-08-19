@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Orders;
 using Nop.Web.Models.Customer;
 
 namespace Nop.Web.Factories
@@ -31,20 +30,7 @@ namespace Nop.Web.Factories
         /// <returns>Login model</returns>
         LoginModel PrepareLoginModel(bool? checkoutAsGuest);
 
-        /// <summary>
-        /// Prepare the password recovery model
-        /// </summary>
-        /// <returns>Password recovery model</returns>
-        PasswordRecoveryModel PreparePasswordRecoveryModel();
-
-        /// <summary>
-        /// Prepare the password recovery confirm model
-        /// </summary>
-        /// <returns>Password recovery confirm model</returns>
-        PasswordRecoveryConfirmModel PreparePasswordRecoveryConfirmModel();
-
-     
-
+   
         /// <summary>
         /// Prepare the customer navigation model
         /// </summary>
@@ -66,7 +52,7 @@ namespace Nop.Web.Factories
         /// <param name="orderItem">Order item</param>
         /// <param name="product">Product</param>
         /// <returns>User agreement model</returns>
-        UserAgreementModel PrepareUserAgreementModel(OrderItem orderItem, Product product);
+        UserAgreementModel PrepareUserAgreementModel( Product product);
 
         /// <summary>
         /// Prepare the change password model

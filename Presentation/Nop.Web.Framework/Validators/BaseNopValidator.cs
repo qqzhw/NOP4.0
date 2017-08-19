@@ -3,7 +3,7 @@ using System.Linq.Dynamic;
 using FluentValidation;
 using Nop.Core.Infrastructure;
 using Nop.Data;
-using Nop.Services.Localization;
+
 
 namespace Nop.Web.Framework.Validators
 {
@@ -68,9 +68,7 @@ namespace Nop.Web.Framework.Validators
         /// <param name="dbContext">Database context</param>
         protected virtual void SetDecimalMaxValue<TObject>(IDbContext dbContext)
         {
-            var localizationService = EngineContext.Current.Resolve<ILocalizationService>();
-
-            if (dbContext == null)
+              if (dbContext == null)
                 return;
 
             var dbObjectType = typeof(TObject);
@@ -84,7 +82,7 @@ namespace Nop.Web.Framework.Validators
 
             foreach (var expr in expression)
             {
-                RuleFor(expr.Value).IsDecimal(maxValues[expr.Key]).WithMessage(string.Format(localizationService.GetResource("Nop.Web.Framework.Validators.MaxDecimal"), maxValues[expr.Key] - 1));
+                RuleFor(expr.Value).IsDecimal(maxValues[expr.Key]).WithMessage(string.Format("Nop.Web.Framework.Validators.MaxDecimal{0}", maxValues[expr.Key] - 1));
             }
         }
     }

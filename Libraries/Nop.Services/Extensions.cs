@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Core;
 using Nop.Core.Infrastructure;
-using Nop.Services.Localization;
+
 
 namespace Nop.Services
 {
@@ -17,13 +17,12 @@ namespace Nop.Services
            bool markCurrentAsSelected = true, int[] valuesToExclude = null, bool useLocalization = true) where TEnum : struct
         {
             if (!typeof(TEnum).IsEnum) throw new ArgumentException("An Enumeration type is required.", "enumObj");
-
-            var localizationService = EngineContext.Current.Resolve<ILocalizationService>();
+                      
             var workContext = EngineContext.Current.Resolve<IWorkContext>();
 
             var values = from TEnum enumValue in Enum.GetValues(typeof(TEnum))
                          where valuesToExclude == null || !valuesToExclude.Contains(Convert.ToInt32(enumValue))
-                         select new { ID = Convert.ToInt32(enumValue), Name = useLocalization ? enumValue.GetLocalizedEnum(localizationService, workContext) : CommonHelper.ConvertEnum(enumValue.ToString()) };
+                         select new { ID = Convert.ToInt32(enumValue), Name = useLocalization ? enumValue.ToString() : CommonHelper.ConvertEnum(enumValue.ToString()) };
             object selectedValue = null;
             if (markCurrentAsSelected)
                 selectedValue = Convert.ToInt32(enumObj);

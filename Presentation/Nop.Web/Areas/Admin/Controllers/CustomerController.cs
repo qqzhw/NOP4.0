@@ -17,32 +17,18 @@ using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
-using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Directory;
-using Nop.Core.Domain.Forums;
-using Nop.Core.Domain.Messages;
-using Nop.Core.Domain.Orders;
-using Nop.Core.Domain.Payments;
-using Nop.Core.Domain.Shipping;
-using Nop.Core.Domain.Tax;
-using Nop.Services;
-using Nop.Services.Affiliates;
+using Nop.Core.Domain.Customers; 
+using Nop.Services; 
 using Nop.Services.Authentication.External;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
-using Nop.Services.Customers;
-using Nop.Services.Directory;
-using Nop.Services.ExportImport;
-using Nop.Services.Forums;
-using Nop.Services.Helpers;
-using Nop.Services.Localization;
+using Nop.Services.Customers;  
+using Nop.Services.Helpers; 
 using Nop.Services.Logging;
-using Nop.Services.Messages;
-using Nop.Services.Orders;
+ 
 using Nop.Services.Security;
 using Nop.Services.Stores;
-using Nop.Services.Tax;
-using Nop.Services.Vendors;
+ 
 using Nop.Web.Extensions;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Extensions;
@@ -57,139 +43,66 @@ namespace Nop.Web.Areas.Admin.Controllers
         #region Fields
 
         private readonly ICustomerService _customerService;
-        private readonly INewsLetterSubscriptionService _newsLetterSubscriptionService;
-        private readonly IGenericAttributeService _genericAttributeService;
         private readonly ICustomerRegistrationService _customerRegistrationService;
-        private readonly ICustomerReportService _customerReportService;
+        private readonly IGenericAttributeService _genericAttributeService;
+      
         private readonly IDateTimeHelper _dateTimeHelper;
-        private readonly ILocalizationService _localizationService;
+       
         private readonly DateTimeSettings _dateTimeSettings;
-        private readonly TaxSettings _taxSettings;
-        private readonly RewardPointsSettings _rewardPointsSettings;
-        private readonly ICountryService _countryService;
-        private readonly IStateProvinceService _stateProvinceService;
-        private readonly IAddressService _addressService;
+      
         private readonly CustomerSettings _customerSettings;
-        private readonly ITaxService _taxService;
+      
         private readonly IWorkContext _workContext;
-        private readonly IVendorService _vendorService;
+     
         private readonly IStoreContext _storeContext;
-        private readonly IPriceFormatter _priceFormatter;
-        private readonly IOrderService _orderService;
-        private readonly IExportManager _exportManager;
+        
         private readonly ICustomerActivityService _customerActivityService;
-        private readonly IBackInStockSubscriptionService _backInStockSubscriptionService;
-        private readonly IPriceCalculationService _priceCalculationService;
+       
         private readonly IProductAttributeFormatter _productAttributeFormatter;
         private readonly IPermissionService _permissionService;
-        private readonly IQueuedEmailService _queuedEmailService;
-        private readonly EmailAccountSettings _emailAccountSettings;
-        private readonly IEmailAccountService _emailAccountService;
-        private readonly ForumSettings _forumSettings;
-        private readonly IForumService _forumService;
+        
         private readonly IExternalAuthenticationService _externalAuthenticationService;
-        private readonly AddressSettings _addressSettings;
+       
         private readonly IStoreService _storeService;
-        private readonly ICustomerAttributeParser _customerAttributeParser;
-        private readonly ICustomerAttributeService _customerAttributeService;
-        private readonly IAddressAttributeParser _addressAttributeParser;
-        private readonly IAddressAttributeService _addressAttributeService;
-        private readonly IAddressAttributeFormatter _addressAttributeFormatter;
-        private readonly IAffiliateService _affiliateService;
-        private readonly IWorkflowMessageService _workflowMessageService;
-        private readonly IRewardPointService _rewardPointService;
+        
         private readonly IStaticCacheManager _cacheManager;
         
         #endregion
         
         #region Constructors
 
-        public CustomerController(ICustomerService customerService,
-            INewsLetterSubscriptionService newsLetterSubscriptionService,
-            IGenericAttributeService genericAttributeService,
-            ICustomerRegistrationService customerRegistrationService,
-            ICustomerReportService customerReportService, 
-            IDateTimeHelper dateTimeHelper,
-            ILocalizationService localizationService, 
-            DateTimeSettings dateTimeSettings,
-            TaxSettings taxSettings, 
-            RewardPointsSettings rewardPointsSettings,
-            ICountryService countryService, 
-            IStateProvinceService stateProvinceService, 
-            IAddressService addressService,
-            CustomerSettings customerSettings,
-            ITaxService taxService, 
-            IWorkContext workContext,
-            IVendorService vendorService,
-            IStoreContext storeContext,
-            IPriceFormatter priceFormatter,
-            IOrderService orderService, 
-            IExportManager exportManager,
+        public CustomerController(ICustomerService customerService, 
+            IGenericAttributeService genericAttributeService, 
+            IDateTimeHelper dateTimeHelper, 
+            DateTimeSettings dateTimeSettings, 
+            CustomerSettings customerSettings, 
+            IWorkContext workContext, 
+            IStoreContext storeContext, 
             ICustomerActivityService customerActivityService,
-            IBackInStockSubscriptionService backInStockSubscriptionService,
-            IPriceCalculationService priceCalculationService,
+          ICustomerRegistrationService  customerRegistrationService,
             IProductAttributeFormatter productAttributeFormatter,
             IPermissionService permissionService, 
-            IQueuedEmailService queuedEmailService,
-            EmailAccountSettings emailAccountSettings,
-            IEmailAccountService emailAccountService, 
-            ForumSettings forumSettings,
-            IForumService forumService,
+             
             IExternalAuthenticationService externalAuthenticationService,
-            AddressSettings addressSettings,
-            IStoreService storeService,
-            ICustomerAttributeParser customerAttributeParser,
-            ICustomerAttributeService customerAttributeService,
-            IAddressAttributeParser addressAttributeParser,
-            IAddressAttributeService addressAttributeService,
-            IAddressAttributeFormatter addressAttributeFormatter,
-            IAffiliateService affiliateService,
-            IWorkflowMessageService workflowMessageService,
-            IRewardPointService rewardPointService,
+          
+            IStoreService storeService, 
             IStaticCacheManager cacheManager)
         {
             this._customerService = customerService;
-            this._newsLetterSubscriptionService = newsLetterSubscriptionService;
+            _customerRegistrationService = customerRegistrationService;
             this._genericAttributeService = genericAttributeService;
-            this._customerRegistrationService = customerRegistrationService;
-            this._customerReportService = customerReportService;
+           
             this._dateTimeHelper = dateTimeHelper;
-            this._localizationService = localizationService;
-            this._dateTimeSettings = dateTimeSettings;
-            this._taxSettings = taxSettings;
-            this._rewardPointsSettings = rewardPointsSettings;
-            this._countryService = countryService;
-            this._stateProvinceService = stateProvinceService;
-            this._addressService = addressService;
-            this._customerSettings = customerSettings;
-            this._taxService = taxService;
-            this._workContext = workContext;
-            this._vendorService = vendorService;
-            this._storeContext = storeContext;
-            this._priceFormatter = priceFormatter;
-            this._orderService = orderService;
-            this._exportManager = exportManager;
-            this._customerActivityService = customerActivityService;
-            this._backInStockSubscriptionService = backInStockSubscriptionService;
-            this._priceCalculationService = priceCalculationService;
+          
+            this._dateTimeSettings = dateTimeSettings; 
+            this._customerSettings = customerSettings; 
+            this._workContext = workContext; 
+            this._storeContext = storeContext; 
+            this._customerActivityService = customerActivityService; 
             this._productAttributeFormatter = productAttributeFormatter;
-            this._permissionService = permissionService;
-            this._queuedEmailService = queuedEmailService;
-            this._emailAccountSettings = emailAccountSettings;
-            this._emailAccountService = emailAccountService;
-            this._forumSettings = forumSettings;
-            this._forumService = forumService;
-            this._externalAuthenticationService = externalAuthenticationService;
-            this._addressSettings = addressSettings;
-            this._storeService = storeService;
-            this._customerAttributeParser = customerAttributeParser;
-            this._customerAttributeService = customerAttributeService;
-            this._addressAttributeParser = addressAttributeParser;
-            this._addressAttributeService = addressAttributeService;
-            this._addressAttributeFormatter = addressAttributeFormatter;
-            this._affiliateService = affiliateService;
-            this._workflowMessageService = workflowMessageService;
-            this._rewardPointService = rewardPointService;
+            this._permissionService = permissionService; 
+            this._externalAuthenticationService = externalAuthenticationService; 
+            this._storeService = storeService; 
             this._cacheManager = cacheManager;
         }
         
@@ -212,55 +125,14 @@ namespace Nop.Web.Areas.Admin.Controllers
             return sb.ToString();
         }
         
-        protected virtual IList<RegisteredCustomerReportLineModel> GetReportRegisteredCustomersModel()
-        {
-            var report = new List<RegisteredCustomerReportLineModel>();
-            report.Add(new RegisteredCustomerReportLineModel
-            {
-                Period = _localizationService.GetResource("Admin.Customers.Reports.RegisteredCustomers.Fields.Period.7days"),
-                Customers = _customerReportService.GetRegisteredCustomersReport(7)
-            });
-
-            report.Add(new RegisteredCustomerReportLineModel
-            {
-                Period = _localizationService.GetResource("Admin.Customers.Reports.RegisteredCustomers.Fields.Period.14days"),
-                Customers = _customerReportService.GetRegisteredCustomersReport(14)
-            });
-            report.Add(new RegisteredCustomerReportLineModel
-            {
-                Period = _localizationService.GetResource("Admin.Customers.Reports.RegisteredCustomers.Fields.Period.month"),
-                Customers = _customerReportService.GetRegisteredCustomersReport(30)
-            });
-            report.Add(new RegisteredCustomerReportLineModel
-            {
-                Period = _localizationService.GetResource("Admin.Customers.Reports.RegisteredCustomers.Fields.Period.year"),
-                Customers = _customerReportService.GetRegisteredCustomersReport(365)
-            });
-
-            return report;
-        }
-        
+       
         protected virtual IList<CustomerModel.AssociatedExternalAuthModel> GetAssociatedExternalAuthRecords(Customer customer)
         {
             if (customer == null)
                 throw new ArgumentNullException(nameof(customer));
 
             var result = new List<CustomerModel.AssociatedExternalAuthModel>();
-            foreach (var record in customer.ExternalAuthenticationRecords)
-            {
-                var method = _externalAuthenticationService.LoadExternalAuthenticationMethodBySystemName(record.ProviderSystemName);
-                if (method == null)
-                    continue;
-
-                result.Add(new CustomerModel.AssociatedExternalAuthModel
-                {
-                    Id = record.Id,
-                    Email = record.Email,
-                    ExternalIdentifier = record.ExternalDisplayIdentifier,
-                    AuthMethodName = method.PluginDescriptor.FriendlyName
-                });
-            }
-
+           
             return result;
         }
         
@@ -269,7 +141,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             return new CustomerModel
             {
                 Id = customer.Id,
-                Email = customer.IsRegistered() ? customer.Email : _localizationService.GetResource("Admin.Customers.Guest"),
+                Email = customer.IsRegistered() ? customer.Email : ("Admin.Customers.Guest"),
                 Username = customer.Username,
                 FullName = customer.GetFullName(),
                 Company = customer.GetAttribute<string>(SystemCustomerAttributeNames.Company),
@@ -292,193 +164,15 @@ namespace Nop.Web.Areas.Admin.Controllers
             bool isInGuestsRole = customerRoles.FirstOrDefault(cr => cr.SystemName == SystemCustomerRoleNames.Guests) != null;
             bool isInRegisteredRole = customerRoles.FirstOrDefault(cr => cr.SystemName == SystemCustomerRoleNames.Registered) != null;
             if (isInGuestsRole && isInRegisteredRole)
-                return _localizationService.GetResource("Admin.Customers.Customers.GuestsAndRegisteredRolesError");
+                return ("Admin.Customers.Customers.GuestsAndRegisteredRolesError");
             if (!isInGuestsRole && !isInRegisteredRole)
-                return _localizationService.GetResource("Admin.Customers.Customers.AddCustomerToGuestsOrRegisteredRoleError");
+                return ("Admin.Customers.Customers.AddCustomerToGuestsOrRegisteredRoleError");
 
             //no errors
             return "";
         }
         
-        protected virtual void PrepareVendorsModel(CustomerModel model)
-        {
-            if (model == null)
-                throw new ArgumentNullException(nameof(model));
-
-            model.AvailableVendors.Add(new SelectListItem
-            {
-                Text = _localizationService.GetResource("Admin.Customers.Customers.Fields.Vendor.None"),
-                Value = "0"
-            });
-            var vendors = SelectListHelper.GetVendorList(_vendorService, _cacheManager, true);
-            foreach (var v in vendors)
-                model.AvailableVendors.Add(v);
-        }
-
-        protected virtual void PrepareCustomerAttributeModel(CustomerModel model, Customer customer)
-        {
-            var customerAttributes = _customerAttributeService.GetAllCustomerAttributes();
-            foreach (var attribute in customerAttributes)
-            {
-                var attributeModel = new CustomerModel.CustomerAttributeModel
-                {
-                    Id = attribute.Id,
-                    Name = attribute.Name,
-                    IsRequired = attribute.IsRequired,
-                    AttributeControlType = attribute.AttributeControlType,
-                };
-
-                if (attribute.ShouldHaveValues())
-                {
-                    //values
-                    var attributeValues = _customerAttributeService.GetCustomerAttributeValues(attribute.Id);
-                    foreach (var attributeValue in attributeValues)
-                    {
-                        var attributeValueModel = new CustomerModel.CustomerAttributeValueModel
-                        {
-                            Id = attributeValue.Id,
-                            Name = attributeValue.Name,
-                            IsPreSelected = attributeValue.IsPreSelected
-                        };
-                        attributeModel.Values.Add(attributeValueModel);
-                    }
-                }
-
-
-                //set already selected attributes
-                if (customer != null)
-                {
-                    var selectedCustomerAttributes = customer.GetAttribute<string>(SystemCustomerAttributeNames.CustomCustomerAttributes, _genericAttributeService);
-                    switch (attribute.AttributeControlType)
-                    {
-                        case AttributeControlType.DropdownList:
-                        case AttributeControlType.RadioList:
-                        case AttributeControlType.Checkboxes:
-                        {
-                            if (!String.IsNullOrEmpty(selectedCustomerAttributes))
-                            {
-                                //clear default selection
-                                foreach (var item in attributeModel.Values)
-                                    item.IsPreSelected = false;
-
-                                //select new values
-                                var selectedValues = _customerAttributeParser.ParseCustomerAttributeValues(selectedCustomerAttributes);
-                                foreach (var attributeValue in selectedValues)
-                                    foreach (var item in attributeModel.Values)
-                                        if (attributeValue.Id == item.Id)
-                                            item.IsPreSelected = true;
-                            }
-                        }
-                            break;
-                        case AttributeControlType.ReadonlyCheckboxes:
-                        {
-                            //do nothing
-                            //values are already pre-set
-                        }
-                            break;
-                        case AttributeControlType.TextBox:
-                        case AttributeControlType.MultilineTextbox:
-                        {
-                            if (!String.IsNullOrEmpty(selectedCustomerAttributes))
-                            {
-                                var enteredText = _customerAttributeParser.ParseValues(selectedCustomerAttributes, attribute.Id);
-                                if (enteredText.Any())
-                                    attributeModel.DefaultValue = enteredText[0];
-                            }
-                        }
-                            break;
-                        case AttributeControlType.Datepicker:
-                        case AttributeControlType.ColorSquares:
-                        case AttributeControlType.ImageSquares:
-                        case AttributeControlType.FileUpload:
-                        default:
-                            //not supported attribute control types
-                            break;
-                    }
-                }
-
-                model.CustomerAttributes.Add(attributeModel);
-            }
-        }
-        
-        protected virtual string ParseCustomCustomerAttributes(IFormCollection form)
-        {
-            if (form == null)
-                throw new ArgumentNullException(nameof(form));
-
-            string attributesXml = "";
-            var customerAttributes = _customerAttributeService.GetAllCustomerAttributes();
-            foreach (var attribute in customerAttributes)
-            {
-                string controlId = string.Format("customer_attribute_{0}", attribute.Id);
-                switch (attribute.AttributeControlType)
-                {
-                    case AttributeControlType.DropdownList:
-                    case AttributeControlType.RadioList:
-                        {
-                            var ctrlAttributes = form[controlId];
-                            if (!StringValues.IsNullOrEmpty(ctrlAttributes))
-                            {
-                                int selectedAttributeId = int.Parse(ctrlAttributes);
-                                if (selectedAttributeId > 0)
-                                    attributesXml = _customerAttributeParser.AddCustomerAttribute(attributesXml,
-                                        attribute, selectedAttributeId.ToString());
-                            }
-                        }
-                        break;
-                    case AttributeControlType.Checkboxes:
-                        {
-                            var cblAttributes = form[controlId];
-                            if (!StringValues.IsNullOrEmpty(cblAttributes))
-                            {
-                                foreach (var item in cblAttributes.ToString().Split(new [] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                                {
-                                    int selectedAttributeId = int.Parse(item);
-                                    if (selectedAttributeId > 0)
-                                        attributesXml = _customerAttributeParser.AddCustomerAttribute(attributesXml,
-                                            attribute, selectedAttributeId.ToString());
-                                }
-                            }
-                        }
-                        break;
-                    case AttributeControlType.ReadonlyCheckboxes:
-                        {
-                            //load read-only (already server-side selected) values
-                            var attributeValues = _customerAttributeService.GetCustomerAttributeValues(attribute.Id);
-                            foreach (var selectedAttributeId in attributeValues
-                                .Where(v => v.IsPreSelected)
-                                .Select(v => v.Id)
-                                .ToList())
-                            {
-                                attributesXml = _customerAttributeParser.AddCustomerAttribute(attributesXml,
-                                            attribute, selectedAttributeId.ToString());
-                            }
-                        }
-                        break;
-                    case AttributeControlType.TextBox:
-                    case AttributeControlType.MultilineTextbox:
-                        {
-                            var ctrlAttributes = form[controlId];
-                            if (!StringValues.IsNullOrEmpty(ctrlAttributes))
-                            {
-                                string enteredText = ctrlAttributes.ToString().Trim();
-                                attributesXml = _customerAttributeParser.AddCustomerAttribute(attributesXml,
-                                    attribute, enteredText);
-                            }
-                        }
-                        break;
-                    case AttributeControlType.Datepicker:
-                    case AttributeControlType.ColorSquares:
-                    case AttributeControlType.ImageSquares:
-                    case AttributeControlType.FileUpload:
-                    //not supported customer attributes
-                    default:
-                        break;
-                }
-            }
-
-            return attributesXml;
-        }
+    
         
         protected virtual void PrepareCustomerModel(CustomerModel model, Customer customer, bool excludeProperties)
         {
@@ -500,17 +194,10 @@ namespace Nop.Web.Areas.Admin.Controllers
                     else
                         model.RegisteredInStore = allStores.First(s => s.Id == customer.RegisteredInStoreId).Name;
 
-                    var affiliate = _affiliateService.GetAffiliateById(customer.AffiliateId);
-                    if (affiliate != null)
-                    {
-                        model.AffiliateId = affiliate.Id;
-                        model.AffiliateName = affiliate.GetFullName();
-                    }
-
+                   
                     model.TimeZoneId = customer.GetAttribute<string>(SystemCustomerAttributeNames.TimeZoneId);
                     model.VatNumber = customer.GetAttribute<string>(SystemCustomerAttributeNames.VatNumber);
-                    model.VatNumberStatusNote = ((VatNumberStatus)customer.GetAttribute<int>(SystemCustomerAttributeNames.VatNumberStatusId))
-                        .GetLocalizedEnum(_localizationService, _workContext);
+                    
                     model.CreatedOn = _dateTimeHelper.ConvertToUserTime(customer.CreatedOnUtc, DateTimeKind.Utc);
                     model.LastActivityDate = _dateTimeHelper.ConvertToUserTime(customer.LastActivityDateUtc, DateTimeKind.Utc);
                     model.LastIpAddress = customer.LastIpAddress;
@@ -518,19 +205,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
                     model.SelectedCustomerRoleIds = customer.CustomerRoles.Select(cr => cr.Id).ToList();
 
-                    //newsletter subscriptions
-                    if (!String.IsNullOrEmpty(customer.Email))
-                    {
-                        var newsletterSubscriptionStoreIds = new List<int>();
-                        foreach (var store in allStores)
-                        {
-                            var newsletterSubscription = _newsLetterSubscriptionService
-                                .GetNewsLetterSubscriptionByEmailAndStoreId(customer.Email, store.Id);
-                            if (newsletterSubscription != null)
-                                newsletterSubscriptionStoreIds.Add(store.Id);
-                            model.SelectedNewsletterSubscriptionStoreIds = newsletterSubscriptionStoreIds.ToArray();
-                        }
-                    }
+                
 
                     //form fields
                     model.FirstName = customer.GetAttribute<string>(SystemCustomerAttributeNames.FirstName);
@@ -562,11 +237,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 model.DisplayVatNumber = false;
             }
 
-            //vendors
-            PrepareVendorsModel(model);
-            //customer attributes
-            PrepareCustomerAttributeModel(model, customer);
-
+          
             model.GenderEnabled = _customerSettings.GenderEnabled;
             model.DateOfBirthEnabled = _customerSettings.DateOfBirthEnabled;
             model.CompanyEnabled = _customerSettings.CompanyEnabled;
@@ -579,51 +250,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             model.PhoneEnabled = _customerSettings.PhoneEnabled;
             model.FaxEnabled = _customerSettings.FaxEnabled;
 
-            //countries and states
-            if (_customerSettings.CountryEnabled)
-            {
-                model.AvailableCountries.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Address.SelectCountry"), Value = "0" });
-                foreach (var c in _countryService.GetAllCountries(showHidden: true))
-                {
-                    model.AvailableCountries.Add(new SelectListItem
-                    {
-                        Text = c.Name,
-                        Value = c.Id.ToString(),
-                        Selected = c.Id == model.CountryId
-                    });
-                }
-
-                if (_customerSettings.StateProvinceEnabled)
-                {
-                    //states
-                    var states = _stateProvinceService.GetStateProvincesByCountryId(model.CountryId).ToList();
-                    if (states.Any())
-                    {
-                        model.AvailableStates.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Address.SelectState"), Value = "0" });
-
-                        foreach (var s in states)
-                        {
-                            model.AvailableStates.Add(new SelectListItem { Text = s.Name, Value = s.Id.ToString(), Selected = (s.Id == model.StateProvinceId) });
-                        }
-                    }
-                    else
-                    {
-                        bool anyCountrySelected = model.AvailableCountries.Any(x => x.Selected);
-
-                        model.AvailableStates.Add(new SelectListItem
-                        {
-                            Text = _localizationService.GetResource(anyCountrySelected ? "Admin.Address.OtherNonUS" : "Admin.Address.SelectState"),
-                            Value = "0"
-                        });
-                    }
-                }
-            }
-
-            //newsletter subscriptions
-            model.AvailableNewsletterSubscriptionStores = allStores
-                .Select(s => new CustomerModel.StoreModel() {Id = s.Id, Name = s.Name })
-                .ToList();
-
+        
             //customer roles
             var allRoles = _customerService.GetAllCustomerRoles(true);
             var adminRole = allRoles.FirstOrDefault(c => c.SystemName == SystemCustomerRoleNames.Registered);
@@ -645,7 +272,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             //reward points history
             if (customer != null)
             {
-                model.DisplayRewardPointsHistory = _rewardPointsSettings.Enabled;
+                
                 model.AddRewardPointsValue = 0;
                 model.AddRewardPointsMessage = "Some comment here...";
 
@@ -820,21 +447,11 @@ namespace Nop.Web.Areas.Admin.Controllers
             // Ensure that valid email address is entered if Registered role is checked to avoid registered customers with empty email address
             if (newCustomerRoles.Any() && newCustomerRoles.FirstOrDefault(c => c.SystemName == SystemCustomerRoleNames.Registered) != null && !CommonHelper.IsValidEmail(model.Email))
             {
-                ModelState.AddModelError("", _localizationService.GetResource("Admin.Customers.Customers.ValidEmailRequiredRegisteredRole"));
-                ErrorNotification(_localizationService.GetResource("Admin.Customers.Customers.ValidEmailRequiredRegisteredRole"), false);
+                ModelState.AddModelError("", ("Admin.Customers.Customers.ValidEmailRequiredRegisteredRole"));
+                ErrorNotification(("Admin.Customers.Customers.ValidEmailRequiredRegisteredRole"), false);
             }
 
-            //custom customer attributes
-            var customerAttributesXml = ParseCustomCustomerAttributes(model.Form);
-            if (newCustomerRoles.Any() && newCustomerRoles.FirstOrDefault(c => c.SystemName == SystemCustomerRoleNames.Registered) != null)
-            {
-                var customerAttributeWarnings = _customerAttributeParser.GetAttributeWarnings(customerAttributesXml);
-                foreach (var error in customerAttributeWarnings)
-                {
-                    ModelState.AddModelError("", error);
-                }
-            }
-
+         
             if (ModelState.IsValid)
             {
                 var customer = new Customer
@@ -880,45 +497,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 if (_customerSettings.FaxEnabled)
                     _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.Fax, model.Fax);
 
-                //custom customer attributes
-                _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.CustomCustomerAttributes, customerAttributesXml);
-
-
-                //newsletter subscriptions
-                if (!String.IsNullOrEmpty(customer.Email))
-                {
-                    var allStores = _storeService.GetAllStores();
-                    foreach (var store in allStores)
-                    {
-                        var newsletterSubscription = _newsLetterSubscriptionService
-                            .GetNewsLetterSubscriptionByEmailAndStoreId(customer.Email, store.Id);
-                        if (model.SelectedNewsletterSubscriptionStoreIds != null &&
-                            model.SelectedNewsletterSubscriptionStoreIds.Contains(store.Id))
-                        {
-                            //subscribed
-                            if (newsletterSubscription == null)
-                            {
-                                _newsLetterSubscriptionService.InsertNewsLetterSubscription(new NewsLetterSubscription
-                                {
-                                    NewsLetterSubscriptionGuid = Guid.NewGuid(),
-                                    Email = customer.Email,
-                                    Active = true,
-                                    StoreId = store.Id,
-                                    CreatedOnUtc = DateTime.UtcNow
-                                });
-                            }
-                        }
-                        else
-                        {
-                            //not subscribed
-                            if (newsletterSubscription != null)
-                            {
-                                _newsLetterSubscriptionService.DeleteNewsLetterSubscription(newsletterSubscription);
-                            }
-                        }
-                    }
-                }
-
+            
                 //password
                 if (!String.IsNullOrWhiteSpace(model.Password))
                 {
@@ -950,7 +529,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 {
                     customer.VendorId = 0;
                     _customerService.UpdateCustomer(customer);
-                    ErrorNotification(_localizationService.GetResource("Admin.Customers.Customers.AdminCouldNotbeVendor"));
+                    ErrorNotification(("Admin.Customers.Customers.AdminCouldNotbeVendor"));
                 }
 
                 //ensure that a customer in the Vendors role has a vendor account associated.
@@ -962,13 +541,13 @@ namespace Nop.Web.Areas.Admin.Controllers
                         .FirstOrDefault(x => x.SystemName == SystemCustomerRoleNames.Vendors);
                     customer.CustomerRoles.Remove(vendorRole);
                     _customerService.UpdateCustomer(customer);
-                    ErrorNotification(_localizationService.GetResource("Admin.Customers.Customers.CannotBeInVendoRoleWithoutVendorAssociated"));
+                    ErrorNotification(("Admin.Customers.Customers.CannotBeInVendoRoleWithoutVendorAssociated"));
                 }
 
                 //activity log
-                _customerActivityService.InsertActivity("AddNewCustomer", _localizationService.GetResource("ActivityLog.AddNewCustomer"), customer.Id);
+                _customerActivityService.InsertActivity("AddNewCustomer", ("ActivityLog.AddNewCustomer"), customer.Id);
 
-                SuccessNotification(_localizationService.GetResource("Admin.Customers.Customers.Added"));
+                SuccessNotification(("Admin.Customers.Customers.Added"));
 
                 if (continueEditing)
                 {
@@ -1028,21 +607,11 @@ namespace Nop.Web.Areas.Admin.Controllers
             // Ensure that valid email address is entered if Registered role is checked to avoid registered customers with empty email address
             if (newCustomerRoles.Any() && newCustomerRoles.FirstOrDefault(c => c.SystemName == SystemCustomerRoleNames.Registered) != null && !CommonHelper.IsValidEmail(model.Email))
             {
-                ModelState.AddModelError("", _localizationService.GetResource("Admin.Customers.Customers.ValidEmailRequiredRegisteredRole"));
-                ErrorNotification(_localizationService.GetResource("Admin.Customers.Customers.ValidEmailRequiredRegisteredRole"), false);
+                ModelState.AddModelError("", ("Admin.Customers.Customers.ValidEmailRequiredRegisteredRole"));
+                ErrorNotification(("Admin.Customers.Customers.ValidEmailRequiredRegisteredRole"), false);
             }
 
-            //custom customer attributes
-            var customerAttributesXml = ParseCustomCustomerAttributes(model.Form);
-            if (newCustomerRoles.Any() && newCustomerRoles.FirstOrDefault(c => c.SystemName == SystemCustomerRoleNames.Registered) != null)
-            {
-                var customerAttributeWarnings = _customerAttributeParser.GetAttributeWarnings(customerAttributesXml);
-                foreach (var error in customerAttributeWarnings)
-                {
-                    ModelState.AddModelError("", error);
-                }
-            }
-
+        
             if (ModelState.IsValid)
             {
                 try
@@ -1054,7 +623,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                     if (!customer.IsAdmin() || model.Active || SecondAdminAccountExists(customer))
                         customer.Active = model.Active;
                     else
-                        ErrorNotification(_localizationService.GetResource("Admin.Customers.Customers.AdminAccountShouldExists.Deactivate"));
+                        ErrorNotification(("Admin.Customers.Customers.AdminAccountShouldExists.Deactivate"));
 
                     //email
                     if (!String.IsNullOrWhiteSpace(model.Email))
@@ -1111,46 +680,8 @@ namespace Nop.Web.Areas.Admin.Controllers
                         _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.Phone, model.Phone);
                     if (_customerSettings.FaxEnabled)
                         _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.Fax, model.Fax);
-
-                    //custom customer attributes
-                    _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.CustomCustomerAttributes, customerAttributesXml);
-
-                    //newsletter subscriptions
-                    if (!String.IsNullOrEmpty(customer.Email))
-                    {
-                        var allStores = _storeService.GetAllStores();
-                        foreach (var store in allStores)
-                        {
-                            var newsletterSubscription = _newsLetterSubscriptionService
-                                .GetNewsLetterSubscriptionByEmailAndStoreId(customer.Email, store.Id);
-                            if (model.SelectedNewsletterSubscriptionStoreIds != null &&
-                                model.SelectedNewsletterSubscriptionStoreIds.Contains(store.Id))
-                            {
-                                //subscribed
-                                if (newsletterSubscription == null)
-                                {
-                                    _newsLetterSubscriptionService.InsertNewsLetterSubscription(new NewsLetterSubscription
-                                    {
-                                        NewsLetterSubscriptionGuid = Guid.NewGuid(),
-                                        Email = customer.Email,
-                                        Active = true,
-                                        StoreId = store.Id,
-                                        CreatedOnUtc = DateTime.UtcNow
-                                    });
-                                }
-                            }
-                            else
-                            {
-                                //not subscribed
-                                if (newsletterSubscription != null)
-                                {
-                                    _newsLetterSubscriptionService.DeleteNewsLetterSubscription(newsletterSubscription);
-                                }
-                            }
-                        }
-                    }
-
-
+ 
+               
                     //customer roles
                     foreach (var customerRole in allCustomerRoles)
                     {
@@ -1171,7 +702,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                             //prevent attempts to delete the administrator role from the user, if the user is the last active administrator
                             if (customerRole.SystemName == SystemCustomerRoleNames.Administrators && !SecondAdminAccountExists(customer))
                             {
-                                ErrorNotification(_localizationService.GetResource("Admin.Customers.Customers.AdminAccountShouldExists.DeleteRole"));
+                                ErrorNotification(("Admin.Customers.Customers.AdminAccountShouldExists.DeleteRole"));
                                 continue;
                             }
 
@@ -1189,7 +720,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                     {
                         customer.VendorId = 0;
                         _customerService.UpdateCustomer(customer);
-                        ErrorNotification(_localizationService.GetResource("Admin.Customers.Customers.AdminCouldNotbeVendor"));
+                        ErrorNotification(("Admin.Customers.Customers.AdminCouldNotbeVendor"));
                     }
 
                     //ensure that a customer in the Vendors role has a vendor account associated.
@@ -1201,14 +732,14 @@ namespace Nop.Web.Areas.Admin.Controllers
                             .FirstOrDefault(x => x.SystemName == SystemCustomerRoleNames.Vendors);
                         customer.CustomerRoles.Remove(vendorRole);
                         _customerService.UpdateCustomer(customer);
-                        ErrorNotification(_localizationService.GetResource("Admin.Customers.Customers.CannotBeInVendoRoleWithoutVendorAssociated"));
+                        ErrorNotification(("Admin.Customers.Customers.CannotBeInVendoRoleWithoutVendorAssociated"));
                     }
 
 
                     //activity log
-                    _customerActivityService.InsertActivity("EditCustomer", _localizationService.GetResource("ActivityLog.EditCustomer"), customer.Id);
+                    _customerActivityService.InsertActivity("EditCustomer", ("ActivityLog.EditCustomer"), customer.Id);
 
-                    SuccessNotification(_localizationService.GetResource("Admin.Customers.Customers.Updated"));
+                    SuccessNotification(("Admin.Customers.Customers.Updated"));
                     if (continueEditing)
                     {
                         //selected tab
@@ -1245,7 +776,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             //ensure that the current customer cannot change passwords of "Administrators" if he's not an admin himself
             if (customer.IsAdmin() && !_workContext.CurrentCustomer.IsAdmin())
             {
-                ErrorNotification(_localizationService.GetResource("Admin.Customers.Customers.OnlyAdminCanChangePassword"));
+                ErrorNotification(("Admin.Customers.Customers.OnlyAdminCanChangePassword"));
                 return RedirectToAction("Edit", new { id = customer.Id });
             }
 
@@ -1255,7 +786,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                     false, _customerSettings.DefaultPasswordFormat, model.Password);
                 var changePassResult = _customerRegistrationService.ChangePassword(changePassRequest);
                 if (changePassResult.Success)
-                    SuccessNotification(_localizationService.GetResource("Admin.Customers.Customers.PasswordChanged"));
+                    SuccessNotification(("Admin.Customers.Customers.PasswordChanged"));
                 else
                     foreach (var error in changePassResult.Errors)
                         ErrorNotification(error);
@@ -1278,7 +809,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
             _genericAttributeService.SaveAttribute(customer, 
                 SystemCustomerAttributeNames.VatNumberStatusId,
-                (int)VatNumberStatus.Valid);
+                1);
 
             return RedirectToAction("Edit",  new {id = customer.Id});
         }
@@ -1297,7 +828,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
             _genericAttributeService.SaveAttribute(customer,
                 SystemCustomerAttributeNames.VatNumberStatusId,
-                (int)VatNumberStatus.Invalid);
+               0);
             
             return RedirectToAction("Edit",  new {id = customer.Id});
         }
@@ -1336,32 +867,24 @@ namespace Nop.Web.Areas.Admin.Controllers
                 //prevent attempts to delete the user, if it is the last active administrator
                 if (customer.IsAdmin() && !SecondAdminAccountExists(customer))
                 {
-                    ErrorNotification(_localizationService.GetResource("Admin.Customers.Customers.AdminAccountShouldExists.DeleteAdministrator"));
+                    ErrorNotification(("Admin.Customers.Customers.AdminAccountShouldExists.DeleteAdministrator"));
                     return RedirectToAction("Edit", new { id = customer.Id });
                 }
 
                 //ensure that the current customer cannot delete "Administrators" if he's not an admin himself
                 if (customer.IsAdmin() && !_workContext.CurrentCustomer.IsAdmin())
                 {
-                    ErrorNotification(_localizationService.GetResource("Admin.Customers.Customers.OnlyAdminCanDeleteAdmin"));
+                    ErrorNotification(("Admin.Customers.Customers.OnlyAdminCanDeleteAdmin"));
                     return RedirectToAction("Edit", new { id = customer.Id });
                 }
 
                 //delete
                 _customerService.DeleteCustomer(customer);
-
-                //remove newsletter subscription (if exists)
-                foreach (var store in _storeService.GetAllStores())
-                {
-                    var subscription = _newsLetterSubscriptionService.GetNewsLetterSubscriptionByEmailAndStoreId(customer.Email, store.Id);
-                    if (subscription != null)
-                        _newsLetterSubscriptionService.DeleteNewsLetterSubscription(subscription);
-                }
-
+                 
                 //activity log
-                _customerActivityService.InsertActivity("DeleteCustomer", _localizationService.GetResource("ActivityLog.DeleteCustomer"), customer.Id);
+                _customerActivityService.InsertActivity("DeleteCustomer", ("ActivityLog.DeleteCustomer"), customer.Id);
 
-                SuccessNotification(_localizationService.GetResource("Admin.Customers.Customers.Deleted"));
+                SuccessNotification(("Admin.Customers.Customers.Deleted"));
                 return RedirectToAction("List");
             }
             catch (Exception exc)
@@ -1387,13 +910,13 @@ namespace Nop.Web.Areas.Admin.Controllers
             //otherwise, that user can simply impersonate as an administrator and gain additional administrative privileges
             if (!_workContext.CurrentCustomer.IsAdmin() && customer.IsAdmin())
             {
-                ErrorNotification(_localizationService.GetResource("Admin.Customers.Customers.NonAdminNotImpersonateAsAdminError"));
+                ErrorNotification(("Admin.Customers.Customers.NonAdminNotImpersonateAsAdminError"));
                 return RedirectToAction("Edit", customer.Id);
             }
 
             //activity log
-            _customerActivityService.InsertActivity("Impersonation.Started", _localizationService.GetResource("ActivityLog.Impersonation.Started.StoreOwner"), customer.Email, customer.Id);
-            _customerActivityService.InsertActivity(customer, "Impersonation.Started", _localizationService.GetResource("ActivityLog.Impersonation.Started.Customer"), _workContext.CurrentCustomer.Email, _workContext.CurrentCustomer.Id);
+            _customerActivityService.InsertActivity("Impersonation.Started", ("ActivityLog.Impersonation.Started.StoreOwner"), customer.Email, customer.Id);
+            _customerActivityService.InsertActivity(customer, "Impersonation.Started", ("ActivityLog.Impersonation.Started.Customer"), _workContext.CurrentCustomer.Email, _workContext.CurrentCustomer.Id);
 
             //ensure login is not required
             customer.RequireReLogin = false;
@@ -1414,10 +937,8 @@ namespace Nop.Web.Areas.Admin.Controllers
             if (customer == null)
                 //No customer found with the specified id
                 return RedirectToAction("List");
-
-            _workflowMessageService.SendCustomerWelcomeMessage(customer, _workContext.WorkingLanguage.Id);
-
-            SuccessNotification(_localizationService.GetResource("Admin.Customers.Customers.SendWelcomeMessage.Success"));
+            
+            SuccessNotification(("Admin.Customers.Customers.SendWelcomeMessage.Success"));
 
             return RedirectToAction("Edit", new { id = customer.Id });
         }
@@ -1436,335 +957,19 @@ namespace Nop.Web.Areas.Admin.Controllers
 
             //email validation message
             _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.AccountActivationToken, Guid.NewGuid().ToString());
-            _workflowMessageService.SendCustomerEmailValidationMessage(customer, _workContext.WorkingLanguage.Id);
-
-            SuccessNotification(_localizationService.GetResource("Admin.Customers.Customers.ReSendActivationMessage.Success"));
-
-            return RedirectToAction("Edit", new { id = customer.Id });
-        }
-
-        public virtual IActionResult SendEmail(CustomerModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCustomers))
-                return AccessDeniedView();
-
-            var customer = _customerService.GetCustomerById(model.Id);
-            if (customer == null)
-                //No customer found with the specified id
-                return RedirectToAction("List");
-
-            try
-            {
-                if (String.IsNullOrWhiteSpace(customer.Email))
-                    throw new NopException("Customer email is empty");
-                if (!CommonHelper.IsValidEmail(customer.Email))
-                    throw new NopException("Customer email is not valid");
-                if (String.IsNullOrWhiteSpace(model.SendEmail.Subject))
-                    throw new NopException("Email subject is empty");
-                if (String.IsNullOrWhiteSpace(model.SendEmail.Body))
-                    throw new NopException("Email body is empty");
-
-                var emailAccount = _emailAccountService.GetEmailAccountById(_emailAccountSettings.DefaultEmailAccountId);
-                if (emailAccount == null)
-                    emailAccount = _emailAccountService.GetAllEmailAccounts().FirstOrDefault();
-                if (emailAccount == null)
-                    throw new NopException("Email account can't be loaded");
-                var email = new QueuedEmail
-                {
-                    Priority = QueuedEmailPriority.High,
-                    EmailAccountId = emailAccount.Id,
-                    FromName = emailAccount.DisplayName,
-                    From = emailAccount.Email,
-                    ToName = customer.GetFullName(),
-                    To = customer.Email,
-                    Subject = model.SendEmail.Subject,
-                    Body = model.SendEmail.Body,
-                    CreatedOnUtc = DateTime.UtcNow,
-                    DontSendBeforeDateUtc = (model.SendEmail.SendImmediately || !model.SendEmail.DontSendBeforeDate.HasValue) ? 
-                        null : (DateTime?)_dateTimeHelper.ConvertToUtcTime(model.SendEmail.DontSendBeforeDate.Value)
-                };
-                _queuedEmailService.InsertQueuedEmail(email);
-                SuccessNotification(_localizationService.GetResource("Admin.Customers.Customers.SendEmail.Queued"));
-            }
-            catch (Exception exc)
-            {
-                ErrorNotification(exc.Message);
-            }
+           
+            SuccessNotification(("Admin.Customers.Customers.ReSendActivationMessage.Success"));
 
             return RedirectToAction("Edit", new { id = customer.Id });
         }
 
-        public virtual IActionResult SendPm(CustomerModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCustomers))
-                return AccessDeniedView();
-
-            var customer = _customerService.GetCustomerById(model.Id);
-            if (customer == null)
-                //No customer found with the specified id
-                return RedirectToAction("List");
-
-            try
-            {
-                if (!_forumSettings.AllowPrivateMessages)
-                    throw new NopException("Private messages are disabled");
-                if (customer.IsGuest())
-                    throw new NopException("Customer should be registered");
-                if (String.IsNullOrWhiteSpace(model.SendPm.Subject))
-                    throw new NopException("PM subject is empty");
-                if (String.IsNullOrWhiteSpace(model.SendPm.Message))
-                    throw new NopException("PM message is empty");
-
-
-                var privateMessage = new PrivateMessage
-                {
-                    StoreId = _storeContext.CurrentStore.Id,
-                    ToCustomerId = customer.Id,
-                    FromCustomerId = _workContext.CurrentCustomer.Id,
-                    Subject = model.SendPm.Subject,
-                    Text = model.SendPm.Message,
-                    IsDeletedByAuthor = false,
-                    IsDeletedByRecipient = false,
-                    IsRead = false,
-                    CreatedOnUtc = DateTime.UtcNow
-                };
-
-                _forumService.InsertPrivateMessage(privateMessage);
-                SuccessNotification(_localizationService.GetResource("Admin.Customers.Customers.SendPM.Sent"));
-            }
-            catch (Exception exc)
-            {
-                ErrorNotification(exc.Message);
-            }
-
-            return RedirectToAction("Edit", new { id = customer.Id });
-        }
-        
+      
         #endregion
         
-        #region Reward points history
-
-        [HttpPost]
-        public virtual IActionResult RewardPointsHistorySelect(DataSourceRequest command, int customerId)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCustomers))
-                return AccessDeniedKendoGridJson();
-
-            var customer = _customerService.GetCustomerById(customerId);
-            if (customer == null)
-                throw new ArgumentException("No customer found with the specified id");
-
-            var rewardPoints = _rewardPointService.GetRewardPointsHistory(customer.Id, true, true, command.Page - 1, command.PageSize);
-            var gridModel = new DataSourceResult
-            {
-                Data = rewardPoints.Select(rph =>
-                {
-                    var store = _storeService.GetStoreById(rph.StoreId);
-                    var activatingDate = _dateTimeHelper.ConvertToUserTime(rph.CreatedOnUtc, DateTimeKind.Utc);
-
-                    return new CustomerModel.RewardPointsHistoryModel
-                    {
-                        StoreName = store != null ? store.Name : "Unknown",
-                        Points = rph.Points,
-                        PointsBalance = rph.PointsBalance.HasValue ? rph.PointsBalance.ToString()
-                            : string.Format(_localizationService.GetResource("Admin.Customers.Customers.RewardPoints.ActivatedLater"), activatingDate),
-                        Message = rph.Message,
-                        CreatedOn = activatingDate
-                    };
-                }),
-                Total = rewardPoints.TotalCount
-            };
-
-            return Json(gridModel);
-        }
-
-        public virtual IActionResult RewardPointsHistoryAdd(int customerId, int storeId, int addRewardPointsValue, string addRewardPointsMessage)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCustomers))
-                return AccessDeniedView();
-
-            var customer = _customerService.GetCustomerById(customerId);
-            if (customer == null)
-                return Json(new { Result = false });
-
-            _rewardPointService.AddRewardPointsHistoryEntry(customer,
-                addRewardPointsValue, storeId, addRewardPointsMessage);
-
-            return Json(new { Result = true });
-        }
-        
-        #endregion
-       
-       
-
-        #region Orders
-        
-        [HttpPost]
-        public virtual IActionResult OrderList(int customerId, DataSourceRequest command)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCustomers))
-                return AccessDeniedKendoGridJson();
-
-            var orders = _orderService.SearchOrders(customerId: customerId);
-
-            var gridModel = new DataSourceResult
-            {
-                Data = orders.PagedForCommand(command)
-                    .Select(order =>
-                    {
-                        var store = _storeService.GetStoreById(order.StoreId);
-                        var orderModel = new CustomerModel.OrderModel
-                        {
-                            Id = order.Id, 
-                            OrderStatus = order.OrderStatus.GetLocalizedEnum(_localizationService, _workContext),
-                            OrderStatusId = order.OrderStatusId,
-                            PaymentStatus = order.PaymentStatus.GetLocalizedEnum(_localizationService, _workContext),
-                            ShippingStatus = order.ShippingStatus.GetLocalizedEnum(_localizationService, _workContext),
-                            OrderTotal = _priceFormatter.FormatPrice(order.OrderTotal, true, false),
-                            StoreName = store != null ? store.Name : "Unknown",
-                            CreatedOn = _dateTimeHelper.ConvertToUserTime(order.CreatedOnUtc, DateTimeKind.Utc),
-                            CustomOrderNumber = order.CustomOrderNumber
-                        };
-                        return orderModel;
-                    }),
-                Total = orders.Count
-            };
-
-
-            return Json(gridModel);
-        }
-        
-        #endregion
-
+          
+ 
         #region Reports
-
-        public virtual IActionResult Reports()
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCustomers))
-                return AccessDeniedView();
-
-            var model = new CustomerReportsModel();
-            //customers by number of orders
-            model.BestCustomersByNumberOfOrders = new BestCustomersReportModel();
-            model.BestCustomersByNumberOfOrders.AvailableOrderStatuses = OrderStatus.Pending.ToSelectList(false).ToList();
-            model.BestCustomersByNumberOfOrders.AvailableOrderStatuses.Insert(0, new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
-            model.BestCustomersByNumberOfOrders.AvailablePaymentStatuses = PaymentStatus.Pending.ToSelectList(false).ToList();
-            model.BestCustomersByNumberOfOrders.AvailablePaymentStatuses.Insert(0, new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
-            model.BestCustomersByNumberOfOrders.AvailableShippingStatuses = ShippingStatus.NotYetShipped.ToSelectList(false).ToList();
-            model.BestCustomersByNumberOfOrders.AvailableShippingStatuses.Insert(0, new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
-
-            //customers by order total
-            model.BestCustomersByOrderTotal = new BestCustomersReportModel();
-            model.BestCustomersByOrderTotal.AvailableOrderStatuses = OrderStatus.Pending.ToSelectList(false).ToList();
-            model.BestCustomersByOrderTotal.AvailableOrderStatuses.Insert(0, new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
-            model.BestCustomersByOrderTotal.AvailablePaymentStatuses = PaymentStatus.Pending.ToSelectList(false).ToList();
-            model.BestCustomersByOrderTotal.AvailablePaymentStatuses.Insert(0, new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
-            model.BestCustomersByOrderTotal.AvailableShippingStatuses = ShippingStatus.NotYetShipped.ToSelectList(false).ToList();
-            model.BestCustomersByOrderTotal.AvailableShippingStatuses.Insert(0, new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
-            
-            return View(model);
-        }
-
-        [HttpPost]
-        public virtual IActionResult ReportBestCustomersByOrderTotalList(DataSourceRequest command, BestCustomersReportModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCustomers))
-                return AccessDeniedKendoGridJson();
-
-            DateTime? startDateValue = (model.StartDate == null) ? null
-                            : (DateTime?)_dateTimeHelper.ConvertToUtcTime(model.StartDate.Value, _dateTimeHelper.CurrentTimeZone);
-
-            DateTime? endDateValue = (model.EndDate == null) ? null
-                            : (DateTime?)_dateTimeHelper.ConvertToUtcTime(model.EndDate.Value, _dateTimeHelper.CurrentTimeZone).AddDays(1);
-
-            OrderStatus? orderStatus = model.OrderStatusId > 0 ? (OrderStatus?)(model.OrderStatusId) : null;
-            PaymentStatus? paymentStatus = model.PaymentStatusId > 0 ? (PaymentStatus?)(model.PaymentStatusId) : null;
-            ShippingStatus? shippingStatus = model.ShippingStatusId > 0 ? (ShippingStatus?)(model.ShippingStatusId) : null;
-
-
-            var items = _customerReportService.GetBestCustomersReport(startDateValue, endDateValue,
-                orderStatus, paymentStatus, shippingStatus, 1, command.Page - 1, command.PageSize);
-            var gridModel = new DataSourceResult
-            {
-                Data = items.Select(x =>
-                {
-                    var m = new BestCustomerReportLineModel
-                    {
-                        CustomerId = x.CustomerId,
-                        OrderTotal = _priceFormatter.FormatPrice(x.OrderTotal, true, false),
-                        OrderCount = x.OrderCount,
-                    };
-                    var customer = _customerService.GetCustomerById(x.CustomerId);
-                    if (customer != null)
-                    {
-                        m.CustomerName = customer.IsRegistered() ? customer.Email : _localizationService.GetResource("Admin.Customers.Guest");
-                    }
-                    return m;
-                }),
-                Total = items.TotalCount
-            };
-
-            return Json(gridModel);
-        }
-
-        [HttpPost]
-        public virtual IActionResult ReportBestCustomersByNumberOfOrdersList(DataSourceRequest command, BestCustomersReportModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCustomers))
-                return AccessDeniedKendoGridJson();
-
-            DateTime? startDateValue = (model.StartDate == null) ? null
-                            : (DateTime?)_dateTimeHelper.ConvertToUtcTime(model.StartDate.Value, _dateTimeHelper.CurrentTimeZone);
-
-            DateTime? endDateValue = (model.EndDate == null) ? null
-                            : (DateTime?)_dateTimeHelper.ConvertToUtcTime(model.EndDate.Value, _dateTimeHelper.CurrentTimeZone).AddDays(1);
-
-            OrderStatus? orderStatus = model.OrderStatusId > 0 ? (OrderStatus?)(model.OrderStatusId) : null;
-            PaymentStatus? paymentStatus = model.PaymentStatusId > 0 ? (PaymentStatus?)(model.PaymentStatusId) : null;
-            ShippingStatus? shippingStatus = model.ShippingStatusId > 0 ? (ShippingStatus?)(model.ShippingStatusId) : null;
-
-
-            var items = _customerReportService.GetBestCustomersReport(startDateValue, endDateValue,
-                orderStatus, paymentStatus, shippingStatus, 2, command.Page - 1, command.PageSize);
-            var gridModel = new DataSourceResult
-            {
-                Data = items.Select(x =>
-                {
-                    var m = new BestCustomerReportLineModel
-                    {
-                        CustomerId = x.CustomerId,
-                        OrderTotal = _priceFormatter.FormatPrice(x.OrderTotal, true, false),
-                        OrderCount = x.OrderCount,
-                    };
-                    var customer = _customerService.GetCustomerById(x.CustomerId);
-                    if (customer != null)
-                    {
-                        m.CustomerName = customer.IsRegistered() ? customer.Email : _localizationService.GetResource("Admin.Customers.Guest");
-                    }
-                    return m;
-                }),
-                Total = items.TotalCount
-            };
-
-            return Json(gridModel);
-        }
-
-        [HttpPost]
-        public virtual IActionResult ReportRegisteredCustomersList(DataSourceRequest command)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCustomers))
-                return AccessDeniedKendoGridJson();
-
-            var model = GetReportRegisteredCustomersModel();
-            var gridModel = new DataSourceResult
-            {
-                Data = model,
-                Total = model.Count
-            };
-
-            return Json(gridModel);
-        }
-
+        
         public virtual IActionResult LoadCustomerStatistics(string period)
         {
             if (!_permissionService.Authorize(StandardPermissionProvider.ManageCustomers))
@@ -1776,7 +981,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             var timeZone = _dateTimeHelper.CurrentTimeZone;
             var searchCustomerRoleIds = new[] { _customerService.GetCustomerRoleBySystemName(SystemCustomerRoleNames.Registered).Id };
 
-            var culture = new CultureInfo(_workContext.WorkingLanguage.LanguageCulture);
+            var culture = new CultureInfo("zh-CN");
 
             switch (period)
             {
@@ -1893,169 +1098,8 @@ namespace Nop.Web.Areas.Admin.Controllers
         
         #endregion
         
-        #region Back in stock subscriptions
-
-        [HttpPost]
-        public virtual IActionResult BackInStockSubscriptionList(DataSourceRequest command, int customerId)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCustomers))
-                return AccessDeniedKendoGridJson();
-
-            var subscriptions = _backInStockSubscriptionService.GetAllSubscriptionsByCustomerId(customerId,
-                0, command.Page - 1, command.PageSize);
-            var gridModel = new DataSourceResult
-            {
-                Data = subscriptions.Select(x =>
-                {
-                    var store = _storeService.GetStoreById(x.StoreId);
-                    var product = x.Product;
-                    var m = new CustomerModel.BackInStockSubscriptionModel
-                    {
-                        Id = x.Id,
-                        StoreName = store != null ? store.Name : "Unknown",
-                        ProductId = x.ProductId,
-                        ProductName = product != null ? product.Name : "Unknown",
-                        CreatedOn = _dateTimeHelper.ConvertToUserTime(x.CreatedOnUtc, DateTimeKind.Utc)
-                    };
-                    return m;
-
-                }),
-                Total = subscriptions.TotalCount
-            };
-
-            return Json(gridModel);
-        }
         
-        #endregion
         
-        #region Export / Import
-
-        [HttpPost, ActionName("List")]
-        [FormValueRequired("exportexcel-all")]
-        public virtual IActionResult ExportExcelAll(CustomerListModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCustomers))
-                return AccessDeniedView();
-
-            var searchDayOfBirth = 0;
-            int searchMonthOfBirth = 0;
-            if (!String.IsNullOrWhiteSpace(model.SearchDayOfBirth))
-                searchDayOfBirth = Convert.ToInt32(model.SearchDayOfBirth);
-            if (!String.IsNullOrWhiteSpace(model.SearchMonthOfBirth))
-                searchMonthOfBirth = Convert.ToInt32(model.SearchMonthOfBirth);
-
-            var customers = _customerService.GetAllCustomers(
-                customerRoleIds: model.SearchCustomerRoleIds.ToArray(),
-                email: model.SearchEmail,
-                username: model.SearchUsername,
-                firstName: model.SearchFirstName,
-                lastName: model.SearchLastName,
-                dayOfBirth: searchDayOfBirth,
-                monthOfBirth: searchMonthOfBirth,
-                company: model.SearchCompany,
-                phone: model.SearchPhone,
-                zipPostalCode: model.SearchZipPostalCode,
-                loadOnlyWithShoppingCart: false);
-
-            try
-            {
-                byte[] bytes = _exportManager.ExportCustomersToXlsx(customers);
-                return File(bytes, MimeTypes.TextXlsx, "customers.xlsx");
-            }
-            catch (Exception exc)
-            {
-                ErrorNotification(exc);
-                return RedirectToAction("List");
-            }
-        }
-
-        [HttpPost]
-        public virtual IActionResult ExportExcelSelected(string selectedIds)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCustomers))
-                return AccessDeniedView();
-
-            var customers = new List<Customer>();
-            if (selectedIds != null)
-            {
-                var ids = selectedIds
-                    .Split(new [] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(x => Convert.ToInt32(x))
-                    .ToArray();
-                customers.AddRange(_customerService.GetCustomersByIds(ids));
-            }
-
-            try
-            {
-                byte[] bytes = _exportManager.ExportCustomersToXlsx(customers);
-                return File(bytes, MimeTypes.TextXlsx, "customers.xlsx");
-            }
-            catch (Exception exc)
-            {
-                ErrorNotification(exc);
-                return RedirectToAction("List");
-            }
-        }
-
-        [HttpPost, ActionName("List")]
-        [FormValueRequired("exportxml-all")]
-        public virtual IActionResult ExportXmlAll(CustomerListModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCustomers))
-                return AccessDeniedView();
-
-            var searchDayOfBirth = 0;
-            int searchMonthOfBirth = 0;
-            if (!String.IsNullOrWhiteSpace(model.SearchDayOfBirth))
-                searchDayOfBirth = Convert.ToInt32(model.SearchDayOfBirth);
-            if (!String.IsNullOrWhiteSpace(model.SearchMonthOfBirth))
-                searchMonthOfBirth = Convert.ToInt32(model.SearchMonthOfBirth);
-
-            var customers = _customerService.GetAllCustomers(
-                customerRoleIds: model.SearchCustomerRoleIds.ToArray(),
-                email: model.SearchEmail,
-                username: model.SearchUsername,
-                firstName: model.SearchFirstName,
-                lastName: model.SearchLastName,
-                dayOfBirth: searchDayOfBirth,
-                monthOfBirth: searchMonthOfBirth,
-                company: model.SearchCompany,
-                phone: model.SearchPhone,
-                zipPostalCode: model.SearchZipPostalCode,
-                loadOnlyWithShoppingCart: false);
-
-            try
-            {
-                var xml = _exportManager.ExportCustomersToXml(customers);
-                return File(Encoding.UTF8.GetBytes(xml), "application/xml", "customers.xml");
-            }
-            catch (Exception exc)
-            {
-                ErrorNotification(exc);
-                return RedirectToAction("List");
-            }
-        }
-
-        [HttpPost]
-        public virtual IActionResult ExportXmlSelected(string selectedIds)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCustomers))
-                return AccessDeniedView();
-
-            var customers = new List<Customer>();
-            if (selectedIds != null)
-            {
-                var ids = selectedIds
-                    .Split(new [] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(x => Convert.ToInt32(x))
-                    .ToArray();
-                customers.AddRange(_customerService.GetCustomersByIds(ids));
-            }
-
-            var xml = _exportManager.ExportCustomersToXml(customers);
-            return File(Encoding.UTF8.GetBytes(xml), "application/xml", "customers.xml");
-        }
-        
-        #endregion
+         
     }
 }

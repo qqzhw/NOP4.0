@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nop.Core.Domain.Catalog;
-using Nop.Services.Localization;
+
 using Nop.Services.Security;
 using Nop.Services.Stores;
 
@@ -77,7 +77,7 @@ namespace Nop.Services.Catalog
             var breadcrumb = GetCategoryBreadCrumb(category, categoryService, null, null, true);
             for (int i = 0; i <= breadcrumb.Count - 1; i++)
             {
-                var categoryName = breadcrumb[i].GetLocalized(x => x.Name, languageId);
+                var categoryName = breadcrumb[i].Name;
                 result = String.IsNullOrEmpty(result)
                     ? categoryName
                     : string.Format("{0} {1} {2}", result, separator, categoryName);
@@ -104,7 +104,7 @@ namespace Nop.Services.Catalog
             var breadcrumb = GetCategoryBreadCrumb(category, allCategories, null, null, true);
             for (int i = 0; i <= breadcrumb.Count - 1; i++)
             {
-                var categoryName = breadcrumb[i].GetLocalized(x => x.Name, languageId);
+                var categoryName = breadcrumb[i].Name;
                 result = String.IsNullOrEmpty(result)
                     ? categoryName
                     : string.Format("{0} {1} {2}", result, separator, categoryName);

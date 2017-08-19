@@ -1,5 +1,5 @@
 ﻿using Nop.Core.Infrastructure;
-using Nop.Services.Localization;
+
 
 namespace Nop.Web.Models.Common
 {
@@ -7,22 +7,15 @@ namespace Nop.Web.Models.Common
     {
         #region Constructors
 
-        public PagerModel()
-            : this(EngineContext.Current.Resolve<ILocalizationService>())
+        public PagerModel()            
         {
 
-        }
-
-        public PagerModel(ILocalizationService localizationService)
-        {
-            this._localizationService = localizationService;
-        }
+        }      
 
         #endregion Constructors
 
         #region Fields
-
-        private readonly ILocalizationService _localizationService;
+        
         private int individualPagesDisplayedCount;
         private int pageIndex = -2;
         private int pageSize;
@@ -247,7 +240,7 @@ namespace Nop.Web.Models.Common
             {
                 return (!string.IsNullOrEmpty(firstButtonText)) ?
                     firstButtonText :
-                    _localizationService.GetResource("Pager.First");
+                  ("Pager.First");
             }
             set
             {
@@ -264,7 +257,7 @@ namespace Nop.Web.Models.Common
             {
                 return (!string.IsNullOrEmpty(lastButtonText)) ?
                     lastButtonText :
-                    _localizationService.GetResource("Pager.Last");
+                  ("Pager.Last");
             }
             set
             {
@@ -281,7 +274,7 @@ namespace Nop.Web.Models.Common
             {
                 return (!string.IsNullOrEmpty(nextButtonText)) ?
                     nextButtonText :
-                    _localizationService.GetResource("Pager.Next");
+                 ("Pager.Next");
             }
             set
             {
@@ -298,7 +291,7 @@ namespace Nop.Web.Models.Common
             {
                 return (!string.IsNullOrEmpty(previousButtonText)) ?
                     previousButtonText :
-                    _localizationService.GetResource("Pager.Previous");
+                  ("Pager.Previous");
             }
             set
             {
@@ -315,7 +308,7 @@ namespace Nop.Web.Models.Common
             {
                 return (!string.IsNullOrEmpty(currentPageText)) ?
                     currentPageText :
-                    _localizationService.GetResource("Pager.CurrentPage");
+                    ("Pager.CurrentPage");
             }
             set
             {

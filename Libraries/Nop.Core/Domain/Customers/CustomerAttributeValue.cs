@@ -1,12 +1,12 @@
 
-using Nop.Core.Domain.Localization;
+
 
 namespace Nop.Core.Domain.Customers
 {
     /// <summary>
     /// Represents a customer attribute value
     /// </summary>
-    public partial class CustomerAttributeValue : BaseEntity, ILocalizedEntity
+    public partial class CustomerAttributeValue : BaseEntity
     {
         /// <summary>
         /// Gets or sets the customer attribute identifier

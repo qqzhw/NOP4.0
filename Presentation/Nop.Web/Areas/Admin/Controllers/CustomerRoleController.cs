@@ -13,11 +13,11 @@ using Nop.Core.Domain.Customers;
 using Nop.Services;
 using Nop.Services.Catalog;
 using Nop.Services.Customers;
-using Nop.Services.Localization;
+
 using Nop.Services.Logging;
 using Nop.Services.Security;
 using Nop.Services.Stores;
-using Nop.Services.Vendors;
+ 
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Kendoui;
 using Nop.Web.Framework.Mvc.Filters;
@@ -28,15 +28,12 @@ namespace Nop.Web.Areas.Admin.Controllers
 	{
 		#region Fields
 
-		private readonly ICustomerService _customerService;
-        private readonly ILocalizationService _localizationService;
+		private readonly ICustomerService _customerService;       
         private readonly ICustomerActivityService _customerActivityService;
         private readonly IPermissionService _permissionService;
         private readonly IProductService _productService;
-        private readonly ICategoryService _categoryService;
-        private readonly IManufacturerService _manufacturerService;
-        private readonly IStoreService _storeService;
-        private readonly IVendorService _vendorService;
+        private readonly ICategoryService _categoryService;       
+        private readonly IStoreService _storeService;       
         private readonly IWorkContext _workContext;
         private readonly IStaticCacheManager _cacheManager;
 
@@ -44,27 +41,24 @@ namespace Nop.Web.Areas.Admin.Controllers
 
 		#region Constructors
 
-        public CustomerRoleController(ICustomerService customerService,
-            ILocalizationService localizationService, 
+        public CustomerRoleController(ICustomerService customerService, 
             ICustomerActivityService customerActivityService,
             IPermissionService permissionService,
             IProductService productService,
-            ICategoryService categoryService,
-            IManufacturerService manufacturerService,
-            IStoreService storeService,
-            IVendorService vendorService,
+            ICategoryService categoryService, 
+            IStoreService storeService, 
             IWorkContext workContext, 
             IStaticCacheManager cacheManager)
 		{
             this._customerService = customerService;
-            this._localizationService = localizationService;
+          
             this._customerActivityService = customerActivityService;
             this._permissionService = permissionService;
             this._productService = productService;
             this._categoryService = categoryService;
-            this._manufacturerService = manufacturerService;
+        
             this._storeService = storeService;
-            this._vendorService = vendorService;
+           
             this._workContext = workContext;
             this._cacheManager = cacheManager;
 		}
@@ -140,9 +134,9 @@ namespace Nop.Web.Areas.Admin.Controllers
                 _customerService.InsertCustomerRole(customerRole);
 
                 //activity log
-                _customerActivityService.InsertActivity("AddNewCustomerRole", _localizationService.GetResource("ActivityLog.AddNewCustomerRole"), customerRole.Name);
+                _customerActivityService.InsertActivity("AddNewCustomerRole", ("ActivityLog.AddNewCustomerRole"), customerRole.Name);
 
-                SuccessNotification(_localizationService.GetResource("Admin.Customers.CustomerRoles.Added"));
+                SuccessNotification(("Admin.Customers.CustomerRoles.Added"));
                 return continueEditing ? RedirectToAction("Edit", new { id = customerRole.Id }) : RedirectToAction("List");
             }
 
@@ -180,22 +174,22 @@ namespace Nop.Web.Areas.Admin.Controllers
                 if (ModelState.IsValid)
                 {
                     if (customerRole.IsSystemRole && !model.Active)
-                        throw new NopException(_localizationService.GetResource("Admin.Customers.CustomerRoles.Fields.Active.CantEditSystem"));
+                        throw new NopException(("Admin.Customers.CustomerRoles.Fields.Active.CantEditSystem"));
 
                     if (customerRole.IsSystemRole && !customerRole.SystemName.Equals(model.SystemName, StringComparison.InvariantCultureIgnoreCase))
-                        throw new NopException(_localizationService.GetResource("Admin.Customers.CustomerRoles.Fields.SystemName.CantEditSystem"));
+                        throw new NopException(("Admin.Customers.CustomerRoles.Fields.SystemName.CantEditSystem"));
 
                     if (SystemCustomerRoleNames.Registered.Equals(customerRole.SystemName, StringComparison.InvariantCultureIgnoreCase) &&
                         model.PurchasedWithProductId > 0)
-                        throw new NopException(_localizationService.GetResource("Admin.Customers.CustomerRoles.Fields.PurchasedWithProduct.Registered"));
+                        throw new NopException(("Admin.Customers.CustomerRoles.Fields.PurchasedWithProduct.Registered"));
                     
                     customerRole = model.ToEntity(customerRole);
                     _customerService.UpdateCustomerRole(customerRole);
 
                     //activity log
-                    _customerActivityService.InsertActivity("EditCustomerRole", _localizationService.GetResource("ActivityLog.EditCustomerRole"), customerRole.Name);
+                    _customerActivityService.InsertActivity("EditCustomerRole", ("ActivityLog.EditCustomerRole"), customerRole.Name);
 
-                    SuccessNotification(_localizationService.GetResource("Admin.Customers.CustomerRoles.Updated"));
+                    SuccessNotification(("Admin.Customers.CustomerRoles.Updated"));
                     return continueEditing ? RedirectToAction("Edit", new { id = customerRole.Id}) : RedirectToAction("List");
                 }
 
@@ -225,9 +219,9 @@ namespace Nop.Web.Areas.Admin.Controllers
                 _customerService.DeleteCustomerRole(customerRole);
 
                 //activity log
-                _customerActivityService.InsertActivity("DeleteCustomerRole", _localizationService.GetResource("ActivityLog.DeleteCustomerRole"), customerRole.Name);
+                _customerActivityService.InsertActivity("DeleteCustomerRole", ("ActivityLog.DeleteCustomerRole"), customerRole.Name);
 
-                SuccessNotification(_localizationService.GetResource("Admin.Customers.CustomerRoles.Deleted"));
+                SuccessNotification("Admin.Customers.CustomerRoles.Deleted");
                 return RedirectToAction("List");
             }
             catch (Exception exc)
@@ -244,35 +238,21 @@ namespace Nop.Web.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             var model = new CustomerRoleModel.AssociateProductToCustomerRoleModel();
-            //a vendor should have access only to his products
-            model.IsLoggedInAsVendor = _workContext.CurrentVendor != null;
-
+         
             //categories
-            model.AvailableCategories.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
+            model.AvailableCategories.Add(new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
             var categories = SelectListHelper.GetCategoryList(_categoryService, _cacheManager, true);
             foreach (var c in categories)
                 model.AvailableCategories.Add(c);
-
-            //manufacturers
-            model.AvailableManufacturers.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
-            var manufacturers = SelectListHelper.GetManufacturerList(_manufacturerService, _cacheManager, true);
-            foreach (var m in manufacturers)
-                model.AvailableManufacturers.Add(m);
-
+          
             //stores
-            model.AvailableStores.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
+            model.AvailableStores.Add(new SelectListItem { Text =("Admin.Common.All"), Value = "0" });
             foreach (var s in _storeService.GetAllStores())
                 model.AvailableStores.Add(new SelectListItem { Text = s.Name, Value = s.Id.ToString() });
 
-            //vendors
-            model.AvailableVendors.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
-            var vendors = SelectListHelper.GetVendorList(_vendorService, _cacheManager, true);
-            foreach (var v in vendors)
-                model.AvailableVendors.Add(v);
-
             //product types
             model.AvailableProductTypes = ProductType.SimpleProduct.ToSelectList(false).ToList();
-            model.AvailableProductTypes.Insert(0, new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
+            model.AvailableProductTypes.Insert(0, new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
 
             return View(model);
         }
@@ -284,12 +264,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             if (!_permissionService.Authorize(StandardPermissionProvider.ManageCustomers))
                 return AccessDeniedKendoGridJson();
 
-            //a vendor should have access only to his products
-            if (_workContext.CurrentVendor != null)
-            {
-                model.SearchVendorId = _workContext.CurrentVendor.Id;
-            }
-
+          
             var products = _productService.SearchProducts(
                 categoryIds: new List<int> { model.SearchCategoryId },
                 manufacturerId: model.SearchManufacturerId,
@@ -319,12 +294,8 @@ namespace Nop.Web.Areas.Admin.Controllers
             if (associatedProduct == null)
                 return Content("Cannot load a product");
 
-            //a vendor should have access only to his products
-            if (_workContext.CurrentVendor != null && associatedProduct.VendorId != _workContext.CurrentVendor.Id)
-                return Content("This is not your product");
-
-            //a vendor should have access only to his products
-            model.IsLoggedInAsVendor = _workContext.CurrentVendor != null;
+          
+            //a vendor should have access only to his products           
             ViewBag.RefreshPage = true;
             ViewBag.productId = associatedProduct.Id;
             ViewBag.productName = associatedProduct.Name;

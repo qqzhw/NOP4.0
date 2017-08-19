@@ -7,7 +7,7 @@ using Nop.Core.Data;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Security;
 using Nop.Services.Customers;
-using Nop.Services.Localization;
+
 
 namespace Nop.Services.Security
 {
@@ -35,9 +35,7 @@ namespace Nop.Services.Security
 
         private readonly IRepository<PermissionRecord> _permissionRecordRepository;
         private readonly ICustomerService _customerService;
-        private readonly IWorkContext _workContext;
-        private readonly ILocalizationService _localizationService;
-        private readonly ILanguageService _languageService;
+        private readonly IWorkContext _workContext;     
         private readonly IStaticCacheManager _cacheManager;
 
         #endregion
@@ -55,16 +53,12 @@ namespace Nop.Services.Security
         /// <param name="cacheManager">Static cache manager</param>
         public PermissionService(IRepository<PermissionRecord> permissionRecordRepository,
             ICustomerService customerService,
-            IWorkContext workContext,
-            ILocalizationService localizationService,
-            ILanguageService languageService,
+            IWorkContext workContext,          
             IStaticCacheManager cacheManager)
         {
             this._permissionRecordRepository = permissionRecordRepository;
             this._customerService = customerService;
-            this._workContext = workContext;
-            this._localizationService = localizationService;
-            this._languageService = languageService;
+            this._workContext = workContext;       
             this._cacheManager = cacheManager;
         }
 
@@ -240,9 +234,7 @@ namespace Nop.Services.Security
                     //save new permission
                     InsertPermissionRecord(permission1);
 
-                    //save localization
-                    permission1.SaveLocalizedPermissionName(_localizationService, _languageService);
-                }
+                 }
             }
         }
 
@@ -260,8 +252,6 @@ namespace Nop.Services.Security
                 {
                     DeletePermissionRecord(permission1);
 
-                    //delete permission locales
-                    permission1.DeleteLocalizedPermissionName(_localizationService, _languageService);
                 }
             }
 

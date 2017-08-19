@@ -18,7 +18,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 		#region Fields
 
         private readonly IExternalAuthenticationService _externalAuthenticationService;
-        private readonly ExternalAuthenticationSettings _externalAuthenticationSettings;
+       
         private readonly ISettingService _settingService;
         private readonly IPermissionService _permissionService;
         private readonly IPluginFinder _pluginFinder;
@@ -28,13 +28,13 @@ namespace Nop.Web.Areas.Admin.Controllers
         #region Ctor
 
         public ExternalAuthenticationController(IExternalAuthenticationService externalAuthenticationService, 
-            ExternalAuthenticationSettings externalAuthenticationSettings,
+            
             ISettingService settingService,
             IPermissionService permissionService,
             IPluginFinder pluginFinder)
 		{
             this._externalAuthenticationService = externalAuthenticationService;
-            this._externalAuthenticationSettings = externalAuthenticationSettings;
+          
             this._settingService = settingService;
             this._permissionService = permissionService;
             this._pluginFinder = pluginFinder;
@@ -62,8 +62,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             var methods = _externalAuthenticationService.LoadAllExternalAuthenticationMethods();
             foreach (var method in methods)
             {
-                var tmp1 = method.ToModel();
-                tmp1.IsActive = method.IsMethodActive(_externalAuthenticationSettings);
+                var tmp1 = method.ToModel(); 
                 tmp1.ConfigurationUrl = method.GetConfigurationPageUrl();
                 methodsModel.Add(tmp1);
             }
@@ -84,22 +83,12 @@ namespace Nop.Web.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             var eam = _externalAuthenticationService.LoadExternalAuthenticationMethodBySystemName(model.SystemName);
-            if (eam.IsMethodActive(_externalAuthenticationSettings))
-            {
-                if (!model.IsActive)
-                {
-                    //mark as disabled
-                    _externalAuthenticationSettings.ActiveAuthenticationMethodSystemNames.Remove(eam.PluginDescriptor.SystemName);
-                    _settingService.SaveSetting(_externalAuthenticationSettings);
-                }
-            }
-            else
+         
+           
             {
                 if (model.IsActive)
                 {
-                    //mark as active
-                    _externalAuthenticationSettings.ActiveAuthenticationMethodSystemNames.Add(eam.PluginDescriptor.SystemName);
-                    _settingService.SaveSetting(_externalAuthenticationSettings);
+                   
                 }
             }
             var pluginDescriptor = eam.PluginDescriptor;

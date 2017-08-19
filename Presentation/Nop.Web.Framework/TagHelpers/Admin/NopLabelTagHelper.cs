@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Nop.Core;
-using Nop.Services.Localization;
+
 using Nop.Web.Framework.Mvc.ModelBinding;
 
 namespace Nop.Web.Framework.TagHelpers.Admin
@@ -15,9 +15,7 @@ namespace Nop.Web.Framework.TagHelpers.Admin
         private const string ForAttributeName = "asp-for";
         private const string DisplayHintAttributeName = "asp-display-hint";
 
-        private readonly IWorkContext _workContext;
-        private readonly ILocalizationService _localizationService;
-
+        private readonly IWorkContext _workContext;      
         /// <summary>
         /// HtmlGenerator
         /// </summary>
@@ -42,12 +40,10 @@ namespace Nop.Web.Framework.TagHelpers.Admin
         [ViewContext]
         public ViewContext ViewContext { get; set; }
 
-        public NopLabelTagHelper(IHtmlGenerator generator, IWorkContext workContext, ILocalizationService localizationService)
+        public NopLabelTagHelper(IHtmlGenerator generator, IWorkContext workContext)
         {
             Generator = generator;
-
-            _workContext = workContext;
-            _localizationService = localizationService;
+            _workContext = workContext;      
         }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
@@ -84,10 +80,8 @@ namespace Nop.Web.Framework.TagHelpers.Admin
                     var resourceDisplayName = value as NopResourceDisplayNameAttribute;
                     if (resourceDisplayName != null && DisplayHint)
                     {
-                        var langId = _workContext.WorkingLanguage.Id;
-                        var hintResource = _localizationService.GetResource(
-                            resourceDisplayName.ResourceKey + ".Hint", langId, returnEmptyIfNotFound: true,
-                            logIfNotFound: false);
+                      
+                        var hintResource =  resourceDisplayName.ResourceKey + ".Hint";
 
                         if (!string.IsNullOrEmpty(hintResource))
                         {

@@ -68,17 +68,7 @@ namespace Nop.Services.Catalog
         /// <param name="selectedAttributesXml">Selected attributes (XML format)</param>
         /// <returns>Result</returns>
         bool? IsConditionMet(ProductAttributeMapping pam, string selectedAttributesXml);
-
-        /// <summary>
-        /// Finds a product attribute combination by attributes stored in XML 
-        /// </summary>
-        /// <param name="product">Product</param>
-        /// <param name="attributesXml">Attributes in XML format</param>
-        /// <param name="ignoreNonCombinableAttributes">A value indicating whether we should ignore non-combinable attributes</param>
-        /// <returns>Found product attribute combination</returns>
-        ProductAttributeCombination FindProductAttributeCombination(Product product,
-            string attributesXml, bool ignoreNonCombinableAttributes = true);
-
+         
         /// <summary>
         /// Generate all combinations
         /// </summary>

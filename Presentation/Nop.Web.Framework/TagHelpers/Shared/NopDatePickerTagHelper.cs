@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Nop.Core.Infrastructure;
-using Nop.Services.Localization;
+
 
 namespace Nop.Web.Framework.TagHelpers.Shared
 {
@@ -170,10 +170,10 @@ namespace Nop.Web.Framework.TagHelpers.Shared
             string dayLocale, monthLocale, yearLocale;
             if (bool.TryParse(LocalizeLabels, out bool localizeLabels) && localizeLabels)
             {
-                var locService = EngineContext.Current.Resolve<ILocalizationService>();
-                dayLocale = locService.GetResource("Common.Day");
-                monthLocale = locService.GetResource("Common.Month");
-                yearLocale = locService.GetResource("Common.Year");
+               
+                dayLocale = "Common.Day";
+                monthLocale ="Common.Month";
+                yearLocale = ("Common.Year");
             }
             else
             {

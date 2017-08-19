@@ -14,6 +14,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ExportImport\ExportManager.cs" />
+    <Compile Remove="ExportImport\IExportManager.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="EPPlus" Version="4.1.0" />
     <PackageReference Include="ImageResizer.Plugins.PrettyGifs" Version="4.1.9" />
     <PackageReference Include="iTextSharp" Version="5.5.11" />
@@ -41,6 +46,11 @@
 
   <ItemGroup>
     <WCFMetadata Include="Connected Services" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Directory\" />
+    <Folder Include="Messages\" />
   </ItemGroup>
 
 </Project>

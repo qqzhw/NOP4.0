@@ -119,19 +119,5 @@ namespace Nop.Core.Domain.Customers
         }
         #endregion
 
-        #region Addresses
-
-        public static void RemoveAddress(this Customer customer, Address address)
-        {
-            if (customer.Addresses.Contains(address))
-            {
-                if (customer.BillingAddress == address) customer.BillingAddress = null;
-                if (customer.ShippingAddress == address) customer.ShippingAddress = null;
-
-                customer.Addresses.Remove(address);
-            }
-        }
-
-        #endregion
-    }
+     }
 }
