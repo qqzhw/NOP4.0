@@ -21,11 +21,7 @@
     $(document).ready(function() {
        
         $("#@Html.IdFor(model => model.ProductTypeId)").change(toggleProductType);
-        $("#@Html.IdFor(model => model.RequireOtherProducts)").click(toggleRequireOtherProducts);
-        $("#@Html.IdFor(model => model.AvailableForPreOrder)").click(togglePreOrder);
-        $("#@Html.IdFor(model => model.IsGiftCard)").click(toggleGiftCard);
-        $("#@Html.IdFor(model => model.CustomerEntersPrice)").click(toggleCustomerEntersPrice);
-        $("#@Html.IdFor(model => model.BasepriceEnabled)").click(toggleBasepriceEnabled);
+
         $("#@Html.IdFor(model => model.IsDownload)").click(toggleDownloadableProduct);
         $("#@Html.IdFor(model => model.UnlimitedDownloads)").click(toggleDownloadableProduct);
         $("#@Html.IdFor(model => model.HasSampleDownload)").click(toggleDownloadableProduct);
