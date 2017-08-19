@@ -16,7 +16,6 @@ namespace Nop.Core.Domain.Catalog
         private ICollection<ProductPicture> _productPictures;
        
       
-        private ICollection<ProductAttributeMapping> _productAttributeMappings;
         
 
         /// <summary>
@@ -531,18 +530,7 @@ namespace Nop.Core.Domain.Catalog
             protected set { _productPictures = value; }
         }
          
-        
-
-        /// <summary>
-        /// Gets or sets the product attribute mappings
-        /// </summary>
-        public virtual ICollection<ProductAttributeMapping> ProductAttributeMappings
-        {
-            get { return _productAttributeMappings ?? (_productAttributeMappings = new List<ProductAttributeMapping>()); }
-            protected set { _productAttributeMappings = value; }
-        }
-
-       
+         
               
     }
 }

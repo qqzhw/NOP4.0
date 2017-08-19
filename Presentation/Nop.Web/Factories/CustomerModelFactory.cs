@@ -8,8 +8,7 @@ using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers; 
 using Nop.Core.Domain.Media; 
 using Nop.Core.Domain.Security;
- 
-using Nop.Services.Authentication.External;
+
 using Nop.Services.Common;
 using Nop.Services.Customers; 
 using Nop.Services.Helpers;
@@ -41,10 +40,8 @@ namespace Nop.Web.Factories
       
         private readonly IGenericAttributeService _genericAttributeService;
       
-        private readonly CustomerSettings _customerSettings;
-      
-        private readonly IPictureService _pictureService; 
-        private readonly IExternalAuthenticationService _externalAuthenticationService;
+        private readonly CustomerSettings _customerSettings;      
+        private readonly IPictureService _pictureService;        
         private readonly IDownloadService _downloadService;
         
         private readonly MediaSettings _mediaSettings;
@@ -65,14 +62,9 @@ namespace Nop.Web.Factories
             IWorkContext workContext,
             IStoreContext storeContext,
             IStoreMappingService storeMappingService,
-          
             IGenericAttributeService genericAttributeService,
-           
             CustomerSettings customerSettings,
-        
             IPictureService pictureService, 
-           
-            IExternalAuthenticationService externalAuthenticationService,
             IDownloadService downloadService,
            
             MediaSettings mediaSettings,
@@ -95,7 +87,6 @@ namespace Nop.Web.Factories
           
             this._pictureService = pictureService;
            
-            this._externalAuthenticationService = externalAuthenticationService;
             this._downloadService = downloadService;
             
             this._mediaSettings = mediaSettings;

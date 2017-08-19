@@ -8,11 +8,9 @@ using Nop.Web.Areas.Admin.Extensions;
 using Nop.Web.Areas.Admin.Models.Plugins;
 using Nop.Core;
 using Nop.Core.Domain.Cms;
-using Nop.Core.Domain.Customers;
- 
+using Nop.Core.Domain.Customers; 
 using Nop.Core.Plugins;
 using Nop.Services;
-using Nop.Services.Authentication.External;
 using Nop.Services.Cms;
 using Nop.Services.Configuration;
 using Nop.Services.Customers; 
@@ -30,7 +28,6 @@ namespace Nop.Web.Areas.Admin.Controllers
 		#region Fields
 
         private readonly IPluginFinder _pluginFinder;
-        private readonly IOfficialFeedManager _officialFeedManager;
         
         private readonly IWebHelper _webHelper;
         private readonly IPermissionService _permissionService;
@@ -46,7 +43,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         #region Ctor
 
         public PluginController(IPluginFinder pluginFinder,
-            IOfficialFeedManager officialFeedManager, 
+           
             IWebHelper webHelper,
             IPermissionService permissionService,  
             ISettingService settingService, 
@@ -56,8 +53,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             ICustomerService customerService)
         {
             this._pluginFinder = pluginFinder;
-            this._officialFeedManager = officialFeedManager;
-         
+             
             this._webHelper = webHelper;
             this._permissionService = permissionService;
         
@@ -122,13 +118,8 @@ namespace Nop.Web.Areas.Admin.Controllers
                 var pluginInstance = pluginDescriptor.Instance();
                 pluginModel.ConfigurationUrl = pluginInstance.GetConfigurationPageUrl();
                  
-                  if (pluginInstance is IExternalAuthenticationMethod)
-                {
-                    //external auth method
-                    pluginModel.CanChangeEnabled = true;
-                  
-                }
-                else if (pluginInstance is IWidgetPlugin)
+               
+                if (pluginInstance is IWidgetPlugin)
                 {
                     //Misc plugins
                     pluginModel.CanChangeEnabled = true;
@@ -139,29 +130,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             return pluginModel;
         }
 
-        protected static string GetCategoryBreadCrumbName(OfficialFeedCategory category,
-            IList<OfficialFeedCategory> allCategories)
-        {
-            if (category == null)
-                throw new ArgumentNullException(nameof(category));
-
-            var breadCrumb = new List<OfficialFeedCategory>();
-            while (category != null)
-            {
-                breadCrumb.Add(category);
-                category = allCategories.FirstOrDefault(x => x.Id == category.ParentCategoryId);
-            }
-            breadCrumb.Reverse();
-
-            var result = "";
-            for (int i = 0; i <= breadCrumb.Count - 1; i++)
-            {
-                result += breadCrumb[i].Name;
-                if (i != breadCrumb.Count - 1)
-                    result += " >> ";
-            }
-            return result;
-        }
+     
         #endregion
 
         #region Methods
@@ -348,14 +317,8 @@ namespace Nop.Web.Areas.Admin.Controllers
                 if (pluginDescriptor.Installed)
                 {
                     var pluginInstance = pluginDescriptor.Instance();
-                   
-                      if (pluginInstance is IExternalAuthenticationMethod)
-                    {
-                        //external auth method
-                        var eam = (IExternalAuthenticationMethod)pluginInstance;
-                         
-                    }
-                    else if (pluginInstance is IWidgetPlugin)
+                                       
+                    if (pluginInstance is IWidgetPlugin)
                     {
                         //Misc plugins
                         var widget = (IWidgetPlugin)pluginInstance;
@@ -390,67 +353,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             //If we got this far, something failed, redisplay form
             return View(model);
         }
-
-        //official feed
-        public virtual IActionResult OfficialFeed()
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManagePlugins))
-                return AccessDeniedView();
-
-            var model = new OfficialFeedListModel();
-            //versions
-            model.AvailableVersions.Add(new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
-            foreach (var version in _officialFeedManager.GetVersions())
-                model.AvailableVersions.Add(new SelectListItem{ Text = version.Name, Value = version.Id.ToString()});
-            //pre-select current version
-            //current version name and named on official site do not match. that's why we use "Contains"
-            var currentVersionItem = model.AvailableVersions.FirstOrDefault(x => x.Text.Contains(NopVersion.CurrentVersion));
-            if (currentVersionItem != null)
-            {
-                model.SearchVersionId = int.Parse(currentVersionItem.Value);
-                currentVersionItem.Selected = true;
-            }
-
-            //categories
-            var categories = _officialFeedManager.GetCategories();
-            model.AvailableCategories.Add(new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
-            foreach (var category in categories)
-                model.AvailableCategories.Add(new SelectListItem { Text = GetCategoryBreadCrumbName(category, categories), Value = category.Id.ToString() });
-            //prices
-            model.AvailablePrices.Add(new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
-            model.AvailablePrices.Add(new SelectListItem { Text = ("Admin.Configuration.Plugins.OfficialFeed.Price.Free"), Value = "10" });
-            model.AvailablePrices.Add(new SelectListItem { Text = ("Admin.Configuration.Plugins.OfficialFeed.Price.Commercial"), Value = "20" });
-            return View(model);
-        }
-
-        [HttpPost]
-        public virtual IActionResult OfficialFeedSelect(DataSourceRequest command, OfficialFeedListModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManagePlugins))
-                return AccessDeniedKendoGridJson();
-
-            var plugins = _officialFeedManager.GetAllPlugins(categoryId: model.SearchCategoryId,
-                versionId: model.SearchVersionId,
-                price : model.SearchPriceId,
-                searchTerm: model.SearchName,
-                pageIndex: command.Page - 1,
-                pageSize: command.PageSize);
-
-            var gridModel = new DataSourceResult();
-            gridModel.Data = plugins.Select(x => new OfficialFeedListModel.ItemOverview
-            {
-                Url = x.Url,
-                Name = x.Name,
-                CategoryName = x.Category,
-                SupportedVersions = x.SupportedVersions,
-                PictureUrl = x.PictureUrl,
-                Price = x.Price
-            });
-            gridModel.Total = plugins.TotalCount;
-
-            return Json(gridModel);
-        }
-
+         
         #endregion
     }
 }

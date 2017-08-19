@@ -27,14 +27,7 @@ namespace Nop.Web.Infrastructure.Cache
         IConsumer<EntityInserted<Product>>,
         IConsumer<EntityUpdated<Product>>,
         IConsumer<EntityDeleted<Product>>,      
-     
-        //Product attributes
-        IConsumer<EntityDeleted<ProductAttribute>>,
-        //Product attributes
-        IConsumer<EntityInserted<ProductAttributeMapping>>,
-        IConsumer<EntityDeleted<ProductAttributeMapping>>,
-        //Product attribute values
-        IConsumer<EntityUpdated<ProductAttributeValue>>,
+      
         
         //Picture
         IConsumer<EntityInserted<Picture>>,
@@ -780,30 +773,7 @@ namespace Nop.Web.Infrastructure.Cache
             _cacheManager.RemoveByPattern(PRODUCTS_RELATED_IDS_PATTERN_KEY);
             _cacheManager.RemoveByPattern(SITEMAP_PATTERN_KEY);
         }
-         
-
-        //Product attributes
-        public void HandleEvent(EntityDeleted<ProductAttribute> eventMessage)
-        {
-            _cacheManager.RemoveByPattern(PRODUCT_HAS_PRODUCT_ATTRIBUTES_PATTERN_KEY);
-        }
-        //Product attributes
-        public void HandleEvent(EntityInserted<ProductAttributeMapping> eventMessage)
-        {
-            _cacheManager.RemoveByPattern(string.Format(PRODUCT_HAS_PRODUCT_ATTRIBUTES_PATTERN_KEY_BY_ID, eventMessage.Entity.ProductId));
-        }
-        public void HandleEvent(EntityDeleted<ProductAttributeMapping> eventMessage)
-        {
-            _cacheManager.RemoveByPattern(string.Format(PRODUCT_HAS_PRODUCT_ATTRIBUTES_PATTERN_KEY_BY_ID, eventMessage.Entity.ProductId));
-        }
-        //Product attributes
-        public void HandleEvent(EntityUpdated<ProductAttributeValue> eventMessage)
-        {
-            _cacheManager.RemoveByPattern(PRODUCTATTRIBUTE_PICTURE_PATTERN_KEY);
-            _cacheManager.RemoveByPattern(PRODUCTATTRIBUTE_IMAGESQUARE_PICTURE_PATTERN_KEY);
-        }
-         
-
+          
         //Pictures
         public void HandleEvent(EntityInserted<Picture> eventMessage)
         {

@@ -58,12 +58,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         private readonly IStoreMappingService _storeMappingService; 
         
         private readonly IStaticCacheManager _cacheManager;
-        private readonly IDateTimeHelper _dateTimeHelper;
-       
-        private readonly IProductAttributeService _productAttributeService;
-  
-        private readonly IProductAttributeFormatter _productAttributeFormatter;
-        private readonly IProductAttributeParser _productAttributeParser;
+        private readonly IDateTimeHelper _dateTimeHelper; 
         private readonly IDownloadService _downloadService;
         private readonly ISettingService _settingService;
         
@@ -83,11 +78,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             IStoreService storeService, 
             IStoreMappingService storeMappingService, 
             IStaticCacheManager cacheManager,
-            IDateTimeHelper dateTimeHelper, 
-            IProductAttributeService productAttributeService,
-          
-            IProductAttributeFormatter productAttributeFormatter,
-            IProductAttributeParser productAttributeParser,
+            IDateTimeHelper dateTimeHelper,  
             IDownloadService downloadService,
             ISettingService settingService )
         {
@@ -105,12 +96,8 @@ namespace Nop.Web.Areas.Admin.Controllers
             this._storeMappingService = storeMappingService;
          
             this._cacheManager = cacheManager;
-            this._dateTimeHelper = dateTimeHelper;
-           
-            this._productAttributeService = productAttributeService;
+            this._dateTimeHelper = dateTimeHelper; 
           
-            this._productAttributeFormatter = productAttributeFormatter;
-            this._productAttributeParser = productAttributeParser;
             this._downloadService = downloadService;
             this._settingService = settingService;
         
@@ -291,49 +278,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 model.CreatedOn = _dateTimeHelper.ConvertToUserTime(product.CreatedOnUtc, DateTimeKind.Utc);
                 model.UpdatedOn = _dateTimeHelper.ConvertToUserTime(product.UpdatedOnUtc, DateTimeKind.Utc);
             }
-
-       
-            //little performance hack here
-            //there's no need to load attributes when creating a new product
-            //anyway they're not used (you need to save a product before you map them)
-            if (product != null)
-            {
-                //product attributes
-                foreach (var productAttribute in _productAttributeService.GetAllProductAttributes())
-                {
-                    model.AvailableProductAttributes.Add(new SelectListItem
-                    {
-                        Text = productAttribute.Name,
-                        Value = productAttribute.Id.ToString()
-                    });
-                }
-
-                //specification attributes
-                model.AddSpecificationAttributeModel.AvailableAttributes = _cacheManager
-                    .Get(ModelCacheEventConsumer.SPEC_ATTRIBUTES_MODEL_KEY, () =>
-                    {
-                        var availableSpecificationAttributes = new List<SelectListItem>();
-                     
-                        return availableSpecificationAttributes;
-                    });
-
-                //options of preselected specification attribute
-                if (model.AddSpecificationAttributeModel.AvailableAttributes.Any())
-                {
-                    var selectedAttributeId = int.Parse(model.AddSpecificationAttributeModel.AvailableAttributes.First().Value);
-                    
-                }
-                //default specs values
-                model.AddSpecificationAttributeModel.ShowOnProductPage = true;
-            }
-
-            //copy product
-            if (product != null)
-            {
-           
-            }
-
-          
+            
             //supported product types
             foreach (var productType in ProductType.SimpleProduct.ToSelectList(false).ToList())
             {
@@ -406,11 +351,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             model.AvailableCategories.Add(new SelectListItem { Text = "Admin.Common.All", Value = "0" });
             var categories = SelectListHelper.GetCategoryList(_categoryService, _cacheManager, true);
             foreach (var c in categories)
-                model.AvailableCategories.Add(c);
-
-            //manufacturers
-            model.AvailableManufacturers.Add(new SelectListItem { Text = "Admin.Common.All", Value = "0" });
-           
+                model.AvailableCategories.Add(c); 
 
             //stores
             model.AvailableStores.Add(new SelectListItem { Text = "Admin.Common.All", Value = "0" });
@@ -438,7 +379,6 @@ namespace Nop.Web.Areas.Admin.Controllers
         {
             if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
                 return AccessDeniedKendoGridJson();
-
          
 
             var categoryIds = new List<int> { model.SearchCategoryId };
@@ -487,28 +427,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             return Json(gridModel);
         }
 
-        [HttpPost, ActionName("List")]
-        [FormValueRequired("go-to-product-by-sku")]
-        public virtual IActionResult GoToSku(ProductListModel model)
-        {
-            string sku = model.GoDirectlyToSku;
-
-            //try to load a product entity
-            var product = _productService.GetProductBySku(sku);
-
-            //if not found, then try to load a product attribute combination
-            if (product == null)
-            {
-           
-            }
-
-            if (product != null)
-                return RedirectToAction("Edit", "Product", new { id = product.Id });
-
-            //not found
-            return List();
-        }
-
+     
         //create product
         public virtual IActionResult Create()
         {
@@ -811,9 +730,9 @@ namespace Nop.Web.Areas.Admin.Controllers
              
             var products = _productService.SearchProducts(
                 categoryIds: new List<int> { model.SearchCategoryId },
-                manufacturerId: model.SearchManufacturerId,
+                manufacturerId: 0,
                 storeId: model.SearchStoreId,
-                vendorId: model.SearchVendorId,
+                vendorId: 0,
                 productType: model.SearchProductTypeId > 0 ? (ProductType?)model.SearchProductTypeId : null,
                 keywords: model.SearchProductName,
                 pageIndex: command.Page - 1,
@@ -1066,608 +985,16 @@ namespace Nop.Web.Areas.Admin.Controllers
       
         #endregion
 
-         
- 
- 
-        #region Product attributes
-            
-        [HttpPost]
-        public virtual IActionResult ProductAttributeMappingInsert(ProductModel.ProductAttributeMappingModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
-
-            var product = _productService.GetProductById(model.ProductId);
-            if (product == null)
-                throw new ArgumentException("No product found with the specified id");
-
           
-            //ensure this attribute is not mapped yet
-            if (_productAttributeService.GetProductAttributeMappingsByProductId(product.Id).Any(x => x.ProductAttributeId == model.ProductAttributeId))
-            {
-                return Json(new DataSourceResult { Errors = ("Admin.Catalog.Products.ProductAttributes.Attributes.AlreadyExists") });
-            }
-
-            //insert mapping
-            var productAttributeMapping = new ProductAttributeMapping
-            {
-                ProductId = model.ProductId,
-                ProductAttributeId = model.ProductAttributeId,
-                TextPrompt = model.TextPrompt,
-                IsRequired = model.IsRequired,
-                AttributeControlTypeId = model.AttributeControlTypeId,
-                DisplayOrder = model.DisplayOrder
-            };
-            _productAttributeService.InsertProductAttributeMapping(productAttributeMapping);
-                   
-            return new NullJsonResult();
-        }
-
-        [HttpPost]
-        public virtual IActionResult ProductAttributeMappingUpdate(ProductModel.ProductAttributeMappingModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
-
-            var productAttributeMapping = _productAttributeService.GetProductAttributeMappingById(model.Id);
-            if (productAttributeMapping == null)
-                throw new ArgumentException("No product attribute mapping found with the specified id");
-
-            var product = _productService.GetProductById(productAttributeMapping.ProductId);
-            if (product == null)
-                throw new ArgumentException("No product found with the specified id");
-
-         
-            productAttributeMapping.ProductAttributeId = model.ProductAttributeId;
-            productAttributeMapping.TextPrompt = model.TextPrompt;
-            productAttributeMapping.IsRequired = model.IsRequired;
-            productAttributeMapping.AttributeControlTypeId = model.AttributeControlTypeId;
-            productAttributeMapping.DisplayOrder = model.DisplayOrder;
-            _productAttributeService.UpdateProductAttributeMapping(productAttributeMapping);
-
-            return new NullJsonResult();
-        }
-
-        [HttpPost]
-        public virtual IActionResult ProductAttributeMappingDelete(int id)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
-
-            var productAttributeMapping = _productAttributeService.GetProductAttributeMappingById(id);
-            if (productAttributeMapping == null)
-                throw new ArgumentException("No product attribute mapping found with the specified id");
-
-            var productId = productAttributeMapping.ProductId;
-            var product = _productService.GetProductById(productId);
-            if (product == null)
-                throw new ArgumentException("No product found with the specified id");
-            
-            _productAttributeService.DeleteProductAttributeMapping(productAttributeMapping);
-
-            return new NullJsonResult();
-        }
-
-        #endregion
-
-        #region Product attributes. Validation rules
-
-        public virtual IActionResult ProductAttributeValidationRulesPopup(int id)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
-
-            var productAttributeMapping = _productAttributeService.GetProductAttributeMappingById(id);
-            if (productAttributeMapping == null)
-                //No attribute value found with the specified id
-                return RedirectToAction("List", "Product");
-
-            var product = _productService.GetProductById(productAttributeMapping.ProductId);
-            if (product == null)
-                throw new ArgumentException("No product found with the specified id");
- 
-            var model = new ProductModel.ProductAttributeMappingModel
-            {
-                //prepare only used properties
-                Id = productAttributeMapping.Id,
-                ValidationRulesAllowed = productAttributeMapping.ValidationRulesAllowed(),
-                AttributeControlTypeId = productAttributeMapping.AttributeControlTypeId,
-                ValidationMinLength = productAttributeMapping.ValidationMinLength,
-                ValidationMaxLength = productAttributeMapping.ValidationMaxLength,
-                ValidationFileAllowedExtensions = productAttributeMapping.ValidationFileAllowedExtensions,
-                ValidationFileMaximumSize = productAttributeMapping.ValidationFileMaximumSize,
-                DefaultValue = productAttributeMapping.DefaultValue,
-            };
-            return View(model);
-        }
-
-        [HttpPost]
-        public virtual IActionResult ProductAttributeValidationRulesPopup(ProductModel.ProductAttributeMappingModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
-
-            var productAttributeMapping = _productAttributeService.GetProductAttributeMappingById(model.Id);
-            if (productAttributeMapping == null)
-                //No attribute value found with the specified id
-                return RedirectToAction("List", "Product");
-
-            var product = _productService.GetProductById(productAttributeMapping.ProductId);
-            if (product == null)
-                throw new ArgumentException("No product found with the specified id");
-
-           
-            if (ModelState.IsValid)
-            {
-                productAttributeMapping.ValidationMinLength = model.ValidationMinLength;
-                productAttributeMapping.ValidationMaxLength = model.ValidationMaxLength;
-                productAttributeMapping.ValidationFileAllowedExtensions = model.ValidationFileAllowedExtensions;
-                productAttributeMapping.ValidationFileMaximumSize = model.ValidationFileMaximumSize;
-                productAttributeMapping.DefaultValue = model.DefaultValue;
-                _productAttributeService.UpdateProductAttributeMapping(productAttributeMapping);
-
-                ViewBag.RefreshPage = true;
-                return View(model);
-            }
-
-            //If we got this far, something failed, redisplay form
-            model.ValidationRulesAllowed = productAttributeMapping.ValidationRulesAllowed();
-            model.AttributeControlTypeId = productAttributeMapping.AttributeControlTypeId;
-            return View(model);
-        }
-
-        #endregion
-         
 
         #region Product attribute values
-
-        //list
-        public virtual IActionResult EditAttributeValues(int productAttributeMappingId)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
-
-            var productAttributeMapping = _productAttributeService.GetProductAttributeMappingById(productAttributeMappingId);
-            if (productAttributeMapping == null)
-                throw new ArgumentException("No product attribute mapping found with the specified id");
-
-            var product = _productService.GetProductById(productAttributeMapping.ProductId);
-            if (product == null)
-                throw new ArgumentException("No product found with the specified id");
-
-         
-            var model = new ProductModel.ProductAttributeValueListModel
-            {
-                ProductName = product.Name,
-                ProductId = productAttributeMapping.ProductId,
-                ProductAttributeName = productAttributeMapping.ProductAttribute.Name,
-                ProductAttributeMappingId = productAttributeMapping.Id,
-            };
-
-            return View(model);
-        }
-
-        [HttpPost]
-        public virtual IActionResult ProductAttributeValueList(int productAttributeMappingId, DataSourceRequest command)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedKendoGridJson();
-
-            var productAttributeMapping = _productAttributeService.GetProductAttributeMappingById(productAttributeMappingId);
-            if (productAttributeMapping == null)
-                throw new ArgumentException("No product attribute mapping found with the specified id");
-
-            var product = _productService.GetProductById(productAttributeMapping.ProductId);
-            if (product == null)
-                throw new ArgumentException("No product found with the specified id");
-
-         
-            var values = _productAttributeService.GetProductAttributeValues(productAttributeMappingId);
-            var gridModel = new DataSourceResult
-            {
-                Data = values.Select(x =>
-                {
-                    Product associatedProduct = null;
-                    if (x.AttributeValueType == AttributeValueType.AssociatedToProduct)
-                    {
-                        associatedProduct = _productService.GetProductById(x.AssociatedProductId);
-                    }
-                    var pictureThumbnailUrl = _pictureService.GetPictureUrl(x.PictureId, 75, false);
-                    //little hack here. Grid is rendered wrong way with <img> without "src" attribute
-                    if (String.IsNullOrEmpty(pictureThumbnailUrl))
-                        pictureThumbnailUrl = _pictureService.GetPictureUrl(null, 1, true);
-                    return new ProductModel.ProductAttributeValueModel
-                    {
-                        Id = x.Id,
-                        ProductAttributeMappingId = x.ProductAttributeMappingId,
-                        AttributeValueTypeId = x.AttributeValueTypeId,
-                        AttributeValueTypeName = x.AttributeValueType.ToString(),
-                        AssociatedProductId = x.AssociatedProductId,
-                        AssociatedProductName = associatedProduct != null ? associatedProduct.Name : "",
-                        Name = x.ProductAttributeMapping.AttributeControlType != AttributeControlType.ColorSquares ? x.Name : string.Format("{0} - {1}", x.Name, x.ColorSquaresRgb),
-                        ColorSquaresRgb = x.ColorSquaresRgb,
-                        ImageSquaresPictureId = x.ImageSquaresPictureId,
-                        PriceAdjustment = x.PriceAdjustment,
-                        PriceAdjustmentStr = x.AttributeValueType == AttributeValueType.Simple ? x.PriceAdjustment.ToString("G29") : "",
-                        WeightAdjustment = x.WeightAdjustment,
-                        WeightAdjustmentStr = x.AttributeValueType == AttributeValueType.Simple ? x.WeightAdjustment.ToString("G29") : "",
-                        Cost = x.Cost,
-                        CustomerEntersQty = x.CustomerEntersQty,
-                        Quantity = x.Quantity,
-                        IsPreSelected = x.IsPreSelected,
-                        DisplayOrder = x.DisplayOrder,
-                        PictureId = x.PictureId,
-                        PictureThumbnailUrl = pictureThumbnailUrl
-                    };
-                }),
-                Total = values.Count()
-            };
-
-            return Json(gridModel);
-        }
-
-        //create
-        public virtual IActionResult ProductAttributeValueCreatePopup(int productAttributeMappingId)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
-
-            var productAttributeMapping = _productAttributeService.GetProductAttributeMappingById(productAttributeMappingId);
-            if (productAttributeMapping == null)
-                throw new ArgumentException("No product attribute mapping found with the specified id");
-
-            var product = _productService.GetProductById(productAttributeMapping.ProductId);
-            if (product == null)
-                throw new ArgumentException("No product found with the specified id");
-
-       
-            var model = new ProductModel.ProductAttributeValueModel();
-            model.ProductAttributeMappingId = productAttributeMappingId;
-
-            //color squares
-            model.DisplayColorSquaresRgb = productAttributeMapping.AttributeControlType == AttributeControlType.ColorSquares;
-            //image squares
-            model.DisplayImageSquaresPicture = productAttributeMapping.AttributeControlType == AttributeControlType.ImageSquares;
-
-            //default qantity for associated product
-            model.Quantity = 1;
-             
-            //pictures
-            model.ProductPictureModels = _productService.GetProductPicturesByProductId(product.Id)
-                .Select(x => new ProductModel.ProductPictureModel
-                {
-                    Id = x.Id,
-                    ProductId = x.ProductId,
-                    PictureId = x.PictureId,
-                    PictureUrl = _pictureService.GetPictureUrl(x.PictureId),
-                    DisplayOrder = x.DisplayOrder
-                })
-                .ToList();
-
-            return View(model);
-        }
-
-        [HttpPost]
-        public virtual IActionResult ProductAttributeValueCreatePopup(ProductModel.ProductAttributeValueModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
-
-            var productAttributeMapping = _productAttributeService.GetProductAttributeMappingById(model.ProductAttributeMappingId);
-            if (productAttributeMapping == null)
-                //No product attribute found with the specified id
-                return RedirectToAction("List", "Product");
-
-            var product = _productService.GetProductById(productAttributeMapping.ProductId);
-            if (product == null)
-                throw new ArgumentException("No product found with the specified id");
-
-            
-            if (productAttributeMapping.AttributeControlType == AttributeControlType.ColorSquares)
-            {
-                //ensure valid color is chosen/entered
-                if (String.IsNullOrEmpty(model.ColorSquaresRgb))
-                    ModelState.AddModelError("", "Color is required");
-                try
-                {
-                    //ensure color is valid (can be instanciated)
-                    System.Drawing.ColorTranslator.FromHtml(model.ColorSquaresRgb);
-                }
-                catch (Exception exc)
-                {
-                    ModelState.AddModelError("", exc.Message);
-                }
-            }
-
-            //ensure a picture is uploaded
-            if (productAttributeMapping.AttributeControlType == AttributeControlType.ImageSquares && model.ImageSquaresPictureId == 0)
-            {
-                ModelState.AddModelError("", "Image is required");
-            }
-
-            if (ModelState.IsValid)
-            {
-                var pav = new ProductAttributeValue
-                {
-                    ProductAttributeMappingId = model.ProductAttributeMappingId,
-                    AttributeValueTypeId = model.AttributeValueTypeId,
-                    AssociatedProductId = model.AssociatedProductId,
-                    Name = model.Name,
-                    ColorSquaresRgb = model.ColorSquaresRgb,
-                    ImageSquaresPictureId = model.ImageSquaresPictureId,
-                    PriceAdjustment = model.PriceAdjustment,
-                    WeightAdjustment = model.WeightAdjustment,
-                    Cost = model.Cost,
-                    CustomerEntersQty = model.CustomerEntersQty,
-                    Quantity = model.CustomerEntersQty ? 1 : model.Quantity,
-                    IsPreSelected = model.IsPreSelected,
-                    DisplayOrder = model.DisplayOrder,
-                    PictureId = model.PictureId,
-                };
-
-                _productAttributeService.InsertProductAttributeValue(pav);
-                
-                ViewBag.RefreshPage = true;
-                return View(model);
-            }
-
-            //If we got this far, something failed, redisplay form
-
-            //pictures
-            model.ProductPictureModels = _productService.GetProductPicturesByProductId(product.Id)
-                .Select(x => new ProductModel.ProductPictureModel
-                {
-                    Id = x.Id,
-                    ProductId = x.ProductId,
-                    PictureId = x.PictureId,
-                    PictureUrl = _pictureService.GetPictureUrl(x.PictureId),
-                    DisplayOrder = x.DisplayOrder
-                })
-                .ToList();
-
-            var associatedProduct = _productService.GetProductById(model.AssociatedProductId);
-            model.AssociatedProductName = associatedProduct != null ? associatedProduct.Name : "";
-
-            return View(model);
-        }
-
-        //edit
-        public virtual IActionResult ProductAttributeValueEditPopup(int id)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
-
-            var pav = _productAttributeService.GetProductAttributeValueById(id);
-            if (pav == null)
-                //No attribute value found with the specified id
-                return RedirectToAction("List", "Product");
-
-            var product = _productService.GetProductById(pav.ProductAttributeMapping.ProductId);
-            if (product == null)
-                throw new ArgumentException("No product found with the specified id");
-
-          
-            var associatedProduct = _productService.GetProductById(pav.AssociatedProductId);
-
-            var model = new ProductModel.ProductAttributeValueModel
-            {
-                ProductAttributeMappingId = pav.ProductAttributeMappingId,
-                AttributeValueTypeId = pav.AttributeValueTypeId,
-                AttributeValueTypeName = pav.AttributeValueType.ToString(),
-                AssociatedProductId = pav.AssociatedProductId,
-                AssociatedProductName = associatedProduct != null ? associatedProduct.Name : "",
-                Name = pav.Name,
-                ColorSquaresRgb = pav.ColorSquaresRgb,
-                DisplayColorSquaresRgb = pav.ProductAttributeMapping.AttributeControlType == AttributeControlType.ColorSquares,
-                ImageSquaresPictureId = pav.ImageSquaresPictureId,
-                DisplayImageSquaresPicture = pav.ProductAttributeMapping.AttributeControlType == AttributeControlType.ImageSquares,
-                PriceAdjustment = pav.PriceAdjustment,
-                WeightAdjustment = pav.WeightAdjustment,
-                Cost = pav.Cost,
-                CustomerEntersQty = pav.CustomerEntersQty,
-                Quantity = pav.Quantity,
-                IsPreSelected = pav.IsPreSelected,
-                DisplayOrder = pav.DisplayOrder,
-                PictureId = pav.PictureId
-            };
-         
-            //pictures
-            model.ProductPictureModels = _productService.GetProductPicturesByProductId(product.Id)
-                .Select(x => new ProductModel.ProductPictureModel
-                {
-                    Id = x.Id,
-                    ProductId = x.ProductId,
-                    PictureId = x.PictureId,
-                    PictureUrl = _pictureService.GetPictureUrl(x.PictureId),
-                    DisplayOrder = x.DisplayOrder
-                })
-                .ToList();
-
-            return View(model);
-        }
-
-        [HttpPost]
-        public virtual IActionResult ProductAttributeValueEditPopup(ProductModel.ProductAttributeValueModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
-
-            var pav = _productAttributeService.GetProductAttributeValueById(model.Id);
-            if (pav == null)
-                //No attribute value found with the specified id
-                return RedirectToAction("List", "Product");
-
-            var product = _productService.GetProductById(pav.ProductAttributeMapping.ProductId);
-            if (product == null)
-                throw new ArgumentException("No product found with the specified id");
- 
-            if (pav.ProductAttributeMapping.AttributeControlType == AttributeControlType.ColorSquares)
-            {
-                //ensure valid color is chosen/entered
-                if (String.IsNullOrEmpty(model.ColorSquaresRgb))
-                    ModelState.AddModelError("", "Color is required");
-                try
-                {
-                    //ensure color is valid (can be instanciated)
-                    System.Drawing.ColorTranslator.FromHtml(model.ColorSquaresRgb);
-                }
-                catch (Exception exc)
-                {
-                    ModelState.AddModelError("", exc.Message);
-                }
-            }
-
-            //ensure a picture is uploaded
-            if (pav.ProductAttributeMapping.AttributeControlType == AttributeControlType.ImageSquares && model.ImageSquaresPictureId == 0)
-            {
-                ModelState.AddModelError("", "Image is required");
-            }
-
-            if (ModelState.IsValid)
-            {
-                pav.AttributeValueTypeId = model.AttributeValueTypeId;
-                pav.AssociatedProductId = model.AssociatedProductId;
-                pav.Name = model.Name;
-                pav.ColorSquaresRgb = model.ColorSquaresRgb;
-                pav.ImageSquaresPictureId = model.ImageSquaresPictureId;
-                pav.PriceAdjustment = model.PriceAdjustment;
-                pav.WeightAdjustment = model.WeightAdjustment;
-                pav.Cost = model.Cost;
-                pav.CustomerEntersQty = model.CustomerEntersQty;
-                pav.Quantity = model.CustomerEntersQty ? 1 : model.Quantity;
-                pav.IsPreSelected = model.IsPreSelected;
-                pav.DisplayOrder = model.DisplayOrder;
-                pav.PictureId = model.PictureId;
-                _productAttributeService.UpdateProductAttributeValue(pav);
-                          
-                ViewBag.RefreshPage = true;
-                return View(model);
-            }
-
-            //If we got this far, something failed, redisplay form
-
-            //pictures
-            model.ProductPictureModels = _productService.GetProductPicturesByProductId(product.Id)
-                .Select(x => new ProductModel.ProductPictureModel
-                {
-                    Id = x.Id,
-                    ProductId = x.ProductId,
-                    PictureId = x.PictureId,
-                    PictureUrl = _pictureService.GetPictureUrl(x.PictureId),
-                    DisplayOrder = x.DisplayOrder
-                })
-                .ToList();
-
-            var associatedProduct = _productService.GetProductById(model.AssociatedProductId);
-            model.AssociatedProductName = associatedProduct != null ? associatedProduct.Name : "";
-
-            return View(model);
-        }
-
-        //delete
-        [HttpPost]
-        public virtual IActionResult ProductAttributeValueDelete(int id)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
-
-            var pav = _productAttributeService.GetProductAttributeValueById(id);
-            if (pav == null)
-                throw new ArgumentException("No product attribute value found with the specified id");
-
-            var product = _productService.GetProductById(pav.ProductAttributeMapping.ProductId);
-            if (product == null)
-                throw new ArgumentException("No product found with the specified id");
-
-        
-            _productAttributeService.DeleteProductAttributeValue(pav);
-
-            return new NullJsonResult();
-        }
-        
-        public virtual IActionResult AssociateProductToAttributeValuePopup()
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
-
-            var model = new ProductModel.ProductAttributeValueModel.AssociateProductToAttributeValueModel();
            
-            //categories
-            model.AvailableCategories.Add(new SelectListItem { Text =  ("Admin.Common.All"), Value = "0" });
-            var categories = SelectListHelper.GetCategoryList(_categoryService, _cacheManager, true);
-            foreach (var c in categories)
-                model.AvailableCategories.Add(c);
-                     
-            //stores
-            model.AvailableStores.Add(new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
-            foreach (var s in _storeService.GetAllStores())
-                model.AvailableStores.Add(new SelectListItem { Text = s.Name, Value = s.Id.ToString() });
-                     
-
-            //product types
-            model.AvailableProductTypes = ProductType.SimpleProduct.ToSelectList(false).ToList();
-            model.AvailableProductTypes.Insert(0, new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
-
-            return View(model);
-        }
-
-        [HttpPost]
-        public virtual IActionResult AssociateProductToAttributeValuePopupList(DataSourceRequest command,
-            ProductModel.ProductAttributeValueModel.AssociateProductToAttributeValueModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedKendoGridJson();
-                      
-            var products = _productService.SearchProducts(
-                categoryIds: new List<int> { model.SearchCategoryId },
-                manufacturerId: model.SearchManufacturerId,
-                storeId: model.SearchStoreId,
-                vendorId: model.SearchVendorId,
-                productType: model.SearchProductTypeId > 0 ? (ProductType?)model.SearchProductTypeId : null,
-                keywords: model.SearchProductName,
-                pageIndex: command.Page - 1,
-                pageSize: command.PageSize,
-                showHidden: true
-                );
-            var gridModel = new DataSourceResult();
-            gridModel.Data = products.Select(x => x.ToModel());
-            gridModel.Total = products.TotalCount;
-
-            return Json(gridModel);
-        }
-
-        [HttpPost]
-        [FormValueRequired("save")]
-        public virtual IActionResult AssociateProductToAttributeValuePopup(ProductModel.ProductAttributeValueModel.AssociateProductToAttributeValueModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
-
-            var associatedProduct = _productService.GetProductById(model.AssociatedToProductId);
-            if (associatedProduct == null)
-                return Content("Cannot load a product");
-            
-            ViewBag.RefreshPage = true;
-            ViewBag.productId = associatedProduct.Id;
-            ViewBag.productName = associatedProduct.Name;
-            return View(model);
-        }
-
         //action displaying notification (warning) to a store owner when associating some product
         public virtual IActionResult AssociatedProductGetWarnings(int productId)
         {
             var associatedProduct = _productService.GetProductById(productId);
             if (associatedProduct != null)
-            {
-                //attributes
-                if (associatedProduct.ProductAttributeMappings.Any())
-                {
-                    if (associatedProduct.ProductAttributeMappings.Any(attribute => attribute.IsRequired))
-                        return Json(new { Result = ("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.AssociatedProduct.HasRequiredAttributes") });
-
-                    return Json(new { Result = ("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.AssociatedProduct.HasAttributes") });
-                }
-                
+            { 
                 //gift card
                 if (associatedProduct.IsGiftCard)
                 {

@@ -47,10 +47,7 @@ namespace Nop.Services.Catalog
         private readonly IRepository<AclRecord> _aclRepository;
         private readonly IRepository<StoreMapping> _storeMappingRepository;
         private readonly IRepository<ProductPicture> _productPictureRepository;
-     
-        private readonly IProductAttributeService _productAttributeService;
-        private readonly IProductAttributeParser _productAttributeParser;
-       
+      
         private readonly IDataProvider _dataProvider;
         private readonly IDbContext _dbContext;
         private readonly ICacheManager _cacheManager;
@@ -101,10 +98,8 @@ namespace Nop.Services.Catalog
             IRepository<ProductPicture> productPictureRepository,
         
             IRepository<AclRecord> aclRepository,
-            IRepository<StoreMapping> storeMappingRepository,
-          
-            IProductAttributeService productAttributeService,
-            IProductAttributeParser productAttributeParser, 
+            IRepository<StoreMapping> storeMappingRepository, 
+       
             IDataProvider dataProvider, 
             IDbContext dbContext,
             IWorkContext workContext, 
@@ -119,8 +114,7 @@ namespace Nop.Services.Catalog
             this._productPictureRepository = productPictureRepository; 
             this._aclRepository = aclRepository;
             this._storeMappingRepository = storeMappingRepository;  
-            this._productAttributeService = productAttributeService;
-            this._productAttributeParser = productAttributeParser; 
+         
             this._dataProvider = dataProvider;
             this._dbContext = dbContext;
             this._workContext = workContext;
@@ -910,26 +904,7 @@ namespace Nop.Services.Catalog
                 #endregion
             }
         }
-
-        /// <summary>
-        /// Gets products by product attribute
-        /// </summary>
-        /// <param name="productAttributeId">Product attribute identifier</param>
-        /// <param name="pageIndex">Page index</param>
-        /// <param name="pageSize">Page size</param>
-        /// <returns>Products</returns>
-        public virtual IPagedList<Product> GetProductsByProductAtributeId(int productAttributeId,
-            int pageIndex = 0, int pageSize = int.MaxValue)
-        {
-            var query = _productRepository.Table;
-            query = query.Where(x => x.ProductAttributeMappings.Any(y => y.ProductAttributeId == productAttributeId));
-            query = query.Where(x => !x.Deleted);
-            query = query.OrderBy(x => x.Name);
-
-            var products = new PagedList<Product>(query, pageIndex, pageSize);
-            return products;
-        }
-
+         
         /// <summary>
         /// Gets associated products
         /// </summary>

@@ -6,8 +6,6 @@ using Nop.Web.Areas.Admin.Models.Cms;
 using Nop.Web.Areas.Admin.Models.Common;
 using Nop.Web.Areas.Admin.Models.Customers;
  
-using Nop.Web.Areas.Admin.Models.ExternalAuthentication;
- 
 using Nop.Web.Areas.Admin.Models.Logging;
  
  
@@ -23,7 +21,6 @@ using Nop.Core.Domain.Media;
 using Nop.Core.Domain.Stores; 
 using Nop.Core.Infrastructure.Mapper;
 using Nop.Core.Plugins;
-using Nop.Services.Authentication.External;
 using Nop.Services.Cms;
  
 using Nop.Web.Framework.Security.Captcha;
@@ -80,27 +77,7 @@ namespace Nop.Web.Areas.Admin.Extensions
         }
 
         #endregion
-
-        #region Product attributes
-
-        public static ProductAttributeModel ToModel(this ProductAttribute entity)
-        {
-            return entity.MapTo<ProductAttribute, ProductAttributeModel>();
-        }
-
-        public static ProductAttribute ToEntity(this ProductAttributeModel model)
-        {
-            return model.MapTo<ProductAttributeModel, ProductAttribute>();
-        }
-
-        public static ProductAttribute ToEntity(this ProductAttributeModel model, ProductAttribute destination)
-        {
-            return model.MapTo(destination);
-        }
-
-        #endregion
-
-       
+         
 
         #region Customer attributes
 
@@ -121,8 +98,7 @@ namespace Nop.Web.Areas.Admin.Extensions
         }
 
         #endregion
-         
-		 
+         		 
         #region Log
 
         public static LogModel ToModel(this Log entity)
@@ -151,16 +127,7 @@ namespace Nop.Web.Areas.Admin.Extensions
         }
 
         #endregion
-  
-        #region External authentication methods
-
-        public static AuthenticationMethodModel ToModel(this IExternalAuthenticationMethod entity)
-        {
-            return entity.MapTo<IExternalAuthenticationMethod, AuthenticationMethodModel>();
-        }
-
-        #endregion
-        
+               
         #region Widgets
 
         public static WidgetModel ToModel(this IWidgetPlugin entity)
@@ -168,9 +135,7 @@ namespace Nop.Web.Areas.Admin.Extensions
             return entity.MapTo<IWidgetPlugin, WidgetModel>();
         }
 
-        #endregion
-		 
-       
+        #endregion		      
 
         #region Customer roles
 
@@ -192,7 +157,6 @@ namespace Nop.Web.Areas.Admin.Extensions
 
         #endregion
 		 
-
         #region Settings
 
   

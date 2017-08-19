@@ -9,11 +9,8 @@ using Nop.Core.Domain;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
-
 using Nop.Core.Domain.Media;
-
 using Nop.Services.Authentication;
-using Nop.Services.Authentication.External;
 using Nop.Services.Common;
 using Nop.Services.Customers;
 using Nop.Services.Events;
@@ -45,8 +42,7 @@ namespace Nop.Web.Controllers
         private readonly ICustomerService _customerService; 
         private readonly IGenericAttributeService _genericAttributeService; 
         private readonly CustomerSettings _customerSettings; 
-        private readonly IPictureService _pictureService; 
-        private readonly IExternalAuthenticationService _externalAuthenticationService;
+        private readonly IPictureService _pictureService;      
         private readonly IWebHelper _webHelper;
         private readonly ICustomerActivityService _customerActivityService;
         private readonly ICustomerRegistrationService _customerRegistrationService;
@@ -71,8 +67,8 @@ namespace Nop.Web.Controllers
             ICustomerService customerService,           
             IGenericAttributeService genericAttributeService,       
             CustomerSettings customerSettings,           
-            IPictureService pictureService,          
-            IExternalAuthenticationService externalAuthenticationService,
+            IPictureService pictureService,         
+      
             IWebHelper webHelper,
             ICustomerActivityService customerActivityService,           
             IEventPublisher eventPublisher,
@@ -90,7 +86,7 @@ namespace Nop.Web.Controllers
             this._genericAttributeService = genericAttributeService;         
             this._customerSettings = customerSettings;        
             this._pictureService = pictureService;         
-            this._externalAuthenticationService = externalAuthenticationService;
+         
             this._webHelper = webHelper;
             this._customerActivityService = customerActivityService;        
             this._eventPublisher = eventPublisher;

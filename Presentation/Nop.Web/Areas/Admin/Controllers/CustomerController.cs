@@ -19,7 +19,6 @@ using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers; 
 using Nop.Services; 
-using Nop.Services.Authentication.External;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Customers;  
@@ -58,11 +57,8 @@ namespace Nop.Web.Areas.Admin.Controllers
         
         private readonly ICustomerActivityService _customerActivityService;
        
-        private readonly IProductAttributeFormatter _productAttributeFormatter;
         private readonly IPermissionService _permissionService;
         
-        private readonly IExternalAuthenticationService _externalAuthenticationService;
-       
         private readonly IStoreService _storeService;
         
         private readonly IStaticCacheManager _cacheManager;
@@ -79,12 +75,8 @@ namespace Nop.Web.Areas.Admin.Controllers
             IWorkContext workContext, 
             IStoreContext storeContext, 
             ICustomerActivityService customerActivityService,
-          ICustomerRegistrationService  customerRegistrationService,
-            IProductAttributeFormatter productAttributeFormatter,
-            IPermissionService permissionService, 
-             
-            IExternalAuthenticationService externalAuthenticationService,
-          
+          ICustomerRegistrationService  customerRegistrationService, 
+            IPermissionService permissionService,            
             IStoreService storeService, 
             IStaticCacheManager cacheManager)
         {
@@ -98,10 +90,8 @@ namespace Nop.Web.Areas.Admin.Controllers
             this._customerSettings = customerSettings; 
             this._workContext = workContext; 
             this._storeContext = storeContext; 
-            this._customerActivityService = customerActivityService; 
-            this._productAttributeFormatter = productAttributeFormatter;
-            this._permissionService = permissionService; 
-            this._externalAuthenticationService = externalAuthenticationService; 
+            this._customerActivityService = customerActivityService;  
+            this._permissionService = permissionService;         
             this._storeService = storeService; 
             this._cacheManager = cacheManager;
         }

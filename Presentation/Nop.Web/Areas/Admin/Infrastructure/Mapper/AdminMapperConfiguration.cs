@@ -2,11 +2,7 @@
 using Nop.Web.Areas.Admin.Models.Catalog;
 using Nop.Web.Areas.Admin.Models.Cms;
 using Nop.Web.Areas.Admin.Models.Common;
-using Nop.Web.Areas.Admin.Models.Customers;
- 
- 
-using Nop.Web.Areas.Admin.Models.ExternalAuthentication;
- 
+using Nop.Web.Areas.Admin.Models.Customers; 
 using Nop.Web.Areas.Admin.Models.Logging;
  using Nop.Web.Areas.Admin.Models.Plugins;
  
@@ -23,7 +19,7 @@ using Nop.Core.Domain.Stores;
  
 using Nop.Core.Infrastructure.Mapper;
 using Nop.Core.Plugins;
-using Nop.Services.Authentication.External;
+
 using Nop.Services.Cms; 
 using Nop.Services.Seo;
  
@@ -69,18 +65,12 @@ namespace Nop.Web.Areas.Admin.Infrastructure.Mapper
                 .ForMember(dest => dest.CreatedOn, mo => mo.Ignore())
                 .ForMember(dest => dest.UpdatedOn, mo => mo.Ignore())
                 .ForMember(dest => dest.ProductTags, mo => mo.Ignore())
-                .ForMember(dest => dest.PictureThumbnailUrl, mo => mo.Ignore())
-                .ForMember(dest => dest.AvailableVendors, mo => mo.Ignore())
+                .ForMember(dest => dest.PictureThumbnailUrl, mo => mo.Ignore())              
                 .ForMember(dest => dest.AvailableProductTemplates, mo => mo.Ignore())             
-                .ForMember(dest => dest.AvailableCategories, mo => mo.Ignore())
-                .ForMember(dest => dest.AvailableManufacturers, mo => mo.Ignore())
-                .ForMember(dest => dest.AvailableProductAttributes, mo => mo.Ignore())
+                .ForMember(dest => dest.AvailableCategories, mo => mo.Ignore())              
                 .ForMember(dest => dest.AddPictureModel, mo => mo.Ignore())
-                .ForMember(dest => dest.ProductPictureModels, mo => mo.Ignore())
-                .ForMember(dest => dest.AddSpecificationAttributeModel, mo => mo.Ignore())
-               
-                .ForMember(dest => dest.ProductWarehouseInventoryModels, mo => mo.Ignore())
-                .ForMember(dest => dest.IsLoggedInAsVendor, mo => mo.Ignore())
+                .ForMember(dest => dest.ProductPictureModels, mo => mo.Ignore())            
+              
                 .ForMember(dest => dest.SeName, mo => mo.MapFrom(src => src.GetSeName(0, true, false)))
                 .ForMember(dest => dest.AvailableCustomerRoles, mo => mo.Ignore())
                 .ForMember(dest => dest.SelectedCustomerRoleIds, mo => mo.Ignore())
@@ -90,18 +80,15 @@ namespace Nop.Web.Areas.Admin.Infrastructure.Mapper
                 .ForMember(dest => dest.PrimaryStoreCurrencyCode, mo => mo.Ignore())
                 .ForMember(dest => dest.BaseDimensionIn, mo => mo.Ignore())
                 .ForMember(dest => dest.BaseWeightIn, mo => mo.Ignore())
-                .ForMember(dest => dest.AvailableDiscounts, mo => mo.Ignore())
                 .ForMember(dest => dest.SelectedCategoryIds, mo => mo.Ignore())
-                .ForMember(dest => dest.SelectedManufacturerIds, mo => mo.Ignore())
-                .ForMember(dest => dest.SelectedDiscountIds, mo => mo.Ignore())
+                       
                 .ForMember(dest => dest.AvailableDeliveryDates, mo => mo.Ignore())
                 .ForMember(dest => dest.AvailableProductAvailabilityRanges, mo => mo.Ignore())
-                .ForMember(dest => dest.AvailableWarehouses, mo => mo.Ignore())
+               
                 .ForMember(dest => dest.AvailableBasepriceUnits, mo => mo.Ignore())
                 .ForMember(dest => dest.AvailableBasepriceBaseUnits, mo => mo.Ignore())
                 .ForMember(dest => dest.LastStockQuantity, mo => mo.Ignore())
-           
-                .ForMember(dest => dest.StockQuantityHistory, mo => mo.Ignore())
+            
                 .ForMember(dest => dest.CustomProperties, mo => mo.Ignore());
             CreateMap<ProductModel, Product>() 
                 .ForMember(dest => dest.CreatedOnUtc, mo => mo.Ignore())
@@ -119,9 +106,7 @@ namespace Nop.Web.Areas.Admin.Infrastructure.Mapper
                 .ForMember(dest => dest.HasDiscountsApplied, mo => mo.Ignore())
              
                 .ForMember(dest => dest.DownloadActivationType, mo => mo.Ignore())
-               
-                .ForMember(dest => dest.ProductAttributeMappings, mo => mo.Ignore())
-               
+                
                 .ForMember(dest => dest.SubjectToAcl, mo => mo.Ignore())
                 .ForMember(dest => dest.LimitedToStores, mo => mo.Ignore());
             //logs
@@ -143,16 +128,7 @@ namespace Nop.Web.Areas.Admin.Infrastructure.Mapper
                 .ForMember(dest => dest.CustomerEmail, mo => mo.MapFrom(src => src.Customer.Email))
                 .ForMember(dest => dest.CreatedOn, mo => mo.Ignore())
                 .ForMember(dest => dest.CustomProperties, mo => mo.Ignore());
-         
-         
-            //external authentication methods
-            CreateMap<IExternalAuthenticationMethod, AuthenticationMethodModel>()
-                .ForMember(dest => dest.FriendlyName, mo => mo.MapFrom(src => src.PluginDescriptor.FriendlyName))
-                .ForMember(dest => dest.SystemName, mo => mo.MapFrom(src => src.PluginDescriptor.SystemName))
-                .ForMember(dest => dest.DisplayOrder, mo => mo.MapFrom(src => src.PluginDescriptor.DisplayOrder))
-                .ForMember(dest => dest.IsActive, mo => mo.Ignore())
-                .ForMember(dest => dest.CustomProperties, mo => mo.Ignore())
-                .ForMember(dest => dest.ConfigurationUrl, mo => mo.Ignore());
+                            
             //widgets
             CreateMap<IWidgetPlugin, WidgetModel>()
                 .ForMember(dest => dest.FriendlyName, mo => mo.MapFrom(src => src.PluginDescriptor.FriendlyName))
@@ -183,14 +159,7 @@ namespace Nop.Web.Areas.Admin.Infrastructure.Mapper
                 .ForMember(dest => dest.CustomProperties, mo => mo.Ignore());
             CreateMap<CustomerRoleModel, CustomerRole>()
                 .ForMember(dest => dest.PermissionRecords, mo => mo.Ignore());
-
-            //product attributes
-            CreateMap<ProductAttribute, ProductAttributeModel>() 
-                .ForMember(dest => dest.CustomProperties, mo => mo.Ignore());
-            CreateMap<ProductAttributeModel, ProductAttribute>();
-            //specification attributes
-          
-           
+             
             //customer attributes
             CreateMap<CustomerAttribute, CustomerAttributeModel>()
                 .ForMember(dest => dest.AttributeControlTypeName, mo => mo.Ignore())

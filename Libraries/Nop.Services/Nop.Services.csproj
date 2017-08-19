@@ -14,6 +14,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Authentication\External\**" />
+    <EmbeddedResource Remove="Authentication\External\**" />
+    <None Remove="Authentication\External\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="ExportImport\ExportManager.cs" />
     <Compile Remove="ExportImport\IExportManager.cs" />
   </ItemGroup>

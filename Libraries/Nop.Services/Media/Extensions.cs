@@ -48,30 +48,15 @@ namespace Nop.Services.Media
         /// <param name="productAttributeParser">Product attribute service</param>
         /// <returns>Picture</returns>
         public static Picture GetProductPicture(this Product product, string attributesXml,
-            IPictureService pictureService,
-            IProductAttributeParser productAttributeParser)
+            IPictureService pictureService       )
         {
             if (product == null)
                 throw new ArgumentNullException(nameof(product));
             if (pictureService == null)
                 throw new ArgumentNullException(nameof(pictureService));
-            if (productAttributeParser == null)
-                throw new ArgumentNullException(nameof(productAttributeParser));
-
+          
             Picture picture = null;
-
-            //first, let's see whether we have some attribute values with custom pictures
-            var attributeValues = productAttributeParser.ParseProductAttributeValues(attributesXml);
-            foreach (var attributeValue in attributeValues)
-            {
-                var attributePicture = pictureService.GetPictureById(attributeValue.PictureId);
-                if (attributePicture != null)
-                {
-                    picture = attributePicture;
-                    break;
-                }
-            }
-
+             
             //now let's load the default product picture
             if (picture == null)
             {

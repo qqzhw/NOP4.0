@@ -18,15 +18,13 @@
                 <nop-tab-header-item asp-name="tab-info" asp-default="true">@T("Admin.Catalog.Products.Info")</nop-tab-header-item>
                 <nop-tab-header-item asp-name="tab-seo" class="advanced-setting">@T("Admin.Common.SEO")</nop-tab-header-item>
                 <nop-tab-header-item asp-name="tab-pictures">@T("Admin.Catalog.Products.Pictures")</nop-tab-header-item>
-                <nop-tab-header-item asp-name="tab-product-attributes" class="">@T("Admin.Catalog.Products.ProductAttributes")</nop-tab-header-item>
-                            
+                     
             </nop-tab-header>
             <nop-tab-content>
                 <nop-tab-content-item asp-name="tab-info" asp-default="true">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</nop-tab-content-item>
                 <nop-tab-content-item asp-name="tab-seo">@await Html.PartialAsync("_CreateOrUpdate.SEO", Model)</nop-tab-content-item>
                 <nop-tab-content-item asp-name="tab-pictures">@await Html.PartialAsync("_CreateOrUpdate.Pictures", Model)</nop-tab-content-item>
-                <nop-tab-content-item asp-name="tab-product-attributes">@await Html.PartialAsync("_CreateOrUpdate.ProductAttributes", Model)</nop-tab-content-item>
-                
+               
             </nop-tab-content>
         </nop-tabs>
     </div>
