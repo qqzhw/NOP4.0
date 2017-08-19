@@ -259,16 +259,16 @@ namespace Nop.Services.Seo
             }
 
             //gradual loading
-            string key = string.Format(URLRECORD_BY_SLUG_KEY, slug);
-            return _cacheManager.Get(key, () =>
-            {
-                var urlRecord = GetBySlug(slug);
-                if (urlRecord == null)
-                    return null;
+            //string key = string.Format(URLRECORD_BY_SLUG_KEY, slug);
+            //return _cacheManager.Get(key, () =>
+            //{
+            //    var urlRecord = GetBySlug(slug);
+            //    if (urlRecord == null)
+            //        return null;
 
-                var urlRecordForCaching = Map(urlRecord);
-                return urlRecordForCaching;
-            });
+            //    var urlRecordForCaching = Map(urlRecord);
+            //    return urlRecordForCaching;
+            //});
         }
 
         /// <summary>
