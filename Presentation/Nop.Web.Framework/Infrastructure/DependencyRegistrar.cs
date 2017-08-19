@@ -34,6 +34,7 @@ using Nop.Services.Tasks;
 using Nop.Web.Framework.Mvc.Routing;
 using Nop.Web.Framework.Themes;
 using Nop.Web.Framework.UI;
+using Nop.Services.Directory;
 
 namespace Nop.Web.Framework.Infrastructure
 {
@@ -83,7 +84,8 @@ namespace Nop.Web.Framework.Infrastructure
            
             //cache manager
             builder.RegisterType<PerRequestCacheManager>().As<ICacheManager>().InstancePerLifetimeScope();
-
+            
+            builder.RegisterType<MachineInfoService>().As<IMachineInfoService>().InstancePerLifetimeScope();
             //static cache manager
             if (config.RedisCachingEnabled)
             {

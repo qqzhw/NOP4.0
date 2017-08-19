@@ -3,6 +3,7 @@ using Nop.Web.Areas.Admin.Models.Home;
 using Nop.Core;
 using Nop.Core.Domain.Common;
 using Nop.Services.Configuration;
+using Nop.Services.Directory;
 
 namespace Nop.Web.Areas.Admin.Controllers
 {
@@ -13,7 +14,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         private readonly AdminAreaSettings _adminAreaSettings;
         private readonly ISettingService _settingService;
         private readonly IWorkContext _workContext;
-
+        private readonly IMachineInfoService _machineInfoService;
         #endregion
 
         #region Ctor
@@ -21,11 +22,12 @@ namespace Nop.Web.Areas.Admin.Controllers
         public HomeController(IStoreContext storeContext,
             AdminAreaSettings adminAreaSettings, 
             ISettingService settingService,
-            IWorkContext workContext)
+            IWorkContext workContext, IMachineInfoService  machineInfoService)
         {
             this._adminAreaSettings = adminAreaSettings;
             this._settingService = settingService;
             this._workContext = workContext;
+            _machineInfoService = machineInfoService;
         }
         
         #endregion
@@ -34,6 +36,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         public virtual IActionResult Index()
         {
+            _machineInfoService.GetCPUSerialNumber();
             var model = new DashboardModel(); 
             return View(model);
         }

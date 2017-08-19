@@ -55,8 +55,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Directory\" />
     <Folder Include="Messages\" />
+    <Folder Include="新文件夹\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Management" />
   </ItemGroup>
 
 </Project>
