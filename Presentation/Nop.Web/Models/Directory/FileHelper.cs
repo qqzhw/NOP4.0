@@ -24,14 +24,14 @@ namespace Nop.Web.Models.Directory
 			string numberSuffix = ")",
 			bool mustNumberFirstFile = false)
 		{
-			if (string.IsNullOrEmpty(originalFilePath)) throw new NullOrEmptyException(() => originalFilePath);
+			if (string.IsNullOrEmpty(originalFilePath)) throw new NullException(() => originalFilePath);
 
 			if (!mustNumberFirstFile && !File.Exists(originalFilePath))
 			{
 				return originalFilePath;
 			}
 
-			string folderPath = Path.GetDirectoryName(originalFilePath).TrimEnd(@"\"); // Remove slash from root (e.g. @"C:\")
+			string folderPath = Path.GetDirectoryName(originalFilePath).TrimEnd('\\'); // Remove slash from root (e.g. @"C:\")
 			string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(originalFilePath);
 			string fileExtension = Path.GetExtension(originalFilePath);
 			string separator = !string.IsNullOrEmpty(folderPath) ? "\\" : "";
@@ -95,9 +95,9 @@ namespace Nop.Web.Models.Directory
 			get
 			{
 				string value = Environment.CommandLine; // "C:\Folder\Program.exe" /C
-				value = value.TrimEndUntil(@""""); // "C:\Folder\Program.exe"
-				value = value.TrimEnd(@""""); // "C:\Folder\Program.exe
-				value = value.TrimStart(@""""); // C:\Folder\Program.exe
+				//value = value.TrimEndUntil(@""""); // "C:\Folder\Program.exe"
+				//value = value.TrimEnd(@""""); // "C:\Folder\Program.exe
+				//value = value.TrimStart(@""""); // C:\Folder\Program.exe
 				return Path.GetDirectoryName(value); // C:\Folder
 			}
 		}
@@ -109,8 +109,12 @@ namespace Nop.Web.Models.Directory
 		public static bool IsFolder(string path)
 		{
 			// ReSharper disable once ConvertIfStatementToReturnStatement
-			if (Directory.Exists(path)) return true;
-			return string.IsNullOrEmpty(Path.GetExtension(path));
+			if (System.IO.Directory.Exists(path))
+            {
+                return true;
+            }
+
+            return string.IsNullOrEmpty(Path.GetExtension(path));
 		}
 
 		/// <summary>
@@ -125,8 +129,8 @@ namespace Nop.Web.Models.Directory
 
 		public static void AssertFolderExists(string folderPath)
 		{
-			if (string.IsNullOrEmpty(folderPath)) throw new NullOrEmptyException(() => folderPath);
-			if (!Directory.Exists(folderPath)) throw new FolderDoesNotExistException(folderPath);
+			if (string.IsNullOrEmpty(folderPath)) throw new NullException(() => folderPath);
+			//if (!System.IO.Directory.Exists(folderPath)) throw new FolderDoesNotExistException(folderPath);
 		}
 
 		public static long GetFolderSize(string folderPath)
@@ -202,8 +206,8 @@ namespace Nop.Web.Models.Directory
 
 		public static void AssertFileExists(string filePath)
 		{
-			if (string.IsNullOrEmpty(filePath)) throw new NullOrEmptyException(() => filePath);
-			if (!File.Exists(filePath)) throw new FileDoesNotExistException(filePath);
+			if (string.IsNullOrEmpty(filePath)) throw new NullException(() => filePath);
+		//	if (!File.Exists(filePath)) throw new FileDoesNotExistException(filePath);
 		}
 
 		public static void HideFile(string filePath)
@@ -342,25 +346,25 @@ namespace Nop.Web.Models.Directory
 			return ToRelativePath(null, path);
 		}
 
-		public static string ToRelativePath(string basePath, string path)
-		{
-			if (string.IsNullOrEmpty(basePath))
-			{
-				basePath = Environment.CurrentDirectory;
-			}
+        public static string ToRelativePath(string basePath, string path)
+        {
+            if (string.IsNullOrEmpty(basePath))
+            {
+                basePath = Environment.CurrentDirectory;
+            }
 
-			path = path ?? "";
+            path = path ?? "";
 
-			string absoluteBasePath = Path.GetFullPath(basePath);
-			string absoluteBasePathToUpper = absoluteBasePath.ToUpper();
-			string absolutePathToUpper = path.ToUpper();
-			string relativePathUpperCase = absolutePathToUpper.TrimStart(absoluteBasePathToUpper);
-			relativePathUpperCase = relativePathUpperCase.TrimStart(@"\");
-			string relativePath = path.Right(relativePathUpperCase.Length);
-			return relativePath;
-		}
+            string absoluteBasePath = Path.GetFullPath(basePath);
+            string absoluteBasePathToUpper = absoluteBasePath.ToUpper();
+            string absolutePathToUpper = path.ToUpper();
+            string relativePathUpperCase = absolutePathToUpper.TrimStart(absoluteBasePathToUpper.ToCharArray());
+            relativePathUpperCase = relativePathUpperCase.TrimStart('\\');
+           // string relativePath = path.Right(relativePathUpperCase.Length);
+            return relativePathUpperCase;
+        }
 
-		public static bool PathsAreEqual(string path1, string path2)
+        public static bool PathsAreEqual(string path1, string path2)
 		{
 			path1 = path1 ?? "";
 			path1 = Path.GetFullPath(path1);
@@ -370,5 +374,5 @@ namespace Nop.Web.Models.Directory
 			return string.Equals(path1, path2, StringComparison.OrdinalIgnoreCase);
 		}
 	}
-}
+ 
 }

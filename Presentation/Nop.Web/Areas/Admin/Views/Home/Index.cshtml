@@ -14,7 +14,7 @@
 <nop-antiforgery-token />
 <div class="content-header">
     <h1>
-        @T("Admin.Dashboard")
+       本地预览
     </h1>
 </div>
 <div class="content">
@@ -67,3 +67,18 @@
         </div>
     </div>
 </div>
+@*<h4>Profile Completeness: <span id="completed">40%</span></h4>
+<div id="passStrength" style="width: 80%;"></div>
+<script type="text/javascript">
+    var passProgress;
+    $(document).ready(function () {
+        passProgress = $("#passStrength").kendoProgressBar({
+            type: "percent",
+            min:0,
+            max: 100,
+            animation: true,
+        }).data("kendoProgressBar");
+        passProgress.value(76.6);
+        passProgress.progressStatus.text("Empty");
+    });
+</script>*@

@@ -53,7 +53,7 @@ namespace Nop.Web.Models.Directory
 		//
 		// 返回结果:
 		//     驱动器上的可用空闲空间总量（以字节为单位）。 
-		public long AvailableFreeSpaceText { get; set; }
+		public string AvailableFreeSpaceText { get; set; }
 
 		public long TotalFreeSpace { get; set; }
 		public string TotalFreeSpaceText { get; set; }
@@ -80,6 +80,6 @@ namespace Nop.Web.Models.Directory
 		// 返回结果:
 		//     卷标。 
 		public string VolumeLabel { get; set; }
-		  
+		 public int Percent { get; set; }
 	}
 }

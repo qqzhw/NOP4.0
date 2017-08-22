@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Nop.Web.Framework.Mvc.Models;
+using Nop.Web.Models.Directory;
 
 namespace Nop.Web.Areas.Admin.Models.Home
 {
@@ -8,10 +9,10 @@ namespace Nop.Web.Areas.Admin.Models.Home
     {
         public NopCommerceNewsModel()
         {
-            Items = new List<NewsDetailsModel>();
+            Items = new List<DriveInfoModel>();
         }
 
-        public List<NewsDetailsModel> Items { get; set; }
+        public List<DriveInfoModel> Items { get; set; }
         public bool HasNewItems { get; set; }
         public bool HideAdvertisements { get; set; }
 

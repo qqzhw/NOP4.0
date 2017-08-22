@@ -408,21 +408,23 @@ namespace Nop.Web.Areas.Admin.Controllers
                 showHidden: true,
                 overridePublished: overridePublished
             );
-            var gridModel = new DataSourceResult();
-            gridModel.Data = products.Select(x =>
+            var gridModel = new DataSourceResult
             {
-                var productModel = x.ToModel();
+                Data = products.Select(x =>
+                {
+                    var productModel = x.ToModel();
                 //little performance optimization: ensure that "FullDescription" is not returned
                 productModel.FullDescription = "";
 
                 //picture
                 var defaultProductPicture = _pictureService.GetPicturesByProductId(x.Id, 1).FirstOrDefault();
-                productModel.PictureThumbnailUrl = _pictureService.GetPictureUrl(defaultProductPicture, 75, true);
-                  //friendly stock qantity
-               
+                    productModel.PictureThumbnailUrl = _pictureService.GetPictureUrl(defaultProductPicture, 75, true);
+                //friendly stock qantity
+
                 return productModel;
-            });
-            gridModel.Total = products.TotalCount;
+                }),
+                Total = products.TotalCount
+            };
 
             return Json(gridModel);
         }
@@ -739,9 +741,11 @@ namespace Nop.Web.Areas.Admin.Controllers
                 pageSize: command.PageSize,
                 showHidden: true
                 );
-            var gridModel = new DataSourceResult();
-            gridModel.Data = products.Select(x => x.ToModel());
-            gridModel.Total = products.TotalCount;
+            var gridModel = new DataSourceResult
+            {
+                Data = products.Select(x => x.ToModel()),
+                Total = products.TotalCount
+            };
 
             return Json(gridModel);
         }

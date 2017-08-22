@@ -10,6 +10,9 @@ using Nop.Services.Configuration;
 using Nop.Web.Areas.Admin.Infrastructure.Cache;
 using Nop.Web.Areas.Admin.Models.Home;
 using Nop.Web.Framework.Mvc.Rss;
+using System.IO;
+using Nop.Web.Models.Directory;
+using System.Collections.Generic;
 
 namespace Nop.Web.Areas.Admin.Components
 {
@@ -38,61 +41,35 @@ namespace Nop.Web.Areas.Admin.Components
         {
             try
             {
-                string feedUrl = string
-                    .Format(
-                        "http://www.nopCommerce.com/NewsRSS.aspx?Version={0}&Localhost={1}&HideAdvertisements={2}&StoreURL={3}",
-                        NopVersion.CurrentVersion,
-                        _webHelper.IsLocalRequest(Request),
-                        _adminAreaSettings.HideAdvertisementsOnAdminArea,
-                        _storeContext.CurrentStore.Url)
-                    .ToLowerInvariant();
-
-                var rssData = _cacheManager.Get(ModelCacheEventConsumer.OFFICIAL_NEWS_MODEL_KEY, () =>
+                var models = new List<DriveInfoModel>();
+                DriveInfo[] drives = DriveInfo.GetDrives();
+                foreach (var item in drives)
                 {
-                    //specify timeout (5 secs)
-                    var request = WebRequest.Create(feedUrl);
-                    request.Timeout = 5000;
-                    using (var response = request.GetResponse())
-                    using (var reader = XmlReader.Create(response.GetResponseStream()))
+                    var drive = new DriveInfoModel()
                     {
-                        return RssFeed.Load(reader);
-                    }
-                });
-
+                        AvailableFreeSpace = item.AvailableFreeSpace,
+                        AvailableFreeSpaceText = ByteFormatter.ToString(item.AvailableFreeSpace),
+                        DriveFormat = item.DriveFormat,
+                        DriveType = item.DriveType,
+                        IsReady = item.IsReady,
+                        Name = item.Name,
+                        RootDirectory = item.RootDirectory,
+                        TotalFreeSpace = item.TotalFreeSpace,
+                        TotalFreeSpaceText = ByteFormatter.ToString(item.TotalFreeSpace),
+                        TotalSize = item.TotalSize,
+                        TotalSizeText = ByteFormatter.ToString(item.TotalSize),
+                        VolumeLabel = item.VolumeLabel,
+                        Percent=(int)(item.AvailableFreeSpace*100.0/item.TotalSize)
+                    };
+                    models.Add(drive);
+                }
                 var model = new NopCommerceNewsModel
                 {
-                    HideAdvertisements = _adminAreaSettings.HideAdvertisementsOnAdminArea
+                    HideAdvertisements = _adminAreaSettings.HideAdvertisementsOnAdminArea,
+                    Items = models
+                    
                 };
-
-                for (int i = 0; i < rssData.Items.Count; i++)
-                {
-                    var item = rssData.Items.ElementAt(i);
-                    var newsItem = new NopCommerceNewsModel.NewsDetailsModel
-                    {
-                        Title = item.TitleText,
-                        Summary = item.ContentText,
-                        Url = item.Url.OriginalString,
-                        PublishDate = item.PublishDate
-                    };
-                    model.Items.Add(newsItem);
-
-                    //has new items?
-                    if (i == 0)
-                    {
-                        var firstRequest = String.IsNullOrEmpty(_adminAreaSettings.LastNewsTitleAdminArea);
-                        if (_adminAreaSettings.LastNewsTitleAdminArea != newsItem.Title)
-                        {
-                            _adminAreaSettings.LastNewsTitleAdminArea = newsItem.Title;
-                            _settingService.SaveSetting(_adminAreaSettings);
-
-                            if (!firstRequest)
-                            {
-                                //new item
-                                model.HasNewItems = true;
-                            }
-                        }
-                    }
-                }
+                 
                 return View(model);
             }
             catch

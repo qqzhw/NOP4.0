@@ -14,11 +14,8 @@
     <div class="box-header with-border clearfix">
         <div class="box-title">
             <i class="fa fa-newspaper-o"></i>
-            @T("Admin.NopCommerceNews")
-            @if (Model.HasNewItems)
-            {
-                <div class="new-item-notification"><span>+1</span></div>
-            }
+            本地硬盘信息
+            <div class="new-item-notification"><span>+5</span></div>
         </div>
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -40,18 +37,20 @@
                 <div class="col-md-4">
                     <div class="panel panel-info">
                         <div class="panel-heading clearfix">
-                            @if (!String.IsNullOrEmpty(item.Url))
-                            {
-                                <a class="pull-left" href='@(item.Url)'>@item.Title</a>
-                            }
-                            else
-                            {
-                                <div class="pull-left">@item.Title</div>
-                            }
-                            @*<div class="pull-right">@item.PublishDate.ToString("d")</div>*@
+                            <div class="pull-left">@item.Name</div>
                         </div>
                         <div class="panel-body">
-                            @Html.Raw(item.Summary)
+                            <div id="passStrength" style="width: 80%;" data-role="progressbar" class="k-widget k-progressbar k-progressbar-horizontal">
+                                <span class="k-progress-status-wrap">
+                                    <span class="k-progress-status">@item.Percent%</span>
+                                </span>
+                                <div class="k-state-selected" style="width: @item.Percent%;">
+                                    @*<span class="k-progress-status-wrap" style="width: 130.548%;">
+                                        <span class="k-progress-status">76%</span>
+                                    </span>*@
+                                </div>
+                            </div>
+                            <h4>Profile Completeness: <span id="completed">40%</span></h4>
                         </div>
                     </div>
                 </div>
