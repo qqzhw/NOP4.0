@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Web.Framework.Infrastructure.Extensions;
+using System.IO;
 
 namespace Nop.Web
 {
@@ -25,8 +26,13 @@ namespace Nop.Web
 
         public Startup(IHostingEnvironment environment)
         {
-            //create configuration
-            Configuration = new ConfigurationBuilder()
+			DriveInfo[] drives = DriveInfo.GetDrives();
+			foreach (var item in drives)
+			{
+
+			}
+			//create configuration
+			Configuration = new ConfigurationBuilder()
                 .SetBasePath(environment.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables()
