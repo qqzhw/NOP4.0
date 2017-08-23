@@ -1,4 +1,4 @@
-﻿@model CategoryListModel
+﻿@model DirectoryListModel
 
 @inject AdminAreaSettings adminAreaSettings
 @{
@@ -14,7 +14,7 @@
 <nop-antiforgery-token />
 <div class="content-header clearfix">
     <h1 class="pull-left">
-        @T("Admin.Catalog.Categories.Manage")
+      文件管理
     </h1>
     <div class="pull-right">
         <a asp-action="Create" class="btn bg-blue">
@@ -61,18 +61,18 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <div class="col-md-4">
-                                    <nop-label asp-for="SearchCategoryName" />
+                                    <nop-label asp-for="SearchDriverName" />
                                 </div>
                                 <div class="col-md-8">
-                                    <nop-editor asp-for="SearchCategoryName" />
+                                    <nop-editor asp-for="SearchDriverName" />
                                 </div>
                             </div>
-                            <div class="form-group" @(Model.AvailableStores.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
+                            <div class="form-group" @(Model.AvailableDrivers.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
                                 <div class="col-md-4">
-                                    <nop-label asp-for="SearchStoreId" />
+                                    <nop-label asp-for="SearchDriverId" />
                                 </div>
                                 <div class="col-md-8">
-                                    <nop-select asp-for="SearchStoreId" asp-items="Model.AvailableStores" />
+                                    <nop-select asp-for="SearchDriverId" asp-items="Model.AvailableDrivers" />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -96,7 +96,7 @@
                                     type: "json",
                                     transport: {
                                         read: {
-                                            url: "@Html.Raw(Url.Action("List", "Directorys"))",
+                                            url: "@Html.Raw(Url.Action("List", "Category"))",
                                             type: "POST",
                                             dataType: "json",
                                             data: additionalData
@@ -166,7 +166,7 @@
                                 return false;
                             });
 
-                            $("#@Html.IdFor(model => model.SearchCategoryName)").keydown(function(event) {
+                            $("#@Html.IdFor(model => model.SearchDriverName)").keydown(function(event) {
                                 if (event.keyCode == 13) {
                                     $("#search-categories").click();
                                     return false;
@@ -176,7 +176,7 @@
 
                         function additionalData() {
                             var data = {
-                                SearchCategoryName: $('#@Html.IdFor(model => model.SearchCategoryName)').val(),
+                                SearchCategoryName: $('#@Html.IdFor(model => model.SearchDriverName)').val(),
                                 SearchStoreId: $('#SearchStoreId').val()
                             };
                             addAntiForgeryToken(data);

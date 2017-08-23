@@ -1,0 +1,60 @@
+﻿@model DashboardModel
+@inject IPermissionService permissionService
+@using Nop.Services.Security
+@{
+    Html.AppendCssFileParts("~/lib/ionicons/css/ionicons-2.0.1.min.css");
+
+    //page title
+    ViewBag.Title = T("Admin.Dashboard").Text;
+
+    var canManageCustomers = permissionService.Authorize(StandardPermissionProvider.ManageCustomers);
+    var canManageProducts = permissionService.Authorize(StandardPermissionProvider.ManageProducts);
+    var canManageReturnRequests = permissionService.Authorize(StandardPermissionProvider.ManageReturnRequests);
+}
+<nop-antiforgery-token />
+<div class="content-header">
+    <h1>
+        文件管理
+    </h1>
+</div>
+<div class="content">
+    <div class="row">
+        <div class="col-md-12">
+           
+            <div class="row">
+                <div class="col-md-12">
+                   地方
+                </div>
+            </div>
+
+         
+
+            <div class="row">
+                <div class="col-md-12">
+
+                </div>
+            </div>
+             
+            <div class="row">
+
+                <div class="col-md-6">
+
+                </div>
+
+                <div class="col-md-6">
+
+                </div>
+
+            </div>
+ 
+            <div class="row">
+
+                <div class="col-md-4">
+
+                </div>
+            </div>
+
+       
+        </div>
+    </div>
+</div>

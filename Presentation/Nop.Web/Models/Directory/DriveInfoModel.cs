@@ -81,5 +81,7 @@ namespace Nop.Web.Models.Directory
 		//     卷标。 
 		public string VolumeLabel { get; set; }
 		 public int Percent { get; set; }
-	}
+        public string NameDesc { get; set; }
+
+    }
 }

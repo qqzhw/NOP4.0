@@ -11,9 +11,9 @@ namespace Nop.Web.Models.Directory
         private const long GB = MB * 1024;
 
         private const string BFormatPattern = "{0} b";
-        private const string KBFormatPattern = "{0:0} KB";
-        private const string MBFormatPattern = "{0:0.00} MB";
-        private const string GBFormatPattern = "{0:0.00} GB";
+        private const string KBFormatPattern = "{0} KB";
+        private const string MBFormatPattern = "{0} MB";
+        private const string GBFormatPattern = "{0:F1} GB";
 
         public static string ToString(long size)
         {
@@ -27,11 +27,11 @@ namespace Nop.Web.Models.Directory
             }
             else if (size >= MB && size < GB)
             {
-                return String.Format(MBFormatPattern, size / 1024.0f);
+                return String.Format(MBFormatPattern, size / MB);
             }
             else // size >= GB
             {
-                return String.Format(GBFormatPattern, size / 1024.0f);
+                return String.Format(GBFormatPattern, (double)size / GB);
             }
         }
     }

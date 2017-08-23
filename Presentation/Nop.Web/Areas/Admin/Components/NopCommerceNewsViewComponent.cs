@@ -48,18 +48,19 @@ namespace Nop.Web.Areas.Admin.Components
                     var drive = new DriveInfoModel()
                     {
                         AvailableFreeSpace = item.AvailableFreeSpace,
-                        AvailableFreeSpaceText = ByteFormatter.ToString(item.AvailableFreeSpace),
+                        AvailableFreeSpaceText = ByteFormatter.ToString(item.AvailableFreeSpace)+" 可用" ,
                         DriveFormat = item.DriveFormat,
                         DriveType = item.DriveType,
                         IsReady = item.IsReady,
                         Name = item.Name,
+                        NameDesc=string.Format("{0}:)",item.ToString().Replace(":","").Replace("\\","")),
                         RootDirectory = item.RootDirectory,
                         TotalFreeSpace = item.TotalFreeSpace,
                         TotalFreeSpaceText = ByteFormatter.ToString(item.TotalFreeSpace),
                         TotalSize = item.TotalSize,
-                        TotalSizeText = ByteFormatter.ToString(item.TotalSize),
-                        VolumeLabel = item.VolumeLabel,
-                        Percent=(int)(item.AvailableFreeSpace*100.0/item.TotalSize)
+                        TotalSizeText ="共"+ ByteFormatter.ToString(item.TotalSize),
+                        VolumeLabel = string.IsNullOrEmpty(item.VolumeLabel)?"本地磁盘 ": item.VolumeLabel,
+                        Percent=100-(int)(item.AvailableFreeSpace*100.0/item.TotalSize)
                     };
                     models.Add(drive);
                 }

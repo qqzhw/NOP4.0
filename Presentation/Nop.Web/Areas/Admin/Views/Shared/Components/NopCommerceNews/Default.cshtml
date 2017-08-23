@@ -15,7 +15,7 @@
         <div class="box-title">
             <i class="fa fa-newspaper-o"></i>
             本地硬盘信息
-            <div class="new-item-notification"><span>+5</span></div>
+            <div class="new-item-notification"><span>+@Model.Items.Count</span></div>
         </div>
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -37,10 +37,10 @@
                 <div class="col-md-4">
                     <div class="panel panel-info">
                         <div class="panel-heading clearfix">
-                            <div class="pull-left">@item.Name</div>
+                            <div class="pull-left">@item.VolumeLabel@item.NameDesc</div>
                         </div>
                         <div class="panel-body">
-                            <div id="passStrength" style="width: 80%;" data-role="progressbar" class="k-widget k-progressbar k-progressbar-horizontal">
+                            <div id="passStrength" style="width: 90%;" data-role="progressbar" class="k-widget k-progressbar k-progressbar-horizontal">
                                 <span class="k-progress-status-wrap">
                                     <span class="k-progress-status">@item.Percent%</span>
                                 </span>
@@ -50,7 +50,7 @@
                                     </span>*@
                                 </div>
                             </div>
-                            <h4>Profile Completeness: <span id="completed">40%</span></h4>
+                            <h5>@item.AvailableFreeSpaceText <span style="margin-left:10px;">@item.TotalSizeText</span></h5>
                         </div>
                     </div>
                 </div>
