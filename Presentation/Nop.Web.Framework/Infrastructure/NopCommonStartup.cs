@@ -118,10 +118,7 @@ namespace Nop.Web.Framework.Infrastructure
 
             //check whether requested page is keep alive page
             application.UseKeepAlive();
-
-            //check whether database is installed
-            application.UseInstallUrl();
-
+			 
             //use HTTP session
             application.UseSession();
 

@@ -14,7 +14,7 @@ namespace Nop.Web.Areas.Admin.Models.Catalog
             AvailableDrivers = new List<SelectListItem>();
         }
 
-        [NopResourceDisplayName("本地磁盘")]
+        [NopResourceDisplayName("文件路径")]
         public string SearchDriverName { get; set; }
 
         [NopResourceDisplayName("本地磁盘")]

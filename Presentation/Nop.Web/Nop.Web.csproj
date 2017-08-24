@@ -52,6 +52,7 @@
     <Folder Include="Areas\Admin\Models\Messages\" />
     <Folder Include="Areas\Admin\Validators\Common\" />
     <Folder Include="Areas\Admin\Validators\Messages\" />
+    <Folder Include="wwwroot\images\新文件夹\" />
   </ItemGroup>
     
   <!-- This target execute after "Build" target.

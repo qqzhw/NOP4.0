@@ -15,6 +15,7 @@ using Nop.Web.Areas.Admin.Models.Catalog;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Web.Framework.Kendoui;
 using System.IO;
+using Nop.Web.Models.Directory;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -87,21 +88,75 @@ namespace Nop.Web.Areas.Admin.Controllers
         {
             if (!_permissionService.Authorize(StandardPermissionProvider.ManageCategories))
                 return AccessDeniedKendoGridJson();
+			FileSystemInfo[] dirFileitems=null;
+			var list = new List<DirectoryInfoModel>();
+			if (string.IsNullOrEmpty(model.SearchDriverName))
+			{
+				DriveInfo[] drives = DriveInfo.GetDrives();  
+				DirectoryInfo dirInfo = new DirectoryInfo(model.SearchDriverId);//根目录
+				dirFileitems = dirInfo.GetFileSystemInfos();
+			}
+			else
+			{
+				DirectoryInfo dirInfo = new DirectoryInfo(model.SearchDriverName);//根目录
+				dirFileitems = dirInfo.GetFileSystemInfos();
+			}
+			foreach (var item in dirFileitems)
+			{
+				if (item is DirectoryInfo)
+				{
+					var directory = item as DirectoryInfo;
+					if ((directory.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden && (directory.Attributes & FileAttributes.System) != FileAttributes.System)
+					{
+						list.Add(new DirectoryInfoModel()
+						{
+							Root = directory.Root,
+							FullName = directory.FullName,
+							IsDir = true,
+							Name = directory.Name,
+							Parent = directory.Parent,
+							CreationTime = directory.CreationTime,
+							Exists = directory.Exists,
+							Extension = directory.Extension,
+							LastAccessTime = directory.LastAccessTime,
+							LastWriteTime = directory.LastWriteTime,
+						});
+					}
+				}
+				else if (item is FileInfo)
+				{
+					var file = item as FileInfo;
+					if ((file.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden && (file.Attributes & FileAttributes.System) != FileAttributes.System)
+					{
+						list.Add(new DirectoryInfoModel()
+						{
 
-            return null;
-            //var categories = new DirectoryListModel(); 
-            //var gridModel = new DataSourceResult
-            //{
-            //    Data = categories.Select(x =>
-            //    {
-            //        var categoryModel = x.ToModel();
-                 
-            //        return categoryModel; 
-            //    }),
-            //    Total = categories.TotalCount
-            //};
-            //return Json(gridModel);
-        }
+							FullName = file.FullName,
+							// FullPath=file.FullPath
+							IsDir = false,
+							Name = file.Name,
+							CreationTime = file.CreationTime,
+							Exists = file.Exists,
+							Extension = file.Extension,
+							LastAccessTime = file.LastAccessTime,
+							LastWriteTime = file.LastWriteTime,
+							IsReadOnly = file.IsReadOnly,
+							Directory = file.Directory,
+							DirectoryName = file.DirectoryName,
+							Length = file.Length,
+						});
+					}
+
+				}
+			} 
+			//var categories = new DirectoryListModel(); 
+			var gridModel = new DataSourceResult
+			{
+				Data = list.OrderByDescending(o=>o.IsDir),
+				Total = list.Count
+			};
+			return Json(gridModel);
+		}
 
     }
 }

@@ -58,26 +58,26 @@
             <div class="panel panel-default panel-search">
                 <div class="panel-body">
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <div class="col-md-4">
-                                    <nop-label asp-for="SearchDriverName" />
-                                </div>
-                                <div class="col-md-8">
-                                    <nop-editor asp-for="SearchDriverName" />
-                                </div>
-                            </div>
+                        <div class="col-md-6"> 
                             <div class="form-group" @(Model.AvailableDrivers.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
                                 <div class="col-md-4">
                                     <nop-label asp-for="SearchDriverId" />
                                 </div>
                                 <div class="col-md-8">
-                                    <nop-select asp-for="SearchDriverId" asp-items="Model.AvailableDrivers" />
+                                    <nop-select asp-for="SearchDriverId"  asp-items="Model.AvailableDrivers" />
                                 </div>
                             </div>
+							<div class="form-group">
+								<div class="col-md-4">
+									<nop-label asp-for="SearchDriverName" />
+								</div>
+								<div class="col-md-8">
+									<nop-editor asp-for="SearchDriverName" />
+								</div>
+							</div>
                             <div class="form-group">
                                 <div class="col-md-8 col-md-offset-4">
-                                    <button type="button" id="search-categories" class="btn btn-primary btn-search"><i class="fa fa-search"></i>@T("Admin.Common.Search")</button>
+                                    <button type="button" id="search-categories" class="btn btn-primary btn-search"><i class="fa fa-search"></i>搜索</button>
                                 </div>
                             </div>
                         </div>
@@ -96,7 +96,7 @@
                                     type: "json",
                                     transport: {
                                         read: {
-                                            url: "@Html.Raw(Url.Action("List", "Category"))",
+                                            url: "@Html.Raw(Url.Action("List", "Directorys"))",
                                             type: "POST",
                                             dataType: "json",
                                             data: additionalData
@@ -111,47 +111,60 @@
                                         display_kendoui_grid_error(e);
                                         // Cancel the changes
                                         this.cancelChanges();
-                                    },
-                                    pageSize: @(defaultGridPageSize),
-                                    serverPaging: true,
-                                    serverFiltering: true,
-                                    serverSorting: true
+                                    }
                                 },
-                                pageable: {
-                                    refresh: true,
-                                    pageSizes: [@(gridPageSizes)],
-                                    @await Html.PartialAsync("_GridPagerMessages")
-                                },
+                                pageable: false,
                                 editable: {
                                     confirmation: "@T("Admin.Common.DeleteConfirmation")",
-                                    mode: "inline"
-                                },
-                                scrollable: false,
-                                columns: [
+									mode: "popup"
+								},
+								selectable: true,
+                                scrollable: true,
+								columns: [
+									{
+										field: "IsDir",
+										title: "&nbsp;",
+										width: 60,
+										headerAttributes: { style: "text-align:center" },
+										attributes: { style: "text-align:center" },
+										template: '# if(IsDir) {# <img src="/images/folder.png" style="height:32px;"></i> #} else {#  #} #'
+									},
                                     {
-                                        field: "Breadcrumb",
-                                        title: "@T("Admin.Catalog.Categories.Fields.Name")"
-                                    }, {
-                                        field: "Published",
-                                        title: "@T("Admin.Catalog.Categories.Fields.Published")",
-                                        width: 100,
-                                        headerAttributes: { style: "text-align:center" },
-                                        attributes: { style: "text-align:center" },
-                                        template: '# if(Published) {# <i class="fa fa-check true-icon"></i> #} else {# <i class="fa fa-close false-icon"></i> #} #'
-                                    }, {
-                                        field: "DisplayOrder",
-                                        title: "@T("Admin.Catalog.Categories.Fields.DisplayOrder")",
+                                        field: "Name",
+                                        title: "名称"
+                                    },{
+                                        field: "FullName",
+                                        title: "路径",
                                         width: 150
-                                    }, {
-                                        field: "Id",
-                                        title: "@T("Admin.Common.Edit")",
-                                        width: 100,
-                                        headerAttributes: { style: "text-align:center" },
-                                        attributes: { style: "text-align:center" },
-                                        template: '<a class="btn btn-default" href="Edit/#=Id#"><i class="fa fa-pencil"></i>@T("Admin.Common.Edit")</a>'
-                                    }
+									},
+									{
+										field: "Length",
+										title: "大小",
+										width: 150
+									},
+									{
+										field: "LastWriteTime",
+                                        title: "修改日期",
+										width: 100, 
+										format: "{0:yyyy-MM-dd HH:mm:ss}",
+									},
+									{ command: ["edit", "destroy"], title: "&nbsp;", width: "250px" }
                                 ]
-                            });
+							});
+							$("#categories-grid").delegate("tbody>tr", "dblclick", function (ev,item) {
+								var grid = $("#categories-grid").data("kendoGrid");
+								var row = grid.select();
+								var data = grid.dataItem(row);
+								console.log(data);
+								if (data.IsDir) {
+									$('#@Html.IdFor(model => model.SearchDriverName)').val(data.FullName);
+									//var grid = $('#categories-grid').data('kendoGrid');
+									//grid.dataSource.page(1);
+									//grid.dataSource.read();
+									$("#search-categories").click();
+									return false;
+								}
+							});
                         });
                     </script>
 
@@ -162,11 +175,15 @@
                                 //search
                                 var grid = $('#categories-grid').data('kendoGrid');
                                 grid.dataSource.page(1); //new search. Set page size to 1
-                                //grid.dataSource.read(); we already loaded the grid above using "page" function
+                                grid.dataSource.read(); //we already loaded the grid above using "page" function
                                 return false;
                             });
 
-                            $("#@Html.IdFor(model => model.SearchDriverName)").keydown(function(event) {
+							$("#@Html.IdFor(model => model.SearchDriverId)").on("change", function (event) {
+								$('#@Html.IdFor(model => model.SearchDriverName)').val('');
+								$("#search-categories").click();
+							});
+							  $("#@Html.IdFor(model => model.SearchDriverName)").keydown(function(event) {
                                 if (event.keyCode == 13) {
                                     $("#search-categories").click();
                                     return false;
@@ -176,8 +193,8 @@
 
                         function additionalData() {
                             var data = {
-                                SearchCategoryName: $('#@Html.IdFor(model => model.SearchDriverName)').val(),
-                                SearchStoreId: $('#SearchStoreId').val()
+								SearchDriverName: $('#@Html.IdFor(model => model.SearchDriverName)').val(),
+								SearchDriverId: $('#SearchDriverId').val()
                             };
                             addAntiForgeryToken(data);
                             return data;

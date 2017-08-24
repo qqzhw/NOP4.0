@@ -108,16 +108,7 @@ namespace Nop.Web.Framework.Infrastructure.Extensions
         {
             application.UseMiddleware<KeepAliveMiddleware>();
         }
-
-        /// <summary>
-        /// Configure middleware checking whether database is installed
-        /// </summary>
-        /// <param name="application">Builder for configuring an application's request pipeline</param>
-        public static void UseInstallUrl(this IApplicationBuilder application)
-        {
-            application.UseMiddleware<InstallUrlMiddleware>();
-        }
-
+		 
         /// <summary>
         /// Set current culture info
         /// </summary>
