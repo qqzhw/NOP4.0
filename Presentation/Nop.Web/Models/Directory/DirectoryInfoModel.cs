@@ -22,7 +22,7 @@ namespace Nop.Web.Models.Directory
       //  public string OriginalPath { get; set; }
         public bool IsReadOnly { get; set; }
         public DateTime LastAccessTime { get; set; }
-        public DateTime LastWriteTime { get; set; }
+        public string LastWriteTime { get; set; }
         public long Length { get; set; } 
         public string LengthText { get; set; }
     }

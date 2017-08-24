@@ -115,11 +115,13 @@
                                 },
                                 pageable: false,
                                 editable: {
-                                    confirmation: "@T("Admin.Common.DeleteConfirmation")",
+                                    confirmation: "确认要删除当前选项吗？",
 									mode: "popup"
 								},
 								selectable: true,
-                                scrollable: true,
+								scrollable: true,
+								culture: "zh-CN",
+								toolbar: [{ name: "create", text: "新建文件夹" }],
 								columns: [
 									{
 										field: "IsDir",
@@ -134,21 +136,20 @@
                                         title: "名称"
                                     },{
                                         field: "FullName",
-                                        title: "路径",
-                                        width: 150
+                                        title: "路径", 
 									},
 									{
 										field: "Length",
 										title: "大小",
-										width: 150
+										width: 100
 									},
 									{
 										field: "LastWriteTime",
                                         title: "修改日期",
-										width: 100, 
-										format: "{0:yyyy-MM-dd HH:mm:ss}",
+										width: 150, 
+										format: "",
 									},
-									{ command: ["edit", "destroy"], title: "&nbsp;", width: "250px" }
+									{ command: [{ name: "edit", text: { edit: "编辑", update: "保存", cancel: "取消" } },{name: "destroy",text:"删除" }], title: "&nbsp;", width: "250px" }
                                 ]
 							});
 							$("#categories-grid").delegate("tbody>tr", "dblclick", function (ev,item) {

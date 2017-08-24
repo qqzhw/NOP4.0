@@ -119,7 +119,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 							Exists = directory.Exists,
 							Extension = directory.Extension,
 							LastAccessTime = directory.LastAccessTime,
-							LastWriteTime = directory.LastWriteTime,
+							LastWriteTime = directory.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss"),
 						});
 					}
 				}
@@ -139,7 +139,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 							Exists = file.Exists,
 							Extension = file.Extension,
 							LastAccessTime = file.LastAccessTime,
-							LastWriteTime = file.LastWriteTime,
+							LastWriteTime = file.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss"),
 							IsReadOnly = file.IsReadOnly,
 							Directory = file.Directory,
 							DirectoryName = file.DirectoryName,
