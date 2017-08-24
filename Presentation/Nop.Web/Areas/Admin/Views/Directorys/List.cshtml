@@ -100,12 +100,43 @@
                                             type: "POST",
                                             dataType: "json",
                                             data: additionalData
-                                        }
+                                        },
+                                            create: {
+                                        url: "@Html.Raw(Url.Action("DirOrFileAdd", "Directorys"))",
+                                        type: "POST",
+                                        dataType: "json",
+                                        data: addAntiForgeryToken
+                                    },
+                                         update: {
+                                        url: "@Html.Raw(Url.Action("DirOrFileUpdate", "Directorys"))",
+                                        type: "POST",
+                                        dataType: "json",
+                                        data: addAntiForgeryToken
+                                    },
+                                    destroy: {
+                                        url: "@Html.Raw(Url.Action("DirOrFileDelete", "Directorys"))",
+                                        type: "POST",
+                                        dataType: "json",
+                                        data: addAntiForgeryToken
+                                    }
                                     },
                                     schema: {
                                         data: "Data",
                                         total: "Total",
-                                        errors: "Errors"
+                                        errors: "Errors",
+                                        model:
+                                        {
+                                            id: "Id",
+                                            fields:
+                                            {
+                                                Id: { editable: false, nullable: true },
+                                                Icon: { editable: false },
+                                                Name: { type: "string", validation: { required: true } },
+                                                FullName: { type: "string" },
+                                                Length: { type: "number" },
+                                                LastWriteTime:{type:"string"}
+                                            }
+                                        }
                                     },
                                     error: function(e) {
                                         display_kendoui_grid_error(e);
@@ -116,28 +147,38 @@
                                 pageable: false,
                                 editable: {
                                     confirmation: "确认要删除当前选项吗？",
-									mode: "popup"
-								},
+                                    mode: "popup",
+                                    template: kendo.template($("#popup-editor").html())
+                                },
+                                edit: function (e) {
+                                    debugger;
+                                    e.container.data("kendoWindow").title("编辑名称");
+                                },
 								selectable: true,
 								scrollable: true,
 								culture: "zh-CN",
-								toolbar: [{ name: "create", text: "新建文件夹" }],
+                                toolbar: kendo.template($("#tooltemplate").html()),
 								columns: [
 									{
-										field: "IsDir",
+										field: "Icon",
 										title: "&nbsp;",
-										width: 60,
+                                        width: 48,
 										headerAttributes: { style: "text-align:center" },
 										attributes: { style: "text-align:center" },
-										template: '# if(IsDir) {# <img src="/images/folder.png" style="height:32px;"></i> #} else {#  #} #'
-									},
+                                        template: '# if(Icon) {# <img src="/images/#=Icon#" style="height:32px;"> #}#',
+									 },
                                     {
                                         field: "Name",
                                         title: "名称"
                                     },{
                                         field: "FullName",
-                                        title: "路径", 
-									},
+                                        title: "路径",
+                                    },
+                                     {
+                                        field: "Extension",
+                                        title: "类型",
+                                        width:60
+                                    },
 									{
 										field: "Length",
 										title: "大小",
@@ -146,10 +187,10 @@
 									{
 										field: "LastWriteTime",
                                         title: "修改日期",
-										width: 150, 
+										width: 150,
 										format: "",
 									},
-									{ command: [{ name: "edit", text: { edit: "编辑", update: "保存", cancel: "取消" } },{name: "destroy",text:"删除" }], title: "&nbsp;", width: "250px" }
+									{ command: [{ name: "edit", text: { edit: "编辑", update: "保存", cancel: "取消" } },{name: "destroy",text:"删除" }], title: "&nbsp;", width: "200px" }
                                 ]
 							});
 							$("#categories-grid").delegate("tbody>tr", "dblclick", function (ev,item) {
@@ -184,12 +225,21 @@
 								$('#@Html.IdFor(model => model.SearchDriverName)').val('');
 								$("#search-categories").click();
 							});
-							  $("#@Html.IdFor(model => model.SearchDriverName)").keydown(function(event) {
+						 $("#@Html.IdFor(model => model.SearchDriverName)").keydown(function(event) {
                                 if (event.keyCode == 13) {
                                     $("#search-categories").click();
                                     return false;
                                 }
                             });
+                         $("#btnrefresh").click(function () {
+                             var text = $('#@Html.IdFor(model => model.SearchDriverName)').val();
+                             var index = text.lastIndexOf("\\");
+                             var newValue = text.substring(0, index);
+                             $('#@Html.IdFor(model => model.SearchDriverName)').val(newValue);
+                             
+                             $("#search-categories").click();
+                             return false;
+                         });
                         });
 
                         function additionalData() {
@@ -249,3 +299,15 @@
         </div>
     </div>
 </div>
+<script id="popup-editor" type="text/x-kendo-template"> 
+    <p>
+        <label style="margin-left:15px;">名称:<input data-bind="value:Name" /> 
+        </label>
+    </p> 
+</script>
+<script type="text/x-kendo-template" id="tooltemplate">
+    <div style="display:inline-block;">
+        <a href="\\#" id="btnrefresh" class="k-pager-refresh k-link k-button" title="Refresh"><span class="k-icon k-i-reload"></span></a>
+        <a  class="k-button k-button-icontext k-grid-add" href="\\#"><span class="k-icon k-add"></span>新建文件夹</a>
+    </div> 
+</script>

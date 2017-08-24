@@ -10,6 +10,7 @@ namespace Nop.Web.Models.Directory
     {
         public string Name { get; set; }        
         public bool IsDir { get; set; }
+        public string Icon { get; set; }
         public DateTime CreationTime { get; set; }
         public DirectoryInfo Directory { get; set; }
         public DirectoryInfo Parent { get; set; }

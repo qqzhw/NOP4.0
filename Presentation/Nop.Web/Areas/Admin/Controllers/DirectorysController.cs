@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Web.Framework.Kendoui;
 using System.IO;
 using Nop.Web.Models.Directory;
+using Nop.Web.Framework.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -113,6 +114,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 							Root = directory.Root,
 							FullName = directory.FullName,
 							IsDir = true,
+                            Icon= "folder.png",
 							Name = directory.Name,
 							Parent = directory.Parent,
 							CreationTime = directory.CreationTime,
@@ -157,6 +159,28 @@ namespace Nop.Web.Areas.Admin.Controllers
 			};
 			return Json(gridModel);
 		}
+
+        public virtual IActionResult DirOrFileAdd(DirectoryInfoModel model)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCategories))
+                return AccessDeniedView(); 
+
+            return new NullJsonResult();
+        }
+        public virtual IActionResult DirOrFileUpdate(DirectoryInfoModel model)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCategories))
+                return AccessDeniedView(); 
+            return new NullJsonResult();
+        }
+
+        public virtual IActionResult DirOrFileDelete(int id)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCategories))
+                return AccessDeniedView();
+            
+            return new NullJsonResult();
+        }
 
     }
 }
