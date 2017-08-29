@@ -393,6 +393,7 @@ namespace Nop.Core
         /// </summary>
         internal static string BaseDirectory { get; set; }
         
+		public static string UploadFilePath { get; set; }
         #endregion
     }
 }

@@ -78,7 +78,8 @@ namespace Nop.Web.Areas.Admin.Controllers
             var model = new DirectoryListModel();
             //var models = new List<DriveInfoModel>();
             DriveInfo[] drives = DriveInfo.GetDrives();
-                                                                 // model.AvailableDrivers.Add(new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
+			CommonHelper.UploadFilePath = drives[0].Name;
+			// model.AvailableDrivers.Add(new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
             foreach (var item in drives)
                 model.AvailableDrivers.Add(new SelectListItem { Text = item.Name, Value = item.Name });
             return View(model);
@@ -95,11 +96,13 @@ namespace Nop.Web.Areas.Admin.Controllers
 			{
 				DriveInfo[] drives = DriveInfo.GetDrives();  
 				DirectoryInfo dirInfo = new DirectoryInfo(model.SearchDriverId);//根目录
+				CommonHelper.UploadFilePath = model.SearchDriverId;
 				dirFileitems = dirInfo.GetFileSystemInfos();
 			}
 			else
 			{
 				DirectoryInfo dirInfo = new DirectoryInfo(model.SearchDriverName);//根目录
+				CommonHelper.UploadFilePath = model.SearchDriverName;
 				dirFileitems = dirInfo.GetFileSystemInfos();
 			}
 			foreach (var item in dirFileitems)

@@ -19,12 +19,12 @@
     <div class="pull-right">
         <a asp-action="Create" class="btn bg-blue">
             <i class="fa fa-plus-square"></i>
-            @T("Admin.Common.AddNew")
+            添加
         </a>
         <div class="btn-group">
             <button type="button" class="btn btn-success">
                 <i class="fa fa-download"></i>
-                @T("Admin.Common.Export")
+              导出
             </button>
             <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                 <span class="caret"></span>
@@ -47,7 +47,7 @@
         </div>
         <button type="button" name="importexcel" class="btn bg-olive" data-toggle="modal" data-target="#importexcel-window">
             <i class="fa fa-upload"></i>
-            @T("Admin.Common.Import")
+            上传文件
         </button>
     </div>
 </div>
@@ -259,39 +259,46 @@
 
 @*import categories form*@
 <div id="importexcel-window" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="importexcel-window-title">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="margin-top:20%"  >
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="importexcel-window-title">@T("Admin.Common.ImportFromExcel")</h4>
+                <button type="button" id="uploadClose" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="importexcel-window-title">上传文件</h4>
             </div>
             <form asp-controller="Category" asp-action="ImportFromXlsx" method="post" enctype="multipart/form-data">
                 <div class="form-horizontal">
-                    <div class="modal-body">
-                        <ul class="common-list">
-                            <li>
-                                <em>@T("Admin.Catalog.Categories.List.ImportFromExcelTip")</em>
-                            </li>
-                            <li>
-                                <em>@T("Admin.Common.ImportFromExcel.ManyRecordsWarning")</em>
-                            </li>
-                        </ul>
-                        <div class="form-group">
-                            <div class="col-md-2">
-                                <div class="label-wrapper">
-                                    <label class="control-label">
-                                        @T("Admin.Common.ExcelFile")
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-md-10">
-                                <input type="file" id="importexcelfile" name="importexcelfile" class="form-control" />
-                            </div>
-                        </div>
+                    <div class="modal-body"> 
+						<div id="example">
+							<div>
+								<div class="demo-section k-content">
+									<input name="files" id="files" type="file" />
+								</div>
+							</div> 
+							<script>
+								$(document).ready(function () {
+									$("#files").kendoUpload({
+										localization: {
+											select: "选择文件",
+											cancel: "取消",
+											headerStatusUploading: "正在上传...",
+											statusFailed: "上传失败"
+										},
+										async: {
+											chunkSize: 11000,// bytes
+											saveUrl: "/admin/upload/chunkSave",
+											removeUrl: "/admin/upload/remove",
+											autoUpload: true
+										}
+									}); 
+								});
+							</script>
+						</div>
+
+                       
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">
-                            @T("Admin.Common.ImportFromExcel")
+                            上传
                         </button>
                     </div>
                 </div>
@@ -310,4 +317,12 @@
         <a href="\\#" id="btnrefresh" class="k-pager-refresh k-link k-button" title="Refresh"><span class="k-icon k-i-reload"></span></a>
         <a  class="k-button k-button-icontext k-grid-add" href="\\#"><span class="k-icon k-add"></span>新建文件夹</a>
     </div> 
+</script>
+<script type="text/javascript">
+								$(document).ready(function () { 
+									$("#uploadClose").on("click", function () {
+										window.location.reload();
+									 }); 
+						 	});
+								 
 </script>
