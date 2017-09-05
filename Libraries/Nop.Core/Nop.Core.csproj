@@ -35,4 +35,8 @@
     <PackageReference Include="StackExchange.Redis.StrongName" Version="1.2.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="System.Management" />
+  </ItemGroup>
+
 </Project>

@@ -8,7 +8,7 @@ namespace Nop.Web.Models.Directory
 {
     public class DriveInfoModel
     {
-
+        public virtual int Id { get; set; }
 		//
 		// 摘要:
 		//     获取驱动器的名称，如 C:\。
@@ -82,6 +82,6 @@ namespace Nop.Web.Models.Directory
 		public string VolumeLabel { get; set; }
 		 public int Percent { get; set; }
         public string NameDesc { get; set; }
-
+        public string DriveLetter { get; set; }
     }
 }

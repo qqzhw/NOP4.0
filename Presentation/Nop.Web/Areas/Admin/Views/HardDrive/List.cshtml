@@ -1,0 +1,212 @@
+﻿@model DriveInfoModel
+@using Nop.Web.Models.Directory
+@inject AdminAreaSettings adminAreaSettings
+@{
+    var defaultGridPageSize = adminAreaSettings.DefaultGridPageSize;
+    var gridPageSizes = adminAreaSettings.GridPageSizes;
+
+    //page title
+    ViewBag.Title ="磁盘管理";
+    //active menu item (system name)
+    Html.SetActiveMenuItemSystemName("Log");
+}
+
+
+<form asp-controller="Log" asp-action="List" method="post">
+    <div class="content-header clearfix">
+        <h1 class="pull-left">
+           磁盘管理
+        </h1>
+        <div class="pull-right">
+            <button type="button" id="delete-selected" class="btn bg-red">
+                <i class="fa fa-trash-o"></i>
+              格式化
+            </button> 
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="form-horizontal">
+            <div class="panel-group"> 
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="log-grid"></div>
+
+                        <script>
+                            $(document).ready(function () {
+                                $("#log-grid").kendoGrid({
+                                    dataSource: {
+                                        type: "json",
+                                        transport: {
+                                            read: {
+                                                url: "@Html.Raw(Url.Action("DriveList", "HardDrive"))",
+                                                type: "POST",
+                                                dataType: "json",
+                                                data: additionalData
+                                            },
+                                            destroy: {
+                                                url: "@Html.Raw(Url.Action("FormatDrive", "HardDrive"))",
+                                                type: "POST",
+                                                dataType: "json",
+                                                data: addAntiForgeryToken
+                                            }
+                                        },
+                                        parameterMap: function (data, operation) {
+                                            if (operation !== "read" && data.models) {
+                                                return { model: kendo.stringify(data.models) };
+                                            }
+                                            return { model: kendo.stringify(data) };
+                                        },
+                                        schema: {
+                                            data: "Data",
+                                            total: "Total",
+                                            errors: "Errors"
+                                        },
+                                        error: function(e) {
+                                            display_kendoui_grid_error(e);
+                                            // Cancel the changes
+                                            this.cancelChanges();
+                                        },
+                                        pageSize:20,
+                                        serverPaging: true,
+                                        serverFiltering: true,
+                                        serverSorting: true
+                                    },
+                                    pageable: false,
+                                    editable: {
+                                        confirmation: "你确认要格式化当前分区吗？",
+                                        mode: "popup",
+                                    },
+                                    scrollable: false,
+                                    dataBound: onDataBound,
+                                    columns: [
+                                    {
+                                        field: "Id",
+                                        headerTemplate: "<input id='mastercheckbox' type='checkbox'/>",
+                                        headerAttributes: { style: "text-align:center" },
+                                        attributes: { style: "text-align:center" },
+                                        template: "<input type='checkbox' value='#=Id#' class='checkboxGroups'/>",
+                                        width: 50
+                                    }, {
+                                        field: "Name",
+                                        title: "名称",
+                                        width: 200
+                                    }, {
+                                            field: "TotalSizeText",
+                                        title: "总共空间"
+                                    }, {
+                                        field: "AvailableFreeSpaceText",
+                                        title: "可用空间",
+                                        width: 200,
+
+                                    },
+                                    { command: [{ name: "destroy", text: "格式化", }], title: "&nbsp;", width: 60 }
+                                    ]
+                                });
+                            });
+                        </script>
+
+                        <script type="text/javascript">
+                            var selectedIds = [];
+
+                            $(document).ready(function() {
+                                //search button
+                                $('#search-log').click(function() {
+                                    //search
+                                    var grid = $('#log-grid').data('kendoGrid');
+                                    grid.dataSource.page(1); //new search. Set page size to 1
+                                    //grid.dataSource.read(); we already loaded the grid above using "page" function
+                                    //clear selected checkboxes
+                                    $('.checkboxGroups').attr('checked', false).change();
+                                    selectedIds = [];
+                                    return false;
+                                });
+                                 
+                                //"delete selected" button
+                                $('#delete-selected').click(function(e) {
+                                    e.preventDefault();
+
+                                    var postData = {
+                                        selectedIds: selectedIds
+                                    };
+                                    addAntiForgeryToken(postData);
+
+                                    $.ajax({
+                                        cache: false,
+                                        type: "POST",
+                                        url: "@(Url.Action("DeleteSelected", "Log"))",
+                                        data: postData,
+                                        complete: function(data) {
+                                            //reload grid
+                                            var grid = $('#log-grid').data('kendoGrid');
+                                            grid.dataSource.page(1); //new search. Set page size to 1
+                                            //grid.dataSource.read(); we already loaded the grid above using "page" function
+                                            //clear selected checkboxes
+                                            $('.checkboxGroups').attr('checked', false).change();
+                                            selectedIds = [];
+                                        },
+                                        error: function(xhr, ajaxOptions, thrownError) {
+                                            alert(thrownError);
+                                        },
+                                        traditional: true
+                                    });
+                                    return false;
+                                });
+
+                                $('#mastercheckbox').click(function() {
+                                    $('.checkboxGroups').attr('checked', $(this).is(':checked')).change();
+                                });
+
+                                //wire up checkboxes.
+                                $('#log-grid').on('change', 'input[type=checkbox][id!=mastercheckbox][class=checkboxGroups]', function(e) {
+                                    var $check = $(this);
+                                    if ($check.is(":checked") == true) {
+                                        var checked = jQuery.inArray($check.val(), selectedIds);
+                                        if (checked == -1) {
+                                            //add id to selectedIds.
+                                            selectedIds.push($check.val());
+                                        }
+                                    } else {
+                                        var checked = jQuery.inArray($check.val(), selectedIds);
+                                        if (checked > -1) {
+                                            //remove id from selectedIds.
+                                            selectedIds = $.grep(selectedIds, function(item, index) {
+                                                return item != $check.val();
+                                            });
+                                        }
+                                    }
+                                    updateMasterCheckbox();
+                                });
+                            });
+
+                            function additionalData() {
+                                var data = {
+                                
+                                };
+                                addAntiForgeryToken(data);
+                                return data;
+                            }
+
+                            function onDataBound(e) {
+                                $('#log-grid input[type=checkbox][id!=mastercheckbox][class=checkboxGroups]').each(function() {
+                                    var currentId = $(this).val();
+                                    var checked = jQuery.inArray(currentId, selectedIds);
+                                    //set checked based on if current checkbox's value is in selectedIds.
+                                    $(this).attr('checked', checked > -1);
+                                });
+
+                                updateMasterCheckbox();
+                            }
+
+                            function updateMasterCheckbox() {
+                                var numChkBoxes = $('#log-grid input[type=checkbox][id!=mastercheckbox][class=checkboxGroups]').length;
+                                var numChkBoxesChecked = $('#log-grid input[type=checkbox][id!=mastercheckbox][class=checkboxGroups]:checked').length;
+                                $('#mastercheckbox').attr('checked', numChkBoxes == numChkBoxesChecked && numChkBoxes > 0);
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

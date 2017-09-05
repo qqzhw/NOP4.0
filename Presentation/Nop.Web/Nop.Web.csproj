@@ -54,6 +54,10 @@
     <Folder Include="Areas\Admin\Validators\Messages\" />
     <Folder Include="wwwroot\images\新文件夹\" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="System.Management" />
+  </ItemGroup>
     
   <!-- This target execute after "Build" target.
   We use it to clean up folder with plugins from unnecessary and obsolete libraries. -->
