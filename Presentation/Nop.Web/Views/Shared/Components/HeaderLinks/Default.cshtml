@@ -5,16 +5,14 @@
         @await Component.InvokeAsync("Widget", new { widgetZone = "header_links_before" })
         @if (Model.IsAuthenticated)
         {
-            <li><a href="@Url.RouteUrl("CustomerInfo")" class="ico-account">@T("Account.MyAccount")@*@Model.CustomerName*@</a></li>
-            <li><a href="@Url.RouteUrl("Logout")" class="ico-logout">@T("Account.Logout")</a></li>
+            <li><a href="@Url.RouteUrl("CustomerInfo")" class="ico-account">@Model.CustomerName</a></li>
+            <li><a href="@Url.RouteUrl("Logout")" class="ico-logout">注销</a></li>
         }
         else
         {          
-            <li><a href="@Url.RouteUrl("Login")" class="ico-login">@T("Account.Login")</a></li>
+            <li><a href="@Url.RouteUrl("Login")" class="ico-login">登录</a></li>
         }
-       
         
-       
         @await Component.InvokeAsync("Widget", new { widgetZone = "header_links_after" })
     </ul>
     
