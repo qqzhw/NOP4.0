@@ -56,14 +56,8 @@ namespace Nop.Core.Domain.Seo
         /// A value indicating whether CSS file bundling and minification is enabled
         /// </summary>
         public bool EnableCssBundling { get; set; }
-        /// <summary>
-        /// A value indicating whether Twitter META tags should be generated
-        /// </summary>
-        public bool TwitterMetaTags { get; set; }
-        /// <summary>
-        /// A value indicating whether Open Graph META tags should be generated
-        /// </summary>
-        public bool OpenGraphMetaTags { get; set; }
+        
+     
         /// <summary>
         /// Slugs (sename) reserved for some other needs
         /// </summary>

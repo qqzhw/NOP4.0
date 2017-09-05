@@ -55,7 +55,7 @@
 
     //page title
     string adminPageTitle = !String.IsNullOrWhiteSpace(ViewBag.Title) ? ViewBag.Title + " / " : "";
-    adminPageTitle += T("Admin.PageTitle").Text;
+    adminPageTitle +="后台管理";
 
     //has "Manage Maintenance" permission?
     var canManageMaintenance = permissionService.Authorize(StandardPermissionProvider.ManageMaintenance);
@@ -132,14 +132,14 @@
                                         @currentCustomer.GetFullName()
                                     </li>
                                     <li>
-                                        <a asp-controller="Customer" asp-action="Logout" asp-area="">@T("Admin.Header.Logout")</a>
+                                        <a asp-controller="Customer" asp-action="Logout" asp-area="">注销</a>
                                     </li>
                                 }
                                 <li>
                                     @await Component.InvokeAsync("AdminWidget", new { widgetZone = "admin_header_middle" })
                                 </li>
                                 <li>
-                                    <a asp-controller="Home" asp-action="Index" asp-area="">@T("Admin.Header.PublicStore")</a>
+                                    <a asp-controller="Home" asp-action="Index" asp-area="">首页</a>
                                 </li>
                                 @if (canManageMaintenance)
                                 {
@@ -150,7 +150,7 @@
                                                 <form asp-controller="Common" asp-action="ClearCache" asp-area="Admin">
                                                     <input name="returnurl" type="hidden" value="@rawUrl">
                                                     <button type="submit" class="bg-light-blue">
-                                                        <span>@T("Admin.Header.ClearCache")</span>
+                                                        <span>清除缓存</span>
                                                     </button>
                                                 </form>
                                             </li>
@@ -158,7 +158,7 @@
                                                 <form asp-controller="Common" asp-action="RestartApplication" asp-area="Admin">
                                                     <input name="returnurl" type="hidden" value="@rawUrl">
                                                     <button id="restart-application" type="submit" class="bg-light-blue">
-                                                        <span>@T("Admin.Header.RestartApplication")</span>
+                                                        <span>重启应用</span>
                                                     </button>
                                                     <script type="text/javascript">
                                                         $(document).ready(function () {

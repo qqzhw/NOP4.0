@@ -102,22 +102,7 @@ namespace Nop.Web.Controllers
             return Redirect(returnUrl);
         }
 
-        [HttpPost]
-        //available even when a store is closed
-        [CheckAccessClosedStore(true)]
-        //available even when navigation is not allowed
-        [CheckAccessPublicStore(true)]
-        public virtual IActionResult EuCookieLawAccept()
-        {
-            if (!_storeInformationSettings.DisplayEuCookieLawWarning)
-                //disabled
-                return Json(new { stored = false });
-
-            //save setting
-            _genericAttributeService.SaveAttribute(_workContext.CurrentCustomer, SystemCustomerAttributeNames.EuCookieLawAccepted, true, _storeContext.CurrentStore.Id);
-            return Json(new { stored = true });
-        }
-
+       
         //robots.txt file
         //available even when a store is closed
         [CheckAccessClosedStore(true)]

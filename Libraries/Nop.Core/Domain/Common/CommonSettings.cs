@@ -39,14 +39,7 @@ namespace Nop.Core.Domain.Common
         /// Gets or sets a value indicating whether to include categories to sitemap
         /// </summary>
         public bool SitemapIncludeCategories { get; set; }
-        /// <summary>
-        /// Gets or sets a value indicating whether to include manufacturers to sitemap
-        /// </summary>
-        public bool SitemapIncludeManufacturers { get; set; }
-        /// <summary>
-        /// Gets or sets a value indicating whether to include products to sitemap
-        /// </summary>
-        public bool SitemapIncludeProducts { get; set; }
+    
         /// <summary>
         /// A list of custom URLs to be added to sitemap.xml (include page names only)
         /// </summary>

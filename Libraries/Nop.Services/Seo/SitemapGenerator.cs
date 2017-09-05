@@ -135,10 +135,7 @@ namespace Nop.Services.Seo
                 sitemapUrls.AddRange(GetCategoryUrls(urlHelper, 0));
 
         
-            //products
-            if (_commonSettings.SitemapIncludeProducts)
-                sitemapUrls.AddRange(GetProductUrls(urlHelper));
-
+            
             //custom URLs
             sitemapUrls.AddRange(GetCustomUrls());
 

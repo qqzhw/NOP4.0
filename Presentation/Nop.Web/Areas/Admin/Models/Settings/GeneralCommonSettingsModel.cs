@@ -14,22 +14,20 @@ namespace Nop.Web.Areas.Admin.Models.Settings
             StoreInformationSettings = new StoreInformationSettingsModel();
             SeoSettings = new SeoSettingsModel();
             SecuritySettings = new SecuritySettingsModel();
-            CaptchaSettings = new CaptchaSettingsModel();
-            PdfSettings = new PdfSettingsModel();
+            CaptchaSettings = new CaptchaSettingsModel(); 
             LocalizationSettings = new LocalizationSettingsModel();
             FullTextSettings = new FullTextSettingsModel();
-            DisplayDefaultMenuItemSettings = new DisplayDefaultMenuItemSettingsModel();
+            
         }
 
         public StoreInformationSettingsModel StoreInformationSettings { get; set; }
         public SeoSettingsModel SeoSettings { get; set; }
         public SecuritySettingsModel SecuritySettings { get; set; }
         public CaptchaSettingsModel CaptchaSettings { get; set; }
-        public PdfSettingsModel PdfSettings { get; set; }
+      
         public LocalizationSettingsModel LocalizationSettings { get; set; }
         public FullTextSettingsModel FullTextSettings { get; set; }
-        public DisplayDefaultMenuItemSettingsModel DisplayDefaultMenuItemSettings { get; set; }
-
+         
         public int ActiveStoreScopeConfiguration { get; set; }
 
 
@@ -59,36 +57,7 @@ namespace Nop.Web.Areas.Admin.Models.Settings
             [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.Logo")]
             public int LogoPictureId { get; set; }
             public bool LogoPictureId_OverrideForStore { get; set; }
-            
-
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayEuCookieLawWarning")]
-            public bool DisplayEuCookieLawWarning { get; set; }
-            public bool DisplayEuCookieLawWarning_OverrideForStore { get; set; }
-            
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.FacebookLink")]
-            public string FacebookLink { get; set; }
-            public bool FacebookLink_OverrideForStore { get; set; }
-
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.TwitterLink")]
-            public string TwitterLink { get; set; }
-            public bool TwitterLink_OverrideForStore { get; set; }
-
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.YoutubeLink")]
-            public string YoutubeLink { get; set; }
-            public bool YoutubeLink_OverrideForStore { get; set; }
-
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.GooglePlusLink")]
-            public string GooglePlusLink { get; set; }
-            public bool GooglePlusLink_OverrideForStore { get; set; }
-
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.SubjectFieldOnContactUsForm")]
-            public bool SubjectFieldOnContactUsForm { get; set; }
-            public bool SubjectFieldOnContactUsForm_OverrideForStore { get; set; }
-
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.UseSystemEmailForContactUsForm")]
-            public bool UseSystemEmailForContactUsForm { get; set; }
-            public bool UseSystemEmailForContactUsForm_OverrideForStore { get; set; }
-
+              
             [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.SitemapEnabled")]
             public bool SitemapEnabled { get; set; }
             public bool SitemapEnabled_OverrideForStore { get; set; }
@@ -97,14 +66,7 @@ namespace Nop.Web.Areas.Admin.Models.Settings
             public bool SitemapIncludeCategories { get; set; }
             public bool SitemapIncludeCategories_OverrideForStore { get; set; }
 
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.SitemapIncludeManufacturers")]
-            public bool SitemapIncludeManufacturers { get; set; }
-            public bool SitemapIncludeManufacturers_OverrideForStore { get; set; }
-
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.SitemapIncludeProducts")]
-            public bool SitemapIncludeProducts { get; set; }
-            public bool SitemapIncludeProducts_OverrideForStore { get; set; }
-
+           
             #region Nested classes
 
             public partial class ThemeConfigurationModel
@@ -168,15 +130,7 @@ namespace Nop.Web.Areas.Admin.Models.Settings
             [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.EnableCssBundling")]
             public bool EnableCssBundling { get; set; }
             public bool EnableCssBundling_OverrideForStore { get; set; }
-
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.TwitterMetaTags")]
-            public bool TwitterMetaTags { get; set; }
-            public bool TwitterMetaTags_OverrideForStore { get; set; }
-
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.OpenGraphMetaTags")]
-            public bool OpenGraphMetaTags { get; set; }
-            public bool OpenGraphMetaTags_OverrideForStore { get; set; }
-
+			 
             [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.CustomHeadTags")]
             public string CustomHeadTags { get; set; }
             public bool CustomHeadTags_OverrideForStore { get; set; }
@@ -250,32 +204,7 @@ namespace Nop.Web.Areas.Admin.Models.Settings
 
             public IList<SelectListItem> AvailableReCaptchaVersions { get; set; }
         }
-
-        public partial class PdfSettingsModel : BaseNopModel
-        {
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.PdfLetterPageSizeEnabled")]
-            public bool LetterPageSizeEnabled { get; set; }
-            public bool LetterPageSizeEnabled_OverrideForStore { get; set; }
-
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.PdfLogo")]
-            [UIHint("Picture")]
-            public int LogoPictureId { get; set; }
-            public bool LogoPictureId_OverrideForStore { get; set; }
-
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisablePdfInvoicesForPendingOrders")]
-            public bool DisablePdfInvoicesForPendingOrders { get; set; }
-            public bool DisablePdfInvoicesForPendingOrders_OverrideForStore { get; set; }
-
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.InvoiceFooterTextColumn1")]
-            public string InvoiceFooterTextColumn1 { get; set; }
-            public bool InvoiceFooterTextColumn1_OverrideForStore { get; set; }
-
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.InvoiceFooterTextColumn2")]
-            public string InvoiceFooterTextColumn2 { get; set; }
-            public bool InvoiceFooterTextColumn2_OverrideForStore { get; set; }
-
-        }
-
+ 
         public partial class LocalizationSettingsModel : BaseNopModel
         {
             [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.UseImagesForLanguageSelection")]
@@ -308,31 +237,7 @@ namespace Nop.Web.Areas.Admin.Models.Settings
             public SelectList SearchModeValues { get; set; }
         }
         
-        public partial class DisplayDefaultMenuItemSettingsModel: BaseNopModel
-        {
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultMenuItemSettings.DisplayHomePageMenuItem")]
-            public bool DisplayHomePageMenuItem { get; set; }
-            public bool DisplayHomePageMenuItem_OverrideForStore { get; set; }
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultMenuItemSettings.DisplayNewProductsMenuItem")]
-            public bool DisplayNewProductsMenuItem { get; set; }
-            public bool DisplayNewProductsMenuItem_OverrideForStore { get; set; }
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultMenuItemSettings.DisplayProductSearchMenuItem")]
-            public bool DisplayProductSearchMenuItem { get; set; }
-            public bool DisplayProductSearchMenuItem_OverrideForStore { get; set; }
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultMenuItemSettings.DisplayCustomerInfoMenuItem")]
-            public bool DisplayCustomerInfoMenuItem { get; set; }
-            public bool DisplayCustomerInfoMenuItem_OverrideForStore { get; set; }
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultMenuItemSettings.DisplayBlogMenuItem")]
-            public bool DisplayBlogMenuItem { get; set; }
-            public bool DisplayBlogMenuItem_OverrideForStore { get; set; }
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultMenuItemSettings.DisplayForumsMenuItem")]
-            public bool DisplayForumsMenuItem { get; set; }
-            public bool DisplayForumsMenuItem_OverrideForStore { get; set; }
-            [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultMenuItemSettings.DisplayContactUsMenuItem")]
-            public bool DisplayContactUsMenuItem { get; set; }
-            public bool DisplayContactUsMenuItem_OverrideForStore { get; set; }
-        }
-        
+      
         #endregion
     }
 }

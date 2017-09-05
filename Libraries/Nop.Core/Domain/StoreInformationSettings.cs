@@ -4,10 +4,7 @@ namespace Nop.Core.Domain
 {
     public class StoreInformationSettings : ISettings
     {
-        /// <summary>
-        /// Gets or sets a value indicating whether "powered by nopCommerce" text should be displayed.
-        /// Please find more info at https://www.nopcommerce.com/copyrightremoval.aspx
-        /// </summary>
+        
         public bool HidePoweredByNopCommerce { get; set; }
 
         /// <summary>
@@ -39,30 +36,6 @@ namespace Nop.Core.Domain
         /// Gets or sets a value indicating whether mini profiler should be displayed only for users with access to the admin area
         /// </summary>
         public bool DisplayMiniProfilerForAdminOnly { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether we should display warnings about the new EU cookie law
-        /// </summary>
-        public bool DisplayEuCookieLawWarning { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value of Facebook page URL of the site
-        /// </summary>
-        public string FacebookLink { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value of Twitter page URL of the site
-        /// </summary>
-        public string TwitterLink { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value of YouTube channel URL of the site
-        /// </summary>
-        public string YoutubeLink { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value of Google+ page URL of the site
-        /// </summary>
-        public string GooglePlusLink { get; set; }
+		 
     }
 }
