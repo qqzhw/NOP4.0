@@ -115,7 +115,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         {
             if (!_permissionService.Authorize(StandardPermissionProvider.ManageCategories))
                 return AccessDeniedView();
-            CommonHelper.FormatDrive(model.DriveLetter);
+           // CommonHelper.FormatDrive(model.DriveLetter);
             return new NullJsonResult();
         }
     }

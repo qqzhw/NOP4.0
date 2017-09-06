@@ -177,7 +177,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             return new NullJsonResult();
         }
 
-        public virtual IActionResult DirOrFileDelete(int id)
+        public virtual IActionResult DirOrFileDelete(DirectoryInfoModel model)
         {
             if (!_permissionService.Authorize(StandardPermissionProvider.ManageCategories))
                 return AccessDeniedView();

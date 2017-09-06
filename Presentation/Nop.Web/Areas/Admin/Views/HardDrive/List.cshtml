@@ -50,32 +50,31 @@
                                                 dataType: "json",
                                                 data: addAntiForgeryToken
                                             }
-                                        },
-                                        parameterMap: function (data, operation) {
-                                            if (operation !== "read" && data.models) {
-                                                return { model: kendo.stringify(data.models) };
-                                            }
-                                            return { model: kendo.stringify(data) };
-                                        },
+                                        },										 
                                         schema: {
                                             data: "Data",
                                             total: "Total",
-                                            errors: "Errors"
+											errors: "Errors",
+											model: {
+												id: "Id",
+												fields: {
+													Name: { editable: false, type: "string" },
+													TotalSizeText: { editable: false, type: "string" },
+													AvailableFreeSpaceText: { editable: false, type: "string" },
+													DriveLetter: { editable: false, type: "string" }
+												}
+											}
                                         },
                                         error: function(e) {
                                             display_kendoui_grid_error(e);
                                             // Cancel the changes
                                             this.cancelChanges();
-                                        },
-                                        pageSize:20,
-                                        serverPaging: true,
-                                        serverFiltering: true,
-                                        serverSorting: true
+                                        },                                      
                                     },
                                     pageable: false,
                                     editable: {
-                                        confirmation: "你确认要格式化当前分区吗？",
-                                        mode: "popup",
+										confirmation: "你确认要格式化当前分区吗？", 
+										mode: "popup",
                                     },
                                     scrollable: false,
                                     dataBound: onDataBound,
