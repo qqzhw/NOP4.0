@@ -4,15 +4,15 @@
 <div class="footer"> 
     <div class="footer-lower">
         <div class="footer-info">
-            <span class="footer-disclaimer">@T("Content.CopyrightNotice {0}", DateTime.Now.Year)</span>
+            <span class="footer-disclaimer">@T("Copyright {0}", DateTime.Now.Year)</span>
             
         </div>
-        @if (!Model.HidePoweredByNopCommerce)
+        @*@if (!Model.HidePoweredByNopCommerce)
         {
             <div class="footer-powered-by"> 
-                Powered by <a href="#">鸿创电子</a>
+                Powered by <a href="#">HCDZ</a>
             </div>
-        }
+        }*@
       
     </div>
     @await Component.InvokeAsync("Widget", new { widgetZone = "footer" })

@@ -115,7 +115,7 @@
                         <!-- mini logo for sidebar mini 50x50 pixels -->
                         <span class="logo-mini"></span>
                         <!-- logo for regular state and mobile devices -->
-                        <span class="logo-lg"></span>
+                        <span style="height:50px;">上位机管理平台</span>
                     </a>
                     <div class="navbar navbar-static-top" role="navigation">
                         <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
@@ -138,9 +138,9 @@
                                 <li>
                                     @await Component.InvokeAsync("AdminWidget", new { widgetZone = "admin_header_middle" })
                                 </li>
-                                <li>
+                                @*<li>
                                     <a asp-controller="Home" asp-action="Index" asp-area="">首页</a>
-                                </li>
+                                </li>*@
                                 @if (canManageMaintenance)
                                 {
                                     <li class="dropdown">
@@ -211,18 +211,16 @@
             </div>
             <div class="main-footer clearfix">
                 @if (!storeInformationSettings.HidePoweredByNopCommerce)
-                {
-                    @*Would you like to remove the "Powered by nopCommerce" link in the bottom of the footer?
-                        Please find more info at https://www.nopcommerce.com/copyrightremoval.aspx*@
-                    <div class="pull-left">
-                        Powered by <a href="https://www.nopcommerce.com/?utm_source=admin-panel&utm_medium=footer&utm_campaign=admin-panel" target="_blank">nopCommerce</a>
-                    </div>
+                {                   
+                    @*<div class="pull-left">
+                        Powered by  HCDZ
+                    </div>*@
                 }
                 <div class="pull-right hidden-xs">
-                    <b>nopCommerce version @NopVersion.CurrentVersion</b>
+                    <b> version 1.0.0.0</b>
                 </div>
                 <div class="text-center">                 
-                    @DateTime.Now.ToString("f")
+                    @DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
                 </div>
             </div>
         </div>

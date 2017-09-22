@@ -153,10 +153,11 @@ namespace Nop.Web.Controllers
                             //activity log
                             _customerActivityService.InsertActivity(customer, "PublicStore.Login", ("ActivityLog.PublicStore.Login"));
 
-                            if (String.IsNullOrEmpty(returnUrl) || !Url.IsLocalUrl(returnUrl))
-                                return RedirectToRoute("HomePage");
-
-                            return Redirect(returnUrl);
+                            //if (String.IsNullOrEmpty(returnUrl) || !Url.IsLocalUrl(returnUrl))
+                            //    return RedirectToRoute("HomePage");
+							if (String.IsNullOrEmpty(returnUrl) || !Url.IsLocalUrl(returnUrl))
+								return Redirect("/Admin");
+							return Redirect(returnUrl);
                         }
                     case CustomerLoginResults.CustomerNotExist:
                         ModelState.AddModelError("", "Account.Login.WrongCredentials.CustomerNotExist");
