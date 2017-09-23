@@ -15,34 +15,7 @@ namespace Nop.Services.Catalog
          
        
 
-        /// <summary>
-        /// Get a list of allowed quantities (parse 'AllowedQuantities' property)
-        /// </summary>
-        /// <param name="product">Product</param>
-        /// <returns>Result</returns>
-        public static int[] ParseAllowedQuantities(this Product product)
-        {
-            if (product == null)
-                throw new ArgumentNullException(nameof(product));
-
-            var result = new List<int>();
-            if (!String.IsNullOrWhiteSpace(product.AllowedQuantities))
-            {
-                product.AllowedQuantities
-                    .Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries)
-                    .ToList()
-                    .ForEach(qtyStr =>
-                    {
-                        int qty;
-                        if (int.TryParse(qtyStr.Trim(), out qty))
-                        {
-                            result.Add(qty);
-                        }
-                    });
-            }
-
-            return result.ToArray();
-        }
+      
            
         
         /// <summary>
@@ -56,8 +29,7 @@ namespace Nop.Services.Catalog
             if (product == null)
                 throw new ArgumentNullException(nameof(product));
 
-            if (!product.IsRental)
-                return null;
+          
 
             return date.ToShortDateString();
         }

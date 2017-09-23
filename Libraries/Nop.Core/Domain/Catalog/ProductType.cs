@@ -1,17 +1,17 @@
 namespace Nop.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents a product type
+    /// PCIE°å¿¨Êý
     /// </summary>
     public enum ProductType
     {
         /// <summary>
-        /// Simple
+        ///°å¿¨1
         /// </summary>
-        SimpleProduct = 5,
+        PCIE1 = 1,
         /// <summary>
-        /// Grouped (product with variants)
+        /// °å¿¨2
         /// </summary>
-        GroupedProduct = 10,
+        PCIE2= 2,
     }
 }

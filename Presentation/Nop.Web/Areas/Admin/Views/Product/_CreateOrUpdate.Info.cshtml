@@ -20,197 +20,17 @@
 <script type="text/javascript">
     $(document).ready(function() {
        
-        $("#@Html.IdFor(model => model.ProductTypeId)").change(toggleProductType);
-
-        $("#@Html.IdFor(model => model.IsDownload)").click(toggleDownloadableProduct);
-        $("#@Html.IdFor(model => model.UnlimitedDownloads)").click(toggleDownloadableProduct);
-        $("#@Html.IdFor(model => model.HasSampleDownload)").click(toggleDownloadableProduct);
-        $("#@Html.IdFor(model => model.HasUserAgreement)").click(toggleDownloadableProduct);
+        
   
-     
-        $("#@Html.IdFor(model => model.MarkAsNew)").click(toggleMarkAsNew);
-         
-        toggleProductType(); 
- 
-        toggleDownloadableProduct();
-       
-      
-        toggleMarkAsNew();
     });
-
-    function toggleShowOnHomePage() {
-        if ($('#@Html.IdFor(model => model.ShowOnHomePage)').is(':checked')) {
-            $('#pnlDisplayOrder').show();
-        } else {
-            $('#pnlDisplayOrder').hide();
-        }
-    }
-
-    function toggleProductType() {
-        var simpleProductId = "@((int)ProductType.SimpleProduct)";
-        var groupedProductId = "@((int)ProductType.GroupedProduct)";
-
-
-        var selectedProductTypeId = $("#@Html.IdFor(model => model.ProductTypeId)").val();
-        if (!selectedProductTypeId || selectedProductTypeId == simpleProductId) {
-            $('#group-prices').show();
-            $('#tier-prices').show();
-            $('#group-required-other-products').show();
-            $('#group-giftcard').show();
-            $('#group-downloads').show();
-            $('#group-recurring').show();
-            $('#group-rental').show();
-            $('#group-shipping').show();
-            $('#group-inventory').show();
-            $('#group-associated-products').hide();
-        } else if (selectedProductTypeId == groupedProductId) {
-            $('#group-prices').hide();
-            $('#tier-prices').hide();
-            $('#group-required-other-products').hide();
-            $('#group-giftcard').hide();
-            $('#group-downloads').hide();
-            $('#group-recurring').hide();
-            $('#group-rental').hide();
-            $('#group-shipping').hide();
-            $('#group-inventory').hide();
-            $('#group-associated-products').show();
-        }
-
-        //templates
-        var productTypeSupportedValues = {};
-        @foreach (var kvp in Model.ProductsTypesSupportedByProductTemplates)
-        {
-            <text>productTypeSupportedValues['@(kvp.Key)'] = {};</text>
-            foreach (var item in kvp.Value)
-            {
-                <text>productTypeSupportedValues['@(kvp.Key)']['@(item.Value)'] = '@Html.Raw(JavaScriptEncoder.Default.Encode((item.Text)))';</text>
-            }
-        }
-        var productTemplateDropddown = $("#@Html.IdFor(model => model.ProductTemplateId)");
-        var productTemplateSelectedValue = productTemplateDropddown.val();
-        productTemplateDropddown.empty();
-        for (var name in productTypeSupportedValues[selectedProductTypeId]) {
-            productTemplateDropddown.append($("<option></option>").attr("value", name).text(productTypeSupportedValues[selectedProductTypeId][name]));
-        }
-        //previously selected value
-        $('#@Html.IdFor(model => model.ProductTemplateId) option').each(function(){
-            if (this.value == productTemplateSelectedValue) {
-                productTemplateDropddown.val(productTemplateSelectedValue);
-            }
-        });
-
-        if ($('#@Html.IdFor(model => model.ProductTemplateId) option').length > 1) {
-            $('#pnlProductTemplateId').show();
-        } else {
-            $('#pnlProductTemplateId').hide();
-        }
-    }
-     
-
-    function toggleDownloadableProduct() {
-        if ($('#@Html.IdFor(model => model.IsDownload)').is(':checked')) {
-            $('#pnlDownloadFile').show();
-            $('#pnlUnlimitedDownloads').show();
-            if ($('#@Html.IdFor(model => model.UnlimitedDownloads)').is(':checked')) {
-                $('#pnlMaxNumberOfDownloads').hide();
-            } else {
-                $('#pnlMaxNumberOfDownloads').show();
-            }
-            $('#pnlDownloadExpirationDays').show();
-            $('#pnlDownloadActivationType').show();
-
-            $('#pnlHasUserAgreement').show();
-            if ($('#@Html.IdFor(model => model.HasUserAgreement)').is(':checked')) {
-                $('#pnlUserAgreementText').show();
-            } else {
-                $('#pnlUserAgreementText').hide();
-            }
-
-            $('#pnlHasSampleDownload').show();
-
-            if ($('#@Html.IdFor(model => model.HasSampleDownload)').is(':checked')) {
-                $('#pnlSampleDownloadFile').show();
-            } else {
-                $('#pnlSampleDownloadFile').hide();
-            }
-        } else {
-            $('#pnlDownloadFile').hide();
-            $('#pnlUnlimitedDownloads').hide();
-            $('#pnlMaxNumberOfDownloads').hide();
-            $('#pnlDownloadExpirationDays').hide();
-            $('#pnlDownloadActivationType').hide();
-            $('#pnlHasUserAgreement').hide();
-            $('#pnlUserAgreementText').hide();
-            $('#pnlHasSampleDownload').hide();
-            $('#pnlSampleDownloadFile').hide();
-        }
-    }
-     
-
-    function toggleMarkAsNew() {
-        if ($('#@Html.IdFor(model => model.MarkAsNew)').is(':checked')) {
-            $('#pnlMarkAsNewStartDateTimeUtc').show();
-            $('#pnlMarkAsNewEndDateTimeUtc').show();
-        } else {
-            $('#pnlMarkAsNewStartDateTimeUtc').hide();
-            $('#pnlMarkAsNewEndDateTimeUtc').hide();
-        }
-    }
-
-  
-    //required product friendly names
-    $(document).ready(function() {
-        loadRequiredProductFriendlyNames();
-    });
-
-    $(document).ready(function() {
-        $('#@Html.IdFor(model => model.RequiredProductIds)')
-            .data('timeout', null)
-            .keyup(function() {
-                clearTimeout($(this).data('timeout'));
-                //one second timeout
-                $(this).data('timeout', setTimeout(loadRequiredProductFriendlyNames, 1000));
-            });
-    });
-
-    function loadRequiredProductFriendlyNames() {
-        var inputValue = $('#@Html.IdFor(model => model.RequiredProductIds)').val();
-        if (inputValue) {
-            //load friendly names
-            $('#required-products-check-progress').show();
-
-            var postData = {
-                productIds: inputValue
-            };
-            addAntiForgeryToken(postData);
-
-            $.ajax({
-                cache: false,
-                type: 'POST',
-                url: '@Url.Action("LoadProductFriendlyNames", "Product")',
-                data: postData,
-                dataType: 'json',
-                success: function(data) {
-                    $('#required-products-check-progress').hide();
-                    $('#required-product-names').text(data.Text);
-                },
-                failure: function() {
-                    $('#required-products-check-progress').hide();
-                    $('#required-product-names').text('');
-                }
-            });
-        } else {
-            $('#required-product-names').text('');
-        }
-    }
-</script>
+ </script>
 
 <div class="raw clearfix">
     <div class="col-md-12">
         <div class="panel-group">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    @T("Admin.Catalog.Products.CommonInfo")
+                    基本信息
                 </div>
                 <div class="panel-body">
                     @if (Model.Id > 0)
@@ -244,36 +64,46 @@
                                 <span asp-validation-for="Name"></span>
                             </div>
                         </div>
+
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <nop-label asp-for="DefaultDir" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="DefaultDir" asp-required="true" />
+                            <span asp-validation-for="DefaultDir"></span>
+                        </div>
+                    </div>
                         <div class="form-group">
                             <div class="col-md-3">
-                                <nop-label asp-for="ShortDescription" />
+                                <nop-label asp-for="RegAddress" />
                             </div>
                             <div class="col-md-9">
-                                <nop-textarea asp-for="ShortDescription" />
-                                <span asp-validation-for="ShortDescription"></span>
+                                <nop-editor asp-for="RegAddress" asp-required="true" />
+                                <span asp-validation-for="RegAddress"></span>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-md-3">
-                                <nop-label asp-for="FullDescription" />
-                            </div>
-                            <div class="col-md-9">
-                                <nop-editor asp-for="FullDescription" asp-template="RichEditor" />
-                                <span asp-validation-for="FullDescription"></span>
-                            </div>
-                        </div>
+                   
                     </div>
                        
                     <div class="form-group">
                         <div class="col-md-3">
-							<nop-label asp-for="Sku" />
+							<nop-label asp-for="DeviceId" />
                         </div>
                         <div class="col-md-9">
-							<nop-editor asp-for="Sku" />
-							<span asp-validation-for="Sku"></span>
+							<nop-editor asp-for="DeviceId" />
+							<span asp-validation-for="DeviceId"></span>
                         </div>
                     </div>
-              
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <nop-label asp-for="VendorId" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="VendorId" />
+                        <span asp-validation-for="VendorId"></span>
+                    </div>
+                </div>
                     
                 </div>
             </div>

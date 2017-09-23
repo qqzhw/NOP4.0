@@ -33,7 +33,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         private readonly ICategoryService _categoryService; 
         private readonly IProductService _productService;
         private readonly ICustomerService _customerService;
-        private readonly IUrlRecordService _urlRecordService;
+       
         private readonly IPictureService _pictureService; 
         private readonly IPermissionService _permissionService;
         private readonly IAclService _aclService;
@@ -53,7 +53,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         public CategoryController(ICategoryService categoryService, 
            IProductService productService, 
             ICustomerService customerService,
-            IUrlRecordService urlRecordService, 
+           
             IPictureService pictureService,  
             IPermissionService permissionService,
             IAclService aclService, 
@@ -68,7 +68,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         
             this._productService = productService;
             this._customerService = customerService;
-            this._urlRecordService = urlRecordService;
+            
             this._pictureService = pictureService; 
             this._permissionService = permissionService;
            
@@ -280,9 +280,6 @@ namespace Nop.Web.Areas.Admin.Controllers
                 category.CreatedOnUtc = DateTime.UtcNow;
                 category.UpdatedOnUtc = DateTime.UtcNow;
                 _categoryService.InsertCategory(category);
-                //search engine name
-                model.SeName = category.ValidateSeName(model.SeName, category.Name, true);
-                _urlRecordService.SaveSlug(category, model.SeName, 0);
                
                 _categoryService.UpdateCategory(category);
                 //update picture seo file name
@@ -359,10 +356,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 category = model.ToEntity(category);
                 category.UpdatedOnUtc = DateTime.UtcNow;
                 _categoryService.UpdateCategory(category);
-                //search engine name
-                model.SeName = category.ValidateSeName(model.SeName, category.Name, true);
-                _urlRecordService.SaveSlug(category, model.SeName, 0);
-                
+               
                 _categoryService.UpdateCategory(category);
                 //delete an old picture (if deleted or updated)
                 if (prevPictureId > 0 && prevPictureId != category.PictureId)
@@ -505,8 +499,8 @@ namespace Nop.Web.Areas.Admin.Controllers
 
          
             //product types
-            model.AvailableProductTypes = ProductType.SimpleProduct.ToSelectList(false).ToList();
-            model.AvailableProductTypes.Insert(0, new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
+            model.AvailableProductTypes = ProductType.PCIE1.ToSelectList(false).ToList();
+            model.AvailableProductTypes.Insert(0, new SelectListItem { Text = "全部", Value = "0" });
 
             return View(model);
         }

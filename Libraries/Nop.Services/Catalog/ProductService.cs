@@ -182,8 +182,7 @@ namespace Nop.Services.Catalog
             var query = from p in _productRepository.Table
                         orderby p.DisplayOrder, p.Id
                         where p.Published &&
-                        !p.Deleted &&
-                        p.ShowOnHomePage
+                        !p.Deleted  
                         select p;
             var products = query.ToList();
             return products;
@@ -297,15 +296,9 @@ namespace Nop.Services.Catalog
                 categoryIds.Remove(0);
 
             var query = _productRepository.Table;
-            query = query.Where(p => !p.Deleted && p.Published && p.VisibleIndividually);
+            query = query.Where(p => !p.Deleted && p.Published );
 
-            //category filtering
-            if (categoryIds != null && categoryIds.Any())
-            {
-                query = from p in query
-                        from pc in p.ProductCategories.Where(pc => categoryIds.Contains(pc.CategoryId))
-                        select p;
-            }
+          
 
             if (!_catalogSettings.IgnoreAcl)
             {
@@ -326,7 +319,7 @@ namespace Nop.Services.Catalog
                         join sm in _storeMappingRepository.Table
                         on new { c1 = p.Id, c2 = "Product" } equals new { c1 = sm.EntityId, c2 = sm.EntityName } into p_sm
                         from sm in p_sm.DefaultIfEmpty()
-                        where !p.LimitedToStores || storeId == sm.StoreId
+                     
                         select p;
             }
 
@@ -743,43 +736,24 @@ namespace Nop.Services.Catalog
                     //unpublished only
                     query = query.Where(p => !p.Published);
                 }
-                if (visibleIndividuallyOnly)
-                {
-                    query = query.Where(p => p.VisibleIndividually);
-                }
+               
+                 
                 //The function 'CurrentUtcDateTime' is not supported by SQL Server Compact. 
                 //That's why we pass the date value
                 var nowUtc = DateTime.UtcNow;
                 if (markedAsNewOnly)
                 {
-                    query = query.Where(p => p.MarkAsNew);
-                    query = query.Where(p =>
-                        (!p.MarkAsNewStartDateTimeUtc.HasValue || p.MarkAsNewStartDateTimeUtc.Value < nowUtc) &&
-                        (!p.MarkAsNewEndDateTimeUtc.HasValue || p.MarkAsNewEndDateTimeUtc.Value > nowUtc));
-                }
+                     }
                 if (productType.HasValue)
                 {
                     var productTypeId = (int) productType.Value;
                     query = query.Where(p => p.ProductTypeId == productTypeId);
                 }
-
-                if (priceMin.HasValue)
-                {
-                    //min price
-                    query = query.Where(p => p.Price >= priceMin.Value);
-                }
-                if (priceMax.HasValue)
-                {
-                    //max price
-                    query = query.Where(p => p.Price <= priceMax.Value);
-                }
+                 
                 if (!showHidden)
                 {
                     //available dates
-                    query = query.Where(p =>
-                        (!p.AvailableStartDateTimeUtc.HasValue || p.AvailableStartDateTimeUtc.Value < nowUtc) &&
-                        (!p.AvailableEndDateTimeUtc.HasValue || p.AvailableEndDateTimeUtc.Value > nowUtc));
-                }
+                    }
 
                 //searching by keyword
                 if (!String.IsNullOrWhiteSpace(keywords))
@@ -787,7 +761,7 @@ namespace Nop.Services.Catalog
                     query = from p in query                         
                             where (p.Name.Contains(keywords)) ||
                                   (searchDescriptions && p.ShortDescription.Contains(keywords)) ||
-                                  (searchDescriptions && p.FullDescription.Contains(keywords)) 
+                                  (searchDescriptions) 
                                                            
                             select p;
                 }
@@ -809,36 +783,11 @@ namespace Nop.Services.Catalog
                     query = from p in query
                             join sm in _storeMappingRepository.Table
                             on new { c1 = p.Id, c2 = "Product" } equals new { c1 = sm.EntityId, c2 = sm.EntityName } into p_sm
-                            from sm in p_sm.DefaultIfEmpty()
-                            where !p.LimitedToStores || storeId == sm.StoreId
+                            from sm in p_sm.DefaultIfEmpty()                            
                             select p;
                 }
-
-                //category filtering
-                if (categoryIds != null && categoryIds.Any())
-                {
-                    query = from p in query
-                            from pc in p.ProductCategories.Where(pc => categoryIds.Contains(pc.CategoryId))
-                            where (!featuredProducts.HasValue || featuredProducts.Value == pc.IsFeaturedProduct)
-                            select p;
-                }
-                            
-
-                //vendor filtering
-                if (vendorId > 0)
-                {
-                    query = query.Where(p => p.VendorId == vendorId);
-                }
-                             
-                //related products filtering
-                //if (relatedToProductId > 0)
-                //{
-                //    query = from p in query
-                //            join rp in _relatedProductRepository.Table on p.Id equals rp.ProductId2
-                //            where (relatedToProductId == rp.ProductId1)
-                //            select p;
-                //}
-
+   
+                 
                            //only distinct products (group by ID)
                 //if we use standard Distinct() method, then all fields will be compared (low performance)
                 //it'll not work in SQL Server Compact when searching products by a keyword)
@@ -853,7 +802,7 @@ namespace Nop.Services.Catalog
                 {
                     //category position
                     var firstCategoryId = categoryIds[0];
-                    query = query.OrderBy(p => p.ProductCategories.FirstOrDefault(pc => pc.CategoryId == firstCategoryId).DisplayOrder);
+                 
                 }
                 else if (orderBy == ProductSortingEnum.Position && manufacturerId > 0)
                 {
@@ -874,20 +823,12 @@ namespace Nop.Services.Catalog
                     //Name: Z to A
                     query = query.OrderByDescending(p => p.Name);
                 }
-                else if (orderBy == ProductSortingEnum.PriceAsc)
-                {
-                    //Price: Low to High
-                    query = query.OrderBy(p => p.Price);
-                }
-                else if (orderBy == ProductSortingEnum.PriceDesc)
-                {
-                    //Price: High to Low
-                    query = query.OrderByDescending(p => p.Price);
-                }
+                
+              
                 else if (orderBy == ProductSortingEnum.CreatedOn)
                 {
                     //creation date
-                    query = query.OrderByDescending(p => p.CreatedOnUtc);
+                    query = query.OrderByDescending(p => p.CreatedOn);
                 }
                 else
                 {
@@ -905,109 +846,7 @@ namespace Nop.Services.Catalog
             }
         }
          
-        /// <summary>
-        /// Gets associated products
-        /// </summary>
-        /// <param name="parentGroupedProductId">Parent product identifier (used with grouped products)</param>
-        /// <param name="storeId">Store identifier; 0 to load all records</param>
-        /// <param name="vendorId">Vendor identifier; 0 to load all records</param>
-        /// <param name="showHidden">A value indicating whether to show hidden records</param>
-        /// <returns>Products</returns>
-        public virtual IList<Product> GetAssociatedProducts(int parentGroupedProductId,
-            int storeId = 0, int vendorId = 0, bool showHidden = false)
-        {
-            var query = _productRepository.Table;
-            query = query.Where(x => x.ParentGroupedProductId == parentGroupedProductId);
-            if (!showHidden)
-            {
-                query = query.Where(x => x.Published);
-            
-                //The function 'CurrentUtcDateTime' is not supported by SQL Server Compact. 
-                //That's why we pass the date value
-                var nowUtc = DateTime.UtcNow;
-                //available dates
-                query = query.Where(p =>
-                    (!p.AvailableStartDateTimeUtc.HasValue || p.AvailableStartDateTimeUtc.Value < nowUtc) &&
-                    (!p.AvailableEndDateTimeUtc.HasValue || p.AvailableEndDateTimeUtc.Value > nowUtc));
-            }
-            //vendor filtering
-            if (vendorId > 0)
-            {
-                query = query.Where(p => p.VendorId == vendorId);
-            }
-            query = query.Where(x => !x.Deleted);
-            query = query.OrderBy(x => x.DisplayOrder).ThenBy(x => x.Id);
-
-            var products = query.ToList();
-
-            //ACL mapping
-            if (!showHidden)
-            {
-                products = products.Where(x => _aclService.Authorize(x)).ToList();
-            }
-            //Store mapping
-            if (!showHidden && storeId > 0)
-            {
-                products = products.Where(x => _storeMappingService.Authorize(x, storeId)).ToList();
-            }
-
-            return products;
-        }
-               
-        /// <summary>
-        /// Gets a product by SKU
-        /// </summary>
-        /// <param name="sku">SKU</param>
-        /// <returns>Product</returns>
-        public virtual Product GetProductBySku(string sku)
-        {
-            if (String.IsNullOrEmpty(sku))
-                return null;
-
-            sku = sku.Trim();
-
-            var query = from p in _productRepository.Table
-                        orderby p.Id
-                        where !p.Deleted &&
-                        p.Sku == sku
-                        select p;
-            var product = query.FirstOrDefault();
-            return product;
-        }
-
-        /// <summary>
-        /// Gets a products by SKU array
-        /// </summary>
-        /// <param name="skuArray">SKU array</param>
-        /// <param name="vendorId">Vendor ID; 0 to load all records</param>
-        /// <returns>Products</returns>
-        public IList<Product> GetProductsBySku(string[] skuArray, int vendorId = 0)
-        {
-            if (skuArray == null)
-                throw new ArgumentNullException(nameof(skuArray));
-
-            var query = _productRepository.Table;
-            query = query.Where(p => !p.Deleted && skuArray.Contains(p.Sku));
-
-            if (vendorId != 0)
-                query = query.Where(p => p.VendorId == vendorId);
-
-            return query.ToList();
-        }
-        
-          /// <summary>
-        /// Gets number of products by vendor identifier
-        /// </summary>
-        /// <param name="vendorId">Vendor identifier</param>
-        /// <returns>Number of products</returns>
-        public int GetNumberOfProductsByVendorId(int vendorId)
-        {
-            if (vendorId == 0)
-                return 0;
-
-            return _productRepository.Table.Count(p => p.VendorId == vendorId && !p.Deleted);
-        }
-
+         
         #endregion
          
 

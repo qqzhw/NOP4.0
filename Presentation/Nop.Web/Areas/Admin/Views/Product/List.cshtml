@@ -8,7 +8,7 @@
     var gridPageSizes = adminAreaSettings.GridPageSizes;
 
     //page title
-    ViewBag.Title = T("Admin.Catalog.Products").Text;
+    ViewBag.Title = "PCIE设备";
     //active menu item (system name)
     Html.SetActiveMenuItemSystemName("Products");
 }
@@ -17,66 +17,23 @@
 <form asp-controller="Product" asp-action="List" method="post">
     <div class="content-header clearfix">
         <h1 class="pull-left">
-            @T("Admin.Catalog.Products")
+            设备管理
         </h1>
         <div class="pull-right">
             <a asp-action="Create" class="btn bg-blue">
                 <i class="fa fa-plus-square"></i>
-                @T("Admin.Common.AddNew")
+                新增通道
             </a>
             <button type="submit" name="download-catalog-pdf" class="btn bg-purple">
                 <i class="fa fa-file-pdf-o"></i>
-                @T("Admin.Catalog.Products.List.DownloadPDF")
+                下载
             </button>
-            <div class="btn-group">
-                <button type="button" class="btn btn-success">
-                    <i class="fa fa-download"></i>
-                    @T("Admin.Common.Export")
-                </button>
-                <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <span class="caret"></span>
-                    <span class="sr-only">&nbsp;</span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    <li>
-                        <button type="submit" name="exportxml-all">
-                            <i class="fa fa-file-code-o"></i>
-                            @T("Admin.Common.ExportToXml.All")
-                        </button>
-                    </li>
-                    <li>
-                        <button type="button" id="exportxml-selected">
-                            <i class="fa fa-file-code-o"></i>
-                            @T("Admin.Common.ExportToXml.Selected")
-                        </button>
-                    </li>
-                    <li class="divider"></li>
-                    <li>
-                        <button type="submit" name="exportexcel-all">
-                            <i class="fa fa-file-excel-o"></i>
-                            @T("Admin.Common.ExportToExcel.All")
-                        </button>
-                    </li>
-                    <li>
-                        <button type="button" id="exportexcel-selected">
-                            <i class="fa fa-file-excel-o"></i>
-                            @T("Admin.Common.ExportToExcel.Selected")
-                        </button>
-                    </li>
-                </ul>
-            </div>
-            @if (!Model.IsLoggedInAsVendor || Model.AllowVendorsToImportProducts)
-            {
-                //a vendor cannot import products
-            <button type="button" name="importexcel" class="btn bg-olive" data-toggle="modal" data-target="#importexcel-window">
-                <i class="fa fa-upload"></i>
-                @T("Admin.Common.Import")
-            </button>
-            }
-            <button type="button" id="delete-selected" class="btn bg-red">
-                <i class="fa fa-trash-o"></i>
-                @T("Admin.Common.Delete.Selected")
-            </button>
+            
+
+            @*<button type="button" id="delete-selected" class="btn bg-red">
+                    <i class="fa fa-trash-o"></i>
+                   关闭设备
+                </button>*@
         </div>
     </div>
 
@@ -87,102 +44,67 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-md-5">
-                                <div class="form-group">
+                                <div class="form-group" @(Model.AvailableDrivers.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
                                     <div class="col-md-4">
-                                        <nop-label asp-for="SearchProductName" />
+                                        <nop-label asp-for="DriverName" />
                                     </div>
-                                    <div class="col-md-8">
-                                        <nop-editor asp-for="SearchProductName" />
-                                    </div>
-                                </div>
-                                <div class="form-group" @(Model.AvailableCategories.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
                                     <div class="col-md-4">
-                                        <nop-label asp-for="SearchCategoryId" />
+                                        <nop-select asp-for="DriverName" asp-items="Model.AvailableDrivers" />
                                     </div>
-                                    <div class="col-md-8">
-                                        <nop-select asp-for="SearchCategoryId" asp-items="Model.AvailableCategories" />
-                                    </div>
-                                </div>
-                                <div class="form-group" @(Model.AvailableCategories.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
                                     <div class="col-md-4">
-                                        <nop-label asp-for="SearchIncludeSubCategories" />
-                                    </div>
-                                    <div class="col-md-8">
-                                        <nop-editor asp-for="SearchIncludeSubCategories" />
-                                    </div>
-                                </div>
-                                <div class="form-group" @(Model.AvailableManufacturers.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
-                                    <div class="col-md-4">
-                                        <nop-label asp-for="SearchManufacturerId" />
-                                    </div>
-                                    <div class="col-md-8">
-                                        <nop-select asp-for="SearchManufacturerId" asp-items="Model.AvailableManufacturers" />
-                                    </div>
-                                </div>
-                                <div class="form-group" @(Model.AvailableVendors.SelectionIsNotPossible() || Model.IsLoggedInAsVendor ? Html.Raw("style='display: none;'") : null)>
-                                    <div class="col-md-4">
-                                        <nop-label asp-for="SearchVendorId" />
-                                    </div>
-                                    <div class="col-md-8">
-                                        <nop-select asp-for="SearchVendorId" asp-items="Model.AvailableVendors" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-7">
-                                <div class="form-group" @(Model.AvailableStores.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
-                                    <div class="col-md-4">
-                                        <nop-label asp-for="SearchStoreId" />
-                                    </div>
-                                    <div class="col-md-8">
-                                        <nop-select asp-for="SearchStoreId" asp-items="Model.AvailableStores" />
-                                    </div>
-                                </div>
-                                <div class="form-group" @(Model.AvailableWarehouses.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
-                                    <div class="col-md-4">
-                                        <nop-label asp-for="SearchWarehouseId" />
-                                    </div>
-                                    <div class="col-md-8">
-                                        <nop-select asp-for="SearchWarehouseId" asp-items="Model.AvailableWarehouses" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-md-4">
-                                        <nop-label asp-for="SearchProductTypeId" />
-                                    </div>
-                                    <div class="col-md-8">
-                                        <nop-select asp-for="SearchProductTypeId" asp-items="Model.AvailableProductTypes" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-md-4">
-                                        <nop-label asp-for="SearchPublishedId" />
-                                    </div>
-                                    <div class="col-md-8">
-                                        <nop-select asp-for="SearchPublishedId" asp-items="Model.AvailablePublishedOptions" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-md-4">
-                                        <nop-label asp-for="GoDirectlyToSku" />
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="input-group input-group-short">
-                                            <nop-editor asp-for="GoDirectlyToSku" />
-                                            <span class="input-group-btn">
-                                                <button type="submit" id="go-to-product-by-sku" name="go-to-product-by-sku" class="btn btn-info btn-flat">
-                                                    @T("Admin.Common.Go")
-                                                </button>
+                                        <div id="passStrength" style="width: 400px;" data-role="progressbar" class="k-widget k-progressbar k-progressbar-horizontal">
+                                            <span class="k-progress-status-wrap">
+                                                <span class="k-progress-status">25.G5可用</span>
                                             </span>
+                                            <div class="k-state-selected" style="width: 56%;">
+
+                                            </div>
+
                                         </div>
+                                        @*<h5>Text <span style="margin-left:10px;vertical-align:central;padding-bottom:5px;">TotalSizeText</span></h5>*@
+
+
                                     </div>
                                 </div>
+
+                                <div class="form-group" @(Model.AvailableDMA.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
+                                    <div class="col-md-4">
+                                        <nop-label asp-for="SelectedDma" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <nop-select asp-for="SelectedDma" asp-items="Model.AvailableDMA" />
+                                    </div>
+                                    <div class="col-md-4"></div>
+                                </div>
+                                <div class="form-group" @(Model.AvailableMethod.SelectionIsNotPossible() ? Html.Raw("style='display: none;'") : null)>
+                                    <div class="col-md-4">
+                                        <nop-label asp-for="SelectedMethod" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <nop-select asp-for="SelectedMethod" asp-items="Model.AvailableMethod" />
+                                    </div>
+                                    <div class="col-md-4"></div>
+                                </div>
                             </div>
+
                         </div>
                         <div class="row">
-                            <div class="col-md-7 col-md-offset-5">
-                                <button type="button" id="search-products" class="btn btn-primary btn-search">
+                            <div class="col-md-9 col-md-offset-3">
+                                <button type="button"  style="width:100px;margin-left:10px;" id="connect-device" class="btn btn-primary ">
                                     <i class="fa fa-search"></i>
-                                    @T("Admin.Common.Search")
+                                    连接设备
+                                </button>
+                                <button type="button" style="margin-left:20px;"   id="check-device" class="btn btn-success disabled">
+                                    <i class="fa fa-cloud-upload"></i>
+                                    设备自检
+                                </button>
+                                <button type="button" style="margin-left:20px;"  id="read-data" class="btn btn-linkedin disabled">
+                                    <i class="fa fa-download"></i>
+                                   读取数据
+                                </button>
+                                <button type="button" style="margin-left:20px;" id="close-device" class="btn bg-red">
+                                    <i class="fa fa-trash-o"></i>
+                                    关闭设备
                                 </button>
                             </div>
                         </div>
@@ -192,7 +114,6 @@
                 <div class="panel panel-default">
                     <div class="panel-body">
                         <div id="products-grid"></div>
-
                         <script>
                             $(document).ready(function() {
                                 $("#products-grid").kendoGrid({
@@ -216,16 +137,8 @@
                                             // Cancel the changes
                                             this.cancelChanges();
                                         },
-                                        pageSize: @(defaultGridPageSize),
-                                        serverPaging: true,
-                                        serverFiltering: true,
-                                        serverSorting: true
                                     },
-                                    pageable: {
-                                        refresh: true,
-                                        pageSizes: [@(gridPageSizes)],
-                                        @await Html.PartialAsync("_GridPagerMessages")
-                                    },
+                                    pageable: false,
                                     editable: {
                                         confirmation: "@T("Admin.Common.DeleteConfirmation")",
                                         mode: "inline"
@@ -234,53 +147,31 @@
                                     dataBound: onDataBound,
                                     columns: [
                                         {
-                                            field: "Id",
-                                            headerTemplate: "<input id='mastercheckbox' type='checkbox'/>",
+                                            field: "Name",
+                                            title: "通道名称",
+                                            width: 300
+                                        },  {
+                                            field: "UpdatedWriteOn",
+                                            title: "上次采集时间",
+                                            width: 200,
+                                            format:"{0:yyyy-MM-dd HH:mm}"
+                                        }, {
+                                            field: "DefaultDir",
+                                            title: "默认文件夹",
+                                            width: 100
+                                        },  {
+                                            field: "Published",
+                                            title: "通道状态",
+                                            width: 100,
                                             headerAttributes: { style: "text-align:center" },
                                             attributes: { style: "text-align:center" },
-                                            template: "<input type='checkbox' value='#=Id#' class='checkboxGroups'/>",
-                                            width: 50
-                                        },
-                                        {
-                                            field: "PictureThumbnailUrl",
-                                            title: "@T("Admin.Catalog.Products.Fields.PictureThumbnailUrl")",
-                                            template: '<img src="#=PictureThumbnailUrl#" />',
-                                            width: 100
-                                        },
-                                        {
-                                            field: "Name",
-                                            title: "@T("Admin.Catalog.Products.Fields.Name")",
-                                            width: 300
-                                        }, {
-                                            field: "Sku",
-                                            title: "@T("Admin.Catalog.Products.Fields.Sku")",
-                                            width: 100
-                                        }, {
-                                            field: "Price",
-                                            title: "@T("Admin.Catalog.Products.Fields.Price")",
-                                            width: 150,
-                                            //if not a grouped product, then display
-                                            template: "# if(ProductTypeId != @((int) ProductType.GroupedProduct)) {# #:Price# #}  #"
-                                        }, {
-                                            field: "StockQuantityStr",
-                                            title: "@T("Admin.Catalog.Products.Fields.StockQuantity")",
-                                            width: 100
-                                        }, {
-                                            field: "ProductTypeName",
-                                            title: "@T("Admin.Catalog.Products.Fields.ProductType")",
-                                            width: 100
-                                        }, {
-                                            field: "Published",
-                                            title: "@T("Admin.Catalog.Products.Fields.Published")",
-                                            width: 100,
                                             template: '# if(Published) {# <i class="fa fa-check true-icon"></i> #} else {# <i class="fa fa-close false-icon"></i> #} #'
                                         }, {
                                             field: "Id",
-                                            title: "@T("Admin.Common.Edit")",
-                                            width: 100,
+                                            title: "操作",
                                             headerAttributes: { style: "text-align:center" },
                                             attributes: { style: "text-align:center" },
-                                            template: '<a class="btn btn-default" href="Edit/#=Id#"><i class="fa fa-pencil"></i>@T("Admin.Common.Edit")</a>'
+                                            template: '<a class="btn btn-default" href="Edit/#=Id#"><i class="fa fa-pencil"></i>@T("预览")</a> <a class="btn btn-default" href="Edit/#=Id#"><i class="fa fa-pencil"></i>打开</a> <a class="btn btn-default" href="Edit/#=Id#"><i class="fa fa-pencil"></i>关闭</a>'
                                         }
                                     ]
                                 });
@@ -308,19 +199,7 @@
                 return false;
             });
 
-            $("#@Html.IdFor(model => model.SearchProductName)").keydown(function (event) {
-                if (event.keyCode === 13) {
-                    $("#search-products").click();
-                    return false;
-                }
-            });
 
-            $("#@Html.IdFor(model => model.GoDirectlyToSku)").keydown(function (event) {
-                if (event.keyCode === 13) {
-                    $("#go-to-product-by-sku").click();
-                    return false;
-                }
-            });
             //delete selected
             $('#delete-selected').click(function(e) {
                 e.preventDefault();
@@ -377,9 +256,7 @@
 
         function additionalData() {
             var data = {
-                SearchProductName: $('#@Html.IdFor(model => model.SearchProductName)').val(),
                 SearchCategoryId: $('#SearchCategoryId').val(),
-                SearchIncludeSubCategories: $('#@Html.IdFor(model => model.SearchIncludeSubCategories)').is(':checked'),
                 SearchManufacturerId: $('#SearchManufacturerId').val(),
                 SearchStoreId: $('#SearchStoreId').val(),
                 SearchWarehouseId: $('#SearchWarehouseId').val(),
@@ -409,80 +286,40 @@
         }
     </script>
 </form>
-
-@*import products form*@
-<div id="importexcel-window" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="importexcel-window-title">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="importexcel-window-title">@T("Admin.Common.ImportFromExcel")</h4>
-        </div>
-            <form asp-controller="Product" asp-action="ImportExcel" method="post" enctype="multipart/form-data">
-                <div class="form-horizontal">
-                    <div class="modal-body">
-                        <ul class="common-list">
-                            <li>
-                                <em>@T("Admin.Catalog.Products.List.ImportFromExcelTip")</em>
-                            </li>
-                            <li>
-                                <em>@T("Admin.Common.ImportFromExcel.ManyRecordsWarning")</em>
-                            </li>
-                        </ul>
-                        <div class="form-group">
-                            <div class="col-md-2">
-                                <div class="label-wrapper">
-                                    <label class="control-label">
-                                        @T("Admin.Common.ExcelFile")
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-md-10">
-                                <input type="file" id="importexcelfile" name="importexcelfile" class="form-control" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">
-                            @T("Admin.Common.ImportFromExcel")
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-@*export selected (XML). We don't use GET approach because it's limited to 2K-4K chars and won't work for large number of entities*@
-<form asp-controller="Product" asp-action="ExportXmlSelected" method="post" id="export-xml-selected-form">
-    <input type="hidden" id="selectedIds" name="selectedIds" value="" />
-</form>
-
+ 
 <script type="text/javascript">
-    $(document).ready(function () {
-        $('#exportxml-selected').click(function (e) {
-            e.preventDefault();
-            var ids = selectedIds.join(",");
-            $('#export-xml-selected-form #selectedIds').val(ids);
-            $('#export-xml-selected-form').submit();
-            return false;
+        $(document).ready(function () {
+            $('#DriverName').on("change",function (e) {
+                e.preventDefault();
+                alert(e.target.value);
+                debugger;
+                var postData = {
+                    diskName: e.target.value
+                };
+                addAntiForgeryToken(postData);
+
+                $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: "@(Url.Action("SelectedDir", "Product"))",
+                    data: postData,
+                    complete: function(data) {
+                        //reload grid
+                        debugger;
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        debugger;
+                    },  
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        alert(thrownError);
+                    },
+                    traditional: true
+                });
+                return false;
+            });
         });
-    });
 </script>
 
-@*export selected (Excel). We don't use GET approach because it's limited to 2K-4K chars and won't work for large number of entities*@
-<form asp-controller="Product" asp-action="ExportExcelSelected" method="post" id="export-excel-selected-form">
-    <input type="hidden" id="selectedIds" name="selectedIds" value="" />
-</form>
-
-<script type="text/javascript">
-    $(document).ready(function () {
-        $('#exportexcel-selected').click(function (e) {
-            e.preventDefault();
-            var ids = selectedIds.join(",");
-            $('#export-excel-selected-form #selectedIds').val(ids);
-            $('#export-excel-selected-form').submit();
-            return false;
-        });
-    });
-</script>
+ 
+ 

@@ -21,7 +21,7 @@ namespace Nop.Services.Customers
         private readonly ICustomerService _customerService;
         private readonly IEncryptionService _encryptionService;    
         private readonly IStoreService _storeService;     
-        private readonly IGenericAttributeService _genericAttributeService;
+        
         private readonly IWorkContext _workContext;
      
         private readonly IEventPublisher _eventPublisher;
@@ -50,15 +50,13 @@ namespace Nop.Services.Customers
         public CustomerRegistrationService(ICustomerService customerService,
             IEncryptionService encryptionService,          
             IStoreService storeService,         
-            IWorkContext workContext,
-            IGenericAttributeService genericAttributeService,           
+            IWorkContext workContext, 
             IEventPublisher eventPublisher,      
             CustomerSettings customerSettings)
         {
             this._customerService = customerService;
             this._encryptionService = encryptionService;      
-            this._storeService = storeService;       
-            this._genericAttributeService = genericAttributeService;
+            this._storeService = storeService;     
             this._workContext = workContext;          
             this._eventPublisher = eventPublisher;         
             this._customerSettings = customerSettings;
@@ -269,9 +267,7 @@ namespace Nop.Services.Customers
                 customer.EmailToRevalidate = newEmail;
                 _customerService.UpdateCustomer(customer);
 
-                //email re-validation message
-                _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.EmailRevalidationToken, Guid.NewGuid().ToString());
-             
+           
             }
             else
             {

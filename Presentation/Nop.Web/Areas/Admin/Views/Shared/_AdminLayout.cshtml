@@ -1,6 +1,5 @@
 ﻿@inject IWebHelper webHelper
 @inject IWorkContext workContext
-@inject IDateTimeHelper dateTimeHelper
 @inject IPermissionService permissionService
 @inject IHttpContextAccessor httpContextAccessor
 @inject CommonSettings commonSettings 
@@ -68,7 +67,7 @@
 
     //sidebar
     const string hideSidebarAttributeName = "HideSidebar";
-    var hideSidebar = workContext.CurrentCustomer.GetAttribute<bool>(hideSidebarAttributeName);
+    var hideSidebar =false;
 
     //avatar
     var currentCustomer = workContext.CurrentCustomer;

@@ -43,7 +43,7 @@ namespace Nop.Web.Factories
         private readonly IThemeContext _themeContext;
         private readonly IThemeProvider _themeProvider;
       
-        private readonly IGenericAttributeService _genericAttributeService;
+        
         private readonly IWebHelper _webHelper;
         private readonly IPermissionService _permissionService;
         private readonly IStaticCacheManager _cacheManager;
@@ -67,8 +67,7 @@ namespace Nop.Web.Factories
             IStoreContext storeContext,
             ISitemapGenerator sitemapGenerator,
             IThemeContext themeContext,
-            IThemeProvider themeProvider, 
-            IGenericAttributeService genericAttributeService,
+            IThemeProvider themeProvider,  
             IWebHelper webHelper,
             IPermissionService permissionService,
             IStaticCacheManager cacheManager,
@@ -88,8 +87,7 @@ namespace Nop.Web.Factories
             this._sitemapGenerator = sitemapGenerator;
             this._themeContext = themeContext;
             this._themeProvider = themeProvider;
-          
-            this._genericAttributeService = genericAttributeService;
+           
             this._webHelper = webHelper;
             this._permissionService = permissionService;
             this._cacheManager = cacheManager;

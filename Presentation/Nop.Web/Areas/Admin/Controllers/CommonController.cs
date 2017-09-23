@@ -32,9 +32,9 @@ namespace Nop.Web.Areas.Admin.Controllers
 
        
         private readonly ICustomerService _customerService;
-        private readonly IUrlRecordService _urlRecordService;
+      
         private readonly IWebHelper _webHelper;       
-        private readonly IDateTimeHelper _dateTimeHelper;       
+     
         private readonly IWorkContext _workContext;
         private readonly IStoreContext _storeContext;
         private readonly IPermissionService _permissionService;     
@@ -49,10 +49,8 @@ namespace Nop.Web.Areas.Admin.Controllers
         #region Constructors
 
         public CommonController( 
-            ICustomerService customerService,
-            IUrlRecordService urlRecordService,
-            IWebHelper webHelper,         
-            IDateTimeHelper dateTimeHelper,          
+            ICustomerService customerService, 
+            IWebHelper webHelper,                 
             IWorkContext workContext,
             IStoreContext storeContext,
             IPermissionService permissionService,        
@@ -62,10 +60,9 @@ namespace Nop.Web.Areas.Admin.Controllers
             IHostingEnvironment hostingEnvironment,
             IStaticCacheManager cacheManager)
         {         
-            this._customerService = customerService;
-            this._urlRecordService = urlRecordService;
+            this._customerService = customerService; 
             this._webHelper = webHelper;          
-            this._dateTimeHelper = dateTimeHelper;         
+         
             this._workContext = workContext;
             this._storeContext = storeContext;
             this._permissionService = permissionService;          
@@ -151,7 +148,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             model.ServerTimeZone = TimeZone.CurrentTimeZone.StandardName;
             model.ServerLocalTime = DateTime.Now;
             model.UtcTime = DateTime.UtcNow;
-            model.CurrentUserTime = _dateTimeHelper.ConvertToUserTime(DateTime.Now);
+            model.CurrentUserTime = (DateTime.Now);
             model.HttpHost = HttpContext.Request.Headers[HeaderNames.Host];
 
             foreach (var header in HttpContext.Request.Headers)
@@ -302,10 +299,10 @@ namespace Nop.Web.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             DateTime? startDateValue = (model.DeleteGuests.StartDate == null) ? null
-                            : (DateTime?)_dateTimeHelper.ConvertToUtcTime(model.DeleteGuests.StartDate.Value, _dateTimeHelper.CurrentTimeZone);
+                            : (DateTime?)(model.DeleteGuests.StartDate.Value);
 
             DateTime? endDateValue = (model.DeleteGuests.EndDate == null) ? null
-                            : (DateTime?)_dateTimeHelper.ConvertToUtcTime(model.DeleteGuests.EndDate.Value, _dateTimeHelper.CurrentTimeZone).AddDays(1);
+                            : (DateTime?)model.DeleteGuests.EndDate.Value.AddDays(1);
 
             model.DeleteGuests.NumberOfDeletedCustomers = _customerService.DeleteGuestCustomers(startDateValue, endDateValue, model.DeleteGuests.OnlyWithoutShoppingCart);
 
@@ -319,7 +316,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             if (!_permissionService.Authorize(StandardPermissionProvider.ManageMaintenance))
                 return AccessDeniedView();
 
-            var olderThanDateValue = _dateTimeHelper.ConvertToUtcTime(model.DeleteAbandonedCarts.OlderThan, _dateTimeHelper.CurrentTimeZone);
+            var olderThanDateValue = (model.DeleteAbandonedCarts.OlderThan);
 
             model.DeleteAbandonedCarts.NumberOfDeletedItems = 0;
             return View(model);
@@ -333,10 +330,10 @@ namespace Nop.Web.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             DateTime? startDateValue = (model.DeleteExportedFiles.StartDate == null) ? null
-                            : (DateTime?)_dateTimeHelper.ConvertToUtcTime(model.DeleteExportedFiles.StartDate.Value, _dateTimeHelper.CurrentTimeZone);
+                            : (DateTime?)(model.DeleteExportedFiles.StartDate.Value);
 
             DateTime? endDateValue = (model.DeleteExportedFiles.EndDate == null) ? null
-                            : (DateTime?)_dateTimeHelper.ConvertToUtcTime(model.DeleteExportedFiles.EndDate.Value, _dateTimeHelper.CurrentTimeZone).AddDays(1);
+                            : (DateTime?)(model.DeleteExportedFiles.EndDate.Value).AddDays(1);
 
 
             model.DeleteExportedFiles.NumberOfDeletedFiles = 0;
@@ -489,79 +486,17 @@ namespace Nop.Web.Areas.Admin.Controllers
             var model = new UrlRecordListModel();
             return View(model);
         }
-        [HttpPost]
-        public virtual IActionResult SeNames(DataSourceRequest command, UrlRecordListModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageMaintenance))
-                return AccessDeniedKendoGridJson();
-
-            var urlRecords = _urlRecordService.GetAllUrlRecords(model.SeName, command.Page - 1, command.PageSize);
-            var gridModel = new DataSourceResult
-            {
-                Data = urlRecords.Select(x =>
-                {
-                    //details URL
-                    string detailsUrl = "";
-                    var entityName = x.EntityName != null ? x.EntityName.ToLowerInvariant() : "";
-                    switch (entityName)
-                    {                        
-                        case "category":
-                            detailsUrl = Url.Action("Edit", "Category", new { id = x.EntityId });
-                            break;                       
-                        case "product":
-                            detailsUrl = Url.Action("Edit", "Product", new { id = x.EntityId });
-                            break;                     
-                        default:
-                            break;
-                    }
-
-                    return new UrlRecordModel
-                    {
-                        Id = x.Id,
-                        Name = x.Slug,
-                        EntityId = x.EntityId,
-                        EntityName = x.EntityName,
-                        IsActive = x.IsActive,
-                        Language = "中文",
-                        DetailsUrl = detailsUrl
-                    };
-                }),
-                Total = urlRecords.TotalCount
-            };
-            return Json(gridModel);
-        }
-        [HttpPost]
+         [HttpPost]
         public virtual IActionResult DeleteSelectedSeNames(ICollection<int> selectedIds)
         {
             if (!_permissionService.Authorize(StandardPermissionProvider.ManageMaintenance))
                 return AccessDeniedView();
 
-            if (selectedIds != null)
-            {
-                _urlRecordService.DeleteUrlRecords(_urlRecordService.GetUrlRecordsByIds(selectedIds.ToArray()));
-            }
+            
 
             return Json(new { Result = true });
         }
-
-
-   
-        //action displaying notification (warning) to a store owner that entered SE URL already exists
-        public virtual IActionResult UrlReservedWarning(string entityId, string entityName, string seName)
-        {
-            if (string.IsNullOrEmpty(seName))
-                return Json(new { Result = string.Empty });
-
-            int parsedEntityId;
-            int.TryParse(entityId, out parsedEntityId);
-            var validatedSeName = SeoExtensions.ValidateSeName(parsedEntityId, entityName, seName, null, false);
-
-            if (seName.Equals(validatedSeName, StringComparison.InvariantCultureIgnoreCase))
-                return Json(new { Result = string.Empty });
-
-            return Json(new { Result = string.Format(("Admin.System.Warnings.URL.Reserved"), validatedSeName) });
-        }
-
+         
         #endregion
     }
 }

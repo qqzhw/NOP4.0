@@ -48,8 +48,6 @@ namespace Nop.Web.Areas.Admin.Controllers
         private readonly ISettingService _settingService;
        
         private readonly IPictureService _pictureService;
-       
-        private readonly IDateTimeHelper _dateTimeHelper;
         
         private readonly IEncryptionService _encryptionService;
         private readonly IThemeProvider _themeProvider;
@@ -60,8 +58,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         private readonly IMaintenanceService _maintenanceService;
         private readonly IStoreService _storeService;
         private readonly IWorkContext _workContext;
-        private readonly IGenericAttributeService _genericAttributeService;
-       
+        
         private readonly NopConfig _config;
 
         #endregion
@@ -70,10 +67,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         public SettingController(ISettingService settingService,
            
-            IPictureService pictureService, 
-         
-            IDateTimeHelper dateTimeHelper,
-           
+            IPictureService pictureService,  
             IEncryptionService encryptionService,
             IThemeProvider themeProvider,
             ICustomerService customerService, 
@@ -82,16 +76,12 @@ namespace Nop.Web.Areas.Admin.Controllers
            
             IMaintenanceService maintenanceService,
             IStoreService storeService,
-            IWorkContext workContext, 
-            IGenericAttributeService genericAttributeService,
-          
+            IWorkContext workContext,  
             NopConfig config)
         {
             this._settingService = settingService;
           
             this._pictureService = pictureService;
-           
-            this._dateTimeHelper = dateTimeHelper;
            
             this._encryptionService = encryptionService;
             this._themeProvider = themeProvider;
@@ -102,9 +92,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             this._maintenanceService = maintenanceService;
             this._storeService = storeService;
             this._workContext = workContext;
-            this._genericAttributeService = genericAttributeService;
-            
-            this._config = config;
+              this._config = config;
         }
 
         #endregion
@@ -118,8 +106,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             var store = _storeService.GetStoreById(storeid);
             if (store != null || storeid == 0)
             {
-                _genericAttributeService.SaveAttribute(_workContext.CurrentCustomer,
-                    SystemCustomerAttributeNames.AdminAreaStoreScopeConfiguration, storeid);
+                
             }
 
             //home page
@@ -451,17 +438,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             model.CustomerSettings = customerSettings.ToModel();
          
             model.DateTimeSettings.AllowCustomersToSetTimeZone = dateTimeSettings.AllowCustomersToSetTimeZone;
-            model.DateTimeSettings.DefaultStoreTimeZoneId = _dateTimeHelper.DefaultStoreTimeZone.Id;
-            foreach (TimeZoneInfo timeZone in _dateTimeHelper.GetSystemTimeZones())
-            {
-                model.DateTimeSettings.AvailableTimeZones.Add(new SelectListItem
-                    {
-                        Text = timeZone.DisplayName,
-                        Value = timeZone.Id,
-                        Selected = timeZone.Id.Equals(_dateTimeHelper.DefaultStoreTimeZone.Id, StringComparison.InvariantCultureIgnoreCase)
-                    });
-            }
-
+            
             return View(model);
         }
 

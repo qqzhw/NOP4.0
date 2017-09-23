@@ -50,9 +50,7 @@ namespace Nop.Services.Customers
         private readonly IRepository<Customer> _customerRepository;
         private readonly IRepository<CustomerPassword> _customerPasswordRepository;
         private readonly IRepository<CustomerRole> _customerRoleRepository;
-        private readonly IRepository<GenericAttribute> _gaRepository;
-      
-        private readonly IGenericAttributeService _genericAttributeService;
+       
         private readonly IDataProvider _dataProvider;
         private readonly IDbContext _dbContext;
         private readonly ICacheManager _cacheManager;
@@ -68,8 +66,7 @@ namespace Nop.Services.Customers
             IRepository<Customer> customerRepository,
             IRepository<CustomerPassword> customerPasswordRepository,
             IRepository<CustomerRole> customerRoleRepository,
-            IRepository<GenericAttribute> gaRepository,         
-          IGenericAttributeService genericAttributeService,
+           
             IDataProvider dataProvider,
             IDbContext dbContext,
             IEventPublisher eventPublisher, 
@@ -80,8 +77,7 @@ namespace Nop.Services.Customers
             this._customerRepository = customerRepository;
             this._customerPasswordRepository = customerPasswordRepository;
             this._customerRoleRepository = customerRoleRepository;
-            this._gaRepository = gaRepository;         
-          this._genericAttributeService = genericAttributeService;
+         
             this._dataProvider = dataProvider;
             this._dbContext = dbContext;
             this._eventPublisher = eventPublisher;
@@ -143,23 +139,10 @@ namespace Nop.Services.Customers
                 query = query.Where(c => c.Email.Contains(email));
             if (!String.IsNullOrWhiteSpace(username))
                 query = query.Where(c => c.Username.Contains(username));
-            if (!String.IsNullOrWhiteSpace(firstName))
-            {
-                query = query
-                    .Join(_gaRepository.Table, x => x.Id, y => y.EntityId, (x, y) => new { Customer = x, Attribute = y })
-                    .Where((z => z.Attribute.KeyGroup == "Customer" &&
-                        z.Attribute.Key == SystemCustomerAttributeNames.FirstName &&
-                        z.Attribute.Value.Contains(firstName)))
-                    .Select(z => z.Customer);
-            }
+            
             if (!String.IsNullOrWhiteSpace(lastName))
             {
-                query = query
-                    .Join(_gaRepository.Table, x => x.Id, y => y.EntityId, (x, y) => new { Customer = x, Attribute = y })
-                    .Where((z => z.Attribute.KeyGroup == "Customer" &&
-                        z.Attribute.Key == SystemCustomerAttributeNames.LastName &&
-                        z.Attribute.Value.Contains(lastName)))
-                    .Select(z => z.Customer);
+               
             }
             //date of birth is stored as a string into database.
             //we also know that date of birth is stored in the following format YYYY-MM-DD (for example, 1983-02-18).
@@ -174,12 +157,7 @@ namespace Nop.Services.Customers
                 //we also cannot use Length function in SQL Server Compact (not supported in this context)
                 //z.Attribute.Value.Length - dateOfBirthStr.Length = 5
                 //dateOfBirthStr.Length = 5
-                query = query
-                    .Join(_gaRepository.Table, x => x.Id, y => y.EntityId, (x, y) => new { Customer = x, Attribute = y })
-                    .Where((z => z.Attribute.KeyGroup == "Customer" &&
-                        z.Attribute.Key == SystemCustomerAttributeNames.DateOfBirth &&
-                        z.Attribute.Value.Substring(5, 5) == dateOfBirthStr))
-                    .Select(z => z.Customer);
+                
             }
             else if (dayOfBirth > 0)
             {
@@ -191,53 +169,26 @@ namespace Nop.Services.Customers
                 //we also cannot use Length function in SQL Server Compact (not supported in this context)
                 //z.Attribute.Value.Length - dateOfBirthStr.Length = 8
                 //dateOfBirthStr.Length = 2
-                query = query
-                    .Join(_gaRepository.Table, x => x.Id, y => y.EntityId, (x, y) => new { Customer = x, Attribute = y })
-                    .Where((z => z.Attribute.KeyGroup == "Customer" &&
-                        z.Attribute.Key == SystemCustomerAttributeNames.DateOfBirth &&
-                        z.Attribute.Value.Substring(8, 2) == dateOfBirthStr))
-                    .Select(z => z.Customer);
+             
             }
             else if (monthOfBirth > 0)
             {
-                //only month is specified
-                string dateOfBirthStr = "-" + monthOfBirth.ToString("00", CultureInfo.InvariantCulture) + "-";
-                query = query
-                    .Join(_gaRepository.Table, x => x.Id, y => y.EntityId, (x, y) => new { Customer = x, Attribute = y })
-                    .Where((z => z.Attribute.KeyGroup == "Customer" &&
-                        z.Attribute.Key == SystemCustomerAttributeNames.DateOfBirth &&
-                        z.Attribute.Value.Contains(dateOfBirthStr)))
-                    .Select(z => z.Customer);
+              
             }
             //search by company
             if (!String.IsNullOrWhiteSpace(company))
             {
-                query = query
-                    .Join(_gaRepository.Table, x => x.Id, y => y.EntityId, (x, y) => new { Customer = x, Attribute = y })
-                    .Where((z => z.Attribute.KeyGroup == "Customer" &&
-                        z.Attribute.Key == SystemCustomerAttributeNames.Company &&
-                        z.Attribute.Value.Contains(company)))
-                    .Select(z => z.Customer);
+              
             }
             //search by phone
             if (!String.IsNullOrWhiteSpace(phone))
             {
-                query = query
-                    .Join(_gaRepository.Table, x => x.Id, y => y.EntityId, (x, y) => new { Customer = x, Attribute = y })
-                    .Where((z => z.Attribute.KeyGroup == "Customer" &&
-                        z.Attribute.Key == SystemCustomerAttributeNames.Phone &&
-                        z.Attribute.Value.Contains(phone)))
-                    .Select(z => z.Customer);
+              
             }
             //search by zip
             if (!String.IsNullOrWhiteSpace(zipPostalCode))
             {
-                query = query
-                    .Join(_gaRepository.Table, x => x.Id, y => y.EntityId, (x, y) => new { Customer = x, Attribute = y })
-                    .Where((z => z.Attribute.KeyGroup == "Customer" &&
-                        z.Attribute.Key == SystemCustomerAttributeNames.ZipPostalCode &&
-                        z.Attribute.Value.Contains(zipPostalCode)))
-                    .Select(z => z.Customer);
+              
             }
 
             //search by IpAddress
@@ -489,28 +440,7 @@ namespace Nop.Services.Customers
         {
             if (customer == null)
                 throw new ArgumentNullException();
-            
-            //clear entered coupon codes
-            if (clearCouponCodes)
-            {
-                _genericAttributeService.SaveAttribute<string>(customer, SystemCustomerAttributeNames.DiscountCouponCode, null);
-                _genericAttributeService.SaveAttribute<string>(customer, SystemCustomerAttributeNames.GiftCardCouponCodes, null);
-            }
-
-            //clear checkout attributes
-            if (clearCheckoutAttributes)
-            {
-                _genericAttributeService.SaveAttribute<string>(customer, SystemCustomerAttributeNames.CheckoutAttributes, null, storeId);
-            }
-
-            //clear reward points flag
-            if (clearRewardPoints)
-            {
-                _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.UseRewardPointsDuringCheckout, false, storeId);
-            }
-
-          
-         
+             
             UpdateCustomer(customer);
         }
         
@@ -600,10 +530,7 @@ namespace Nop.Services.Customers
                 {
                     try
                     {
-                        //delete attributes
-                        var attributes = _genericAttributeService.GetAttributesForEntity(c.Id, "Customer");
-                        _genericAttributeService.DeleteAttributes(attributes);
-
+                       
                         //delete from database
                         _customerRepository.Delete(c);
                         totalRecordsDeleted++;

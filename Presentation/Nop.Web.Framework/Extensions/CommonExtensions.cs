@@ -114,10 +114,7 @@ namespace Nop.Web.Framework.Extensions
             else
             {
                 DateTime tmp1 = source;
-                if (convertToUserTime)
-                {
-                    tmp1 = EngineContext.Current.Resolve<IDateTimeHelper>().ConvertToUserTime(tmp1, DateTimeKind.Utc);
-                }
+              
                 //default formatting
                 if (!String.IsNullOrEmpty(defaultFormat))
                 {

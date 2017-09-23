@@ -17,7 +17,6 @@ namespace Nop.Web.Areas.Admin.Controllers
         #region Fields
 
         private readonly ICustomerService _customerService; 
-        private readonly IDateTimeHelper _dateTimeHelper;
         private readonly CustomerSettings _customerSettings;
         private readonly IPermissionService _permissionService;
      
@@ -27,12 +26,11 @@ namespace Nop.Web.Areas.Admin.Controllers
         #region Ctor
 
         public OnlineCustomerController(ICustomerService customerService,
-          IDateTimeHelper dateTimeHelper,
-            CustomerSettings customerSettings,
+                   CustomerSettings customerSettings,
             IPermissionService permissionService)
         {
             this._customerService = customerService;       
-            this._dateTimeHelper = dateTimeHelper;
+         
             this._customerSettings = customerSettings;
             this._permissionService = permissionService;          
         }
@@ -67,10 +65,8 @@ namespace Nop.Web.Areas.Admin.Controllers
                         x.LastIpAddress :
                         ("Admin.Customers.OnlineCustomers.Fields.IPAddress.Disabled"),
                     Location =x.LastIpAddress,
-                    LastActivityDate = _dateTimeHelper.ConvertToUserTime(x.LastActivityDateUtc, DateTimeKind.Utc),
-                    LastVisitedPage = _customerSettings.StoreLastVisitedPage ?
-                        x.GetAttribute<string>(SystemCustomerAttributeNames.LastVisitedPage) :
-                        ("Admin.Customers.OnlineCustomers.Fields.LastVisitedPage.Disabled")
+                    LastActivityDate = (x.LastActivityDateUtc),
+                   
                 }),
                 Total = customers.TotalCount
             };

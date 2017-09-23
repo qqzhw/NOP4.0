@@ -31,13 +31,14 @@ namespace Nop.Core.Domain.Catalog
 		public string Remark { get; set; }
 
 		public string DeviceId { get; set; }
-		public int VendorId { get; set; }
+		public string VendorId { get; set; }
+        public string DefaultDir { get; set; }
 
-		public bool IsOpen { get; set; }
+        public bool IsOpen { get; set; }
 
 		public bool SubjectToAcl { get; set; }
 
-		public UInt32 RegAddress { get; set; }
+		public int RegAddress { get; set; }
 
 		public bool DisableButton { get; set; }
 

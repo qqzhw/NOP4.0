@@ -26,10 +26,8 @@ namespace Nop.Web.Areas.Admin.Controllers
     {
         #region Fields
 
-        private readonly ICustomerService _customerService;
-        private readonly IUrlRecordService _urlRecordService;
-        private readonly IWebHelper _webHelper;
-        private readonly IDateTimeHelper _dateTimeHelper;
+        private readonly ICustomerService _customerService; 
+        private readonly IWebHelper _webHelper;      
         private readonly IWorkContext _workContext;
         private readonly IStoreContext _storeContext;
         private readonly IPermissionService _permissionService;
@@ -42,10 +40,8 @@ namespace Nop.Web.Areas.Admin.Controllers
         #region Constructors
 
         public DirectorysController(
-            ICustomerService customerService,
-            IUrlRecordService urlRecordService,
-            IWebHelper webHelper,
-            IDateTimeHelper dateTimeHelper,
+            ICustomerService customerService, 
+            IWebHelper webHelper,        
             IWorkContext workContext,
             IStoreContext storeContext,
             IPermissionService permissionService,
@@ -53,10 +49,8 @@ namespace Nop.Web.Areas.Admin.Controllers
             CatalogSettings catalogSettings,          
             IHostingEnvironment hostingEnvironment       )
         {
-            this._customerService = customerService;
-            this._urlRecordService = urlRecordService;
-            this._webHelper = webHelper;
-            this._dateTimeHelper = dateTimeHelper;
+            this._customerService = customerService; 
+            this._webHelper = webHelper;          
             this._workContext = workContext;
             this._storeContext = storeContext;
             this._permissionService = permissionService;

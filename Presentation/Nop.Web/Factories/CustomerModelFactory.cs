@@ -31,15 +31,13 @@ namespace Nop.Web.Factories
         #region Fields
 
        
-        private readonly IDateTimeHelper _dateTimeHelper;
+     
         private readonly DateTimeSettings _dateTimeSettings;
        
         private readonly IWorkContext _workContext;
         private readonly IStoreContext _storeContext;
         private readonly IStoreMappingService _storeMappingService;
-      
-        private readonly IGenericAttributeService _genericAttributeService;
-      
+       
         private readonly CustomerSettings _customerSettings;      
         private readonly IPictureService _pictureService;        
         private readonly IDownloadService _downloadService;
@@ -55,14 +53,13 @@ namespace Nop.Web.Factories
 
         #region Ctor
 
-        public CustomerModelFactory(  
-            IDateTimeHelper dateTimeHelper,
+        public CustomerModelFactory(   
             DateTimeSettings dateTimeSettings, 
            
             IWorkContext workContext,
             IStoreContext storeContext,
             IStoreMappingService storeMappingService,
-            IGenericAttributeService genericAttributeService,
+           
             CustomerSettings customerSettings,
             IPictureService pictureService, 
             IDownloadService downloadService,
@@ -74,15 +71,14 @@ namespace Nop.Web.Factories
             CatalogSettings catalogSettings )
         {
        
-            this._dateTimeHelper = dateTimeHelper;
+           
             this._dateTimeSettings = dateTimeSettings;
          
             this._workContext = workContext;
             this._storeContext = storeContext;
             this._storeMappingService = storeMappingService;
          
-            this._genericAttributeService = genericAttributeService;
-         
+          
             this._customerSettings = customerSettings;
           
             this._pictureService = pictureService;
@@ -121,27 +117,8 @@ namespace Nop.Web.Factories
          
             if (!excludeProperties)
             {
-             
-                model.FirstName = customer.GetAttribute<string>(SystemCustomerAttributeNames.FirstName);
-                model.LastName = customer.GetAttribute<string>(SystemCustomerAttributeNames.LastName);
-                model.Gender = customer.GetAttribute<string>(SystemCustomerAttributeNames.Gender);
-                var dateOfBirth = customer.GetAttribute<DateTime?>(SystemCustomerAttributeNames.DateOfBirth);
-                if (dateOfBirth.HasValue)
-                {
-                    model.DateOfBirthDay = dateOfBirth.Value.Day;
-                    model.DateOfBirthMonth = dateOfBirth.Value.Month;
-                    model.DateOfBirthYear = dateOfBirth.Value.Year;
-                }
-               
-                model.City = customer.GetAttribute<string>(SystemCustomerAttributeNames.City);
               
-                model.StateProvinceId = customer.GetAttribute<int>(SystemCustomerAttributeNames.StateProvinceId);
-                model.Phone = customer.GetAttribute<string>(SystemCustomerAttributeNames.Phone);
-                model.Fax = customer.GetAttribute<string>(SystemCustomerAttributeNames.Fax);
-
-             
-                model.Signature = customer.GetAttribute<string>(SystemCustomerAttributeNames.Signature);
-
+               
                 model.Email = customer.Email;
                 model.Username = customer.Username;
             }
@@ -312,8 +289,7 @@ namespace Nop.Web.Factories
                 throw new ArgumentNullException(nameof(product));
 
             var model = new UserAgreementModel();
-            model.UserAgreementText = product.UserAgreementText;
-            
+           
             return model;
         }
 
@@ -327,24 +303,7 @@ namespace Nop.Web.Factories
             return model;
         }
 
-        /// <summary>
-        /// Prepare the customer avatar model
-        /// </summary>
-        /// <param name="model">Customer avatar model</param>
-        /// <returns>Customer avatar model</returns>
-        public virtual CustomerAvatarModel PrepareCustomerAvatarModel(CustomerAvatarModel model)
-        {
-            if (model == null)
-                throw new ArgumentNullException(nameof(model));
-
-            model.AvatarUrl = _pictureService.GetPictureUrl(
-                _workContext.CurrentCustomer.GetAttribute<int>(SystemCustomerAttributeNames.AvatarPictureId),
-                _mediaSettings.AvatarPictureSize,
-                false);
-
-            return model;
-        }
-
+         
         #endregion
     }
 }

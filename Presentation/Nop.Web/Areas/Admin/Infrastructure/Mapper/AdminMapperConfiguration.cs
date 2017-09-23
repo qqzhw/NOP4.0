@@ -56,59 +56,23 @@ namespace Nop.Web.Areas.Admin.Infrastructure.Mapper
                 .ForMember(dest => dest.LimitedToStores, mo => mo.Ignore());
        
             //products
-            CreateMap<Product, ProductModel>()
-                .ForMember(dest => dest.ProductsTypesSupportedByProductTemplates, mo => mo.Ignore())
-                .ForMember(dest => dest.ProductTypeName, mo => mo.Ignore())
-                .ForMember(dest => dest.AssociatedToProductId, mo => mo.Ignore())
-                .ForMember(dest => dest.AssociatedToProductName, mo => mo.Ignore())
-                .ForMember(dest => dest.StockQuantityStr, mo => mo.Ignore())
+            CreateMap<Product, ProductModel>()  
                 .ForMember(dest => dest.CreatedOn, mo => mo.Ignore())
-                .ForMember(dest => dest.UpdatedOn, mo => mo.Ignore())
-                .ForMember(dest => dest.ProductTags, mo => mo.Ignore())
-                .ForMember(dest => dest.PictureThumbnailUrl, mo => mo.Ignore())              
-                .ForMember(dest => dest.AvailableProductTemplates, mo => mo.Ignore())             
+ 
                 .ForMember(dest => dest.AvailableCategories, mo => mo.Ignore())              
                 .ForMember(dest => dest.AddPictureModel, mo => mo.Ignore())
-                .ForMember(dest => dest.ProductPictureModels, mo => mo.Ignore())            
-              
-                .ForMember(dest => dest.SeName, mo => mo.MapFrom(src => src.GetSeName(0, true, false)))
-                .ForMember(dest => dest.AvailableCustomerRoles, mo => mo.Ignore())
-                .ForMember(dest => dest.SelectedCustomerRoleIds, mo => mo.Ignore())
-                .ForMember(dest => dest.AvailableStores, mo => mo.Ignore())
-                .ForMember(dest => dest.SelectedStoreIds, mo => mo.Ignore())
-                .ForMember(dest => dest.AvailableTaxCategories, mo => mo.Ignore())
-                .ForMember(dest => dest.PrimaryStoreCurrencyCode, mo => mo.Ignore())
-                .ForMember(dest => dest.BaseDimensionIn, mo => mo.Ignore())
-                .ForMember(dest => dest.BaseWeightIn, mo => mo.Ignore())
-                .ForMember(dest => dest.SelectedCategoryIds, mo => mo.Ignore())
-                       
-                .ForMember(dest => dest.AvailableDeliveryDates, mo => mo.Ignore())
-                .ForMember(dest => dest.AvailableProductAvailabilityRanges, mo => mo.Ignore())
+                .ForMember(dest => dest.ProductPictureModels, mo => mo.Ignore())     
+                .ForMember(dest => dest.SelectedCategoryIds, mo => mo.Ignore()) 
                
-                .ForMember(dest => dest.AvailableBasepriceUnits, mo => mo.Ignore())
-                .ForMember(dest => dest.AvailableBasepriceBaseUnits, mo => mo.Ignore())
-                .ForMember(dest => dest.LastStockQuantity, mo => mo.Ignore())
-            
                 .ForMember(dest => dest.CustomProperties, mo => mo.Ignore());
-            CreateMap<ProductModel, Product>() 
-                .ForMember(dest => dest.CreatedOnUtc, mo => mo.Ignore())
-                .ForMember(dest => dest.UpdatedOnUtc, mo => mo.Ignore())
-                .ForMember(dest => dest.ParentGroupedProductId, mo => mo.Ignore())
-                .ForMember(dest => dest.ProductType, mo => mo.Ignore())
+            CreateMap<ProductModel, Product>()
+                .ForMember(dest => dest.CreatedOn, mo => mo.Ignore())
+                .ForMember(dest => dest.UpdatedWriteOn, mo => mo.Ignore())
                 .ForMember(dest => dest.Deleted, mo => mo.Ignore())
-                .ForMember(dest => dest.ApprovedRatingSum, mo => mo.Ignore())
-                .ForMember(dest => dest.NotApprovedRatingSum, mo => mo.Ignore())
-                .ForMember(dest => dest.ApprovedTotalReviews, mo => mo.Ignore())
-                .ForMember(dest => dest.NotApprovedTotalReviews, mo => mo.Ignore())
-                .ForMember(dest => dest.ProductCategories, mo => mo.Ignore()) 
-                .ForMember(dest => dest.ProductPictures, mo => mo.Ignore()) 
-                .ForMember(dest => dest.HasTierPrices, mo => mo.Ignore())
-                .ForMember(dest => dest.HasDiscountsApplied, mo => mo.Ignore())
-             
-                .ForMember(dest => dest.DownloadActivationType, mo => mo.Ignore())
-                
-                .ForMember(dest => dest.SubjectToAcl, mo => mo.Ignore())
-                .ForMember(dest => dest.LimitedToStores, mo => mo.Ignore());
+
+
+                .ForMember(dest => dest.SubjectToAcl, mo => mo.Ignore());
+            
             //logs
             CreateMap<Log, LogModel>()
                 .ForMember(dest => dest.CustomerEmail, mo => mo.Ignore())

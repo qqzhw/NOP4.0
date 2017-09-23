@@ -40,7 +40,7 @@ namespace Nop.Web.Controllers
         private readonly IWorkContext _workContext;
         private readonly IStoreContext _storeContext;
         private readonly ICustomerService _customerService; 
-        private readonly IGenericAttributeService _genericAttributeService; 
+
         private readonly CustomerSettings _customerSettings; 
         private readonly IPictureService _pictureService;      
         private readonly IWebHelper _webHelper;
@@ -65,7 +65,7 @@ namespace Nop.Web.Controllers
             IWorkContext workContext,
             IStoreContext storeContext,
             ICustomerService customerService,           
-            IGenericAttributeService genericAttributeService,       
+           
             CustomerSettings customerSettings,           
             IPictureService pictureService,         
       
@@ -83,7 +83,7 @@ namespace Nop.Web.Controllers
             this._workContext = workContext;
             this._storeContext = storeContext;
             this._customerService = customerService;          
-            this._genericAttributeService = genericAttributeService;         
+           
             this._customerSettings = customerSettings;        
             this._pictureService = pictureService;         
          
@@ -203,10 +203,8 @@ namespace Nop.Web.Controllers
                  "ActivityLog.Impersonation.Finished.Customer",
                     _workContext.OriginalCustomerIfImpersonated.Email, _workContext.OriginalCustomerIfImpersonated.Id);
 
-                //logout impersonated customer
-                _genericAttributeService.SaveAttribute<int?>(_workContext.OriginalCustomerIfImpersonated,
-                    SystemCustomerAttributeNames.ImpersonatedCustomerId, null);
-
+                //logout impersonated customer           
+                
                 //redirect back to customer details page (admin area)
                 return this.RedirectToAction("Edit", "Customer",
                     new { id = _workContext.CurrentCustomer.Id, area = "Admin" });
@@ -282,22 +280,13 @@ namespace Nop.Web.Controllers
             if (customer == null)
                 return RedirectToRoute("HomePage");
 
-            var cToken = customer.GetAttribute<string>(SystemCustomerAttributeNames.AccountActivationToken);
-            if (string.IsNullOrEmpty(cToken))
-                return
-                    View(new AccountActivationModel
-                    {
-                        Result = ("Account.AccountActivation.AlreadyActivated")
-                    });
-
-            if (!cToken.Equals(token, StringComparison.InvariantCultureIgnoreCase))
-                return RedirectToRoute("HomePage");
-
+        
+         
+           
             //activate user account
             customer.Active = true;
             _customerService.UpdateCustomer(customer);
-            _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.AccountActivationToken, "");
-            
+           
             var model = new AccountActivationModel();
             model.Result = ("Account.AccountActivation.Activated");
             return View(model);
@@ -361,28 +350,8 @@ namespace Nop.Web.Controllers
                    
                    
 
-                    //form fields
-                    if (_customerSettings.GenderEnabled)
-                        _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.Gender, model.Gender);
-                    _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.FirstName, model.FirstName);
-                    _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.LastName, model.LastName);
-                    if (_customerSettings.DateOfBirthEnabled)
-                    {
-                        DateTime? dateOfBirth = model.ParseDateOfBirth();
-                        _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.DateOfBirth, dateOfBirth);
-                    }
-                 
+                  
               
-                    if (_customerSettings.CityEnabled)
-                        _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.City, model.City);
-                   
-                    if (_customerSettings.CountryEnabled && _customerSettings.StateProvinceEnabled)
-                        _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.StateProvinceId, model.StateProvinceId);
-                    if (_customerSettings.PhoneEnabled)
-                        _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.Phone, model.Phone);
-                    if (_customerSettings.FaxEnabled)
-                        _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.Fax, model.Fax);
-
                  
  
                     
@@ -486,97 +455,9 @@ namespace Nop.Web.Controllers
         #endregion
 
         #region My account / Avatar
-
-        [HttpsRequirement(SslRequirement.Yes)]
-        public virtual IActionResult Avatar()
-        {
-            if (!_workContext.CurrentCustomer.IsRegistered())
-                return new UnauthorizedResult();
-
-            if (!_customerSettings.AllowCustomersToUploadAvatars)
-                return RedirectToRoute("CustomerInfo");
-
-            var model = new CustomerAvatarModel();
-            model = _customerModelFactory.PrepareCustomerAvatarModel(model);
-            return View(model);
-        }
-
-        [HttpPost, ActionName("Avatar")]
-        [PublicAntiForgery]
-        [FormValueRequired("upload-avatar")]
-        public virtual IActionResult UploadAvatar(CustomerAvatarModel model, IFormFile uploadedFile)
-        {
-            if (!_workContext.CurrentCustomer.IsRegistered())
-                return new UnauthorizedResult();
-
-            if (!_customerSettings.AllowCustomersToUploadAvatars)
-                return RedirectToRoute("CustomerInfo");
-
-            var customer = _workContext.CurrentCustomer;
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var customerAvatar = _pictureService.GetPictureById(customer.GetAttribute<int>(SystemCustomerAttributeNames.AvatarPictureId));
-                    if (uploadedFile != null && !String.IsNullOrEmpty(uploadedFile.FileName))
-                    {
-                        int avatarMaxSize = _customerSettings.AvatarMaximumSizeBytes;
-                        if (uploadedFile.Length > avatarMaxSize)
-                            throw new NopException(string.Format(("Account.Avatar.MaximumUploadedFileSize"), avatarMaxSize));
-
-                        byte[] customerPictureBinary = uploadedFile.GetPictureBits();
-                        if (customerAvatar != null)
-                            customerAvatar = _pictureService.UpdatePicture(customerAvatar.Id, customerPictureBinary, uploadedFile.ContentType, null);
-                        else
-                            customerAvatar = _pictureService.InsertPicture(customerPictureBinary, uploadedFile.ContentType, null);
-                    }
-
-                    int customerAvatarId = 0;
-                    if (customerAvatar != null)
-                        customerAvatarId = customerAvatar.Id;
-
-                    _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.AvatarPictureId, customerAvatarId);
-
-                    model.AvatarUrl = _pictureService.GetPictureUrl(
-                        customer.GetAttribute<int>(SystemCustomerAttributeNames.AvatarPictureId),
-                        _mediaSettings.AvatarPictureSize,
-                        false);
-                    return View(model);
-                }
-                catch (Exception exc)
-                {
-                    ModelState.AddModelError("", exc.Message);
-                }
-            }
-
-
-            //If we got this far, something failed, redisplay form
-            model = _customerModelFactory.PrepareCustomerAvatarModel(model);
-            return View(model);
-        }
-
-        [HttpPost, ActionName("Avatar")]
-        [PublicAntiForgery]
-        [FormValueRequired("remove-avatar")]
-        public virtual IActionResult RemoveAvatar(CustomerAvatarModel model)
-        {
-            if (!_workContext.CurrentCustomer.IsRegistered())
-                return new UnauthorizedResult();
-
-            if (!_customerSettings.AllowCustomersToUploadAvatars)
-                return RedirectToRoute("CustomerInfo");
-
-            var customer = _workContext.CurrentCustomer;
-
-            var customerAvatar = _pictureService.GetPictureById(customer.GetAttribute<int>(SystemCustomerAttributeNames.AvatarPictureId));
-            if (customerAvatar != null)
-                _pictureService.DeletePicture(customerAvatar);
-            _genericAttributeService.SaveAttribute(customer, SystemCustomerAttributeNames.AvatarPictureId, 0);
-
-            return RedirectToRoute("CustomerAvatar");
-        }
-
+         
+        
+       
         #endregion
 
         #endregion

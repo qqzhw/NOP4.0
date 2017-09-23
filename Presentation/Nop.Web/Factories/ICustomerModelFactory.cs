@@ -65,6 +65,6 @@ namespace Nop.Web.Factories
         /// </summary>
         /// <param name="model">Customer avatar model</param>
         /// <returns>Customer avatar model</returns>
-        CustomerAvatarModel PrepareCustomerAvatarModel(CustomerAvatarModel model);
+       
     }
 }

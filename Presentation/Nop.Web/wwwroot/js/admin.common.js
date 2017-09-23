@@ -64,7 +64,7 @@ function bindBootstrapTabSelectEvent(tabsId) {
 
 function display_kendoui_grid_error(e) {
     if (e.errors) {
-        if ((typeof e.errors) == 'string') {
+        if ((typeof e.errors) === 'string') {
             //single error
             //display the message
             alert(e.errors);

@@ -27,7 +27,7 @@ namespace Nop.Web.Controllers
         private readonly IWorkContext _workContext;
         private readonly IStoreContext _storeContext;
         private readonly IThemeContext _themeContext;
-        private readonly IGenericAttributeService _genericAttributeService;
+         
         private readonly ICustomerActivityService _customerActivityService;       
         private readonly ILogger _logger;        
         private readonly StoreInformationSettings _storeInformationSettings;
@@ -41,8 +41,7 @@ namespace Nop.Web.Controllers
         public CommonController(ICommonModelFactory commonModelFactory,           
             IWorkContext workContext,
             IStoreContext storeContext,
-            IThemeContext themeContext,
-            IGenericAttributeService genericAttributeService,
+            IThemeContext themeContext, 
             ICustomerActivityService customerActivityService,         
             ILogger logger,
             StoreInformationSettings storeInformationSettings,
@@ -52,8 +51,7 @@ namespace Nop.Web.Controllers
             this._commonModelFactory = commonModelFactory;         
             this._workContext = workContext;
             this._storeContext = storeContext;
-            this._themeContext = themeContext;
-            this._genericAttributeService = genericAttributeService;
+            this._themeContext = themeContext;          
             this._customerActivityService = customerActivityService;
          
             this._logger = logger;

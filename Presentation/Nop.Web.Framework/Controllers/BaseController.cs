@@ -282,8 +282,8 @@ namespace Nop.Web.Framework.Controllers
             if (storeService.GetAllStores().Count < 2)
                 return 0;
 
-            var storeId = workContext.CurrentCustomer.GetAttribute<int>(SystemCustomerAttributeNames.AdminAreaStoreScopeConfiguration);
-            var store = storeService.GetStoreById(storeId);
+        
+            var store = storeService.GetStoreById(1);
 
             return store != null ? store.Id : 0;
         }

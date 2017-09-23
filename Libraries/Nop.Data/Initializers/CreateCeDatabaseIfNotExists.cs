@@ -33,10 +33,10 @@ namespace Nop.Data.Initializers
                 // If there is no metadata either in the model or in the databaase, then
                 // we assume that the database matches the model because the common cases for
                 // these scenarios are database/model first and/or an existing database.
-                if (!context.Database.CompatibleWithModel(throwIfNoMetadata: false))
-                {
-                    throw new InvalidOperationException(string.Format("The model backing the '{0}' context has changed since the database was created. Either manually delete/update the database, or call Database.SetInitializer with an IDatabaseInitializer instance. For example, the DropCreateDatabaseIfModelChanges strategy will automatically delete and recreate the database, and optionally seed it with new data.", context.GetType().Name));
-                }
+                //if (!context.Database.CompatibleWithModel(throwIfNoMetadata: true))
+                //{
+                //    throw new InvalidOperationException(string.Format("The model backing the '{0}' context has changed since the database was created. Either manually delete/update the database, or call Database.SetInitializer with an IDatabaseInitializer instance. For example, the DropCreateDatabaseIfModelChanges strategy will automatically delete and recreate the database, and optionally seed it with new data.", context.GetType().Name));
+                //}
             }
             else
             {

@@ -191,42 +191,7 @@ namespace Nop.Services.Catalog
             bool showHidden = false,
             bool? overridePublished = null);
         
-
-        /// <summary>
-        /// Gets associated products
-        /// </summary>
-        /// <param name="parentGroupedProductId">Parent product identifier (used with grouped products)</param>
-        /// <param name="storeId">Store identifier; 0 to load all records</param>
-        /// <param name="vendorId">Vendor identifier; 0 to load all records</param>
-        /// <param name="showHidden">A value indicating whether to show hidden records</param>
-        /// <returns>Products</returns>
-        IList<Product> GetAssociatedProducts(int parentGroupedProductId,
-            int storeId = 0, int vendorId = 0, bool showHidden = false);
-
-       
-        /// <summary>
-        /// Gets a product by SKU
-        /// </summary>
-        /// <param name="sku">SKU</param>
-        /// <returns>Product</returns>
-        Product GetProductBySku(string sku);
-
-        /// <summary>
-        /// Gets a products by SKU array
-        /// </summary>
-        /// <param name="skuArray">SKU array</param>
-        /// <param name="vendorId">Vendor ID; 0 to load all records</param>
-        /// <returns>Products</returns>
-        IList<Product> GetProductsBySku(string[] skuArray, int vendorId = 0);
-
-       
-        /// <summary>
-        /// Gets number of products by vendor identifier
-        /// </summary>
-        /// <param name="vendorId">Vendor identifier</param>
-        /// <returns>Number of products</returns>
-        int GetNumberOfProductsByVendorId(int vendorId);
-
+   
         #endregion
          
 

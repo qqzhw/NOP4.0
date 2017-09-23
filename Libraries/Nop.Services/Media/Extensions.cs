@@ -63,11 +63,7 @@ namespace Nop.Services.Media
                 picture = pictureService.GetPicturesByProductId(product.Id, 1).FirstOrDefault();
             }
 
-            //let's check whether this product has some parent "grouped" product
-            if (picture == null && !product.VisibleIndividually && product.ParentGroupedProductId > 0)
-            {
-                picture = pictureService.GetPicturesByProductId(product.ParentGroupedProductId, 1).FirstOrDefault();
-            }
+           
 
             return picture;
         }

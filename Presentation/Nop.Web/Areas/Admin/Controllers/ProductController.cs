@@ -47,18 +47,15 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         private readonly IProductService _productService; 
         private readonly ICategoryService _categoryService; 
-        private readonly ICustomerService _customerService;
-        private readonly IUrlRecordService _urlRecordService;
+        private readonly ICustomerService _customerService; 
         private readonly IWorkContext _workContext; 
         private readonly IPictureService _pictureService; 
         private readonly ICustomerActivityService _customerActivityService;
         private readonly IPermissionService _permissionService;
         private readonly IAclService _aclService;
         private readonly IStoreService _storeService; 
-        private readonly IStoreMappingService _storeMappingService; 
-        
-        private readonly IStaticCacheManager _cacheManager;
-        private readonly IDateTimeHelper _dateTimeHelper; 
+        private readonly IStoreMappingService _storeMappingService;         
+        private readonly IStaticCacheManager _cacheManager;        
         private readonly IDownloadService _downloadService;
         private readonly ISettingService _settingService;
         
@@ -68,8 +65,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         public ProductController(IProductService productService, 
             ICategoryService categoryService, 
-            ICustomerService customerService,
-            IUrlRecordService urlRecordService,
+            ICustomerService customerService, 
             IWorkContext workContext, 
             IPictureService pictureService, 
             ICustomerActivityService customerActivityService,
@@ -77,15 +73,13 @@ namespace Nop.Web.Areas.Admin.Controllers
             IAclService aclService,
             IStoreService storeService, 
             IStoreMappingService storeMappingService, 
-            IStaticCacheManager cacheManager,
-            IDateTimeHelper dateTimeHelper,  
+            IStaticCacheManager cacheManager,         
             IDownloadService downloadService,
             ISettingService settingService )
         {
             this._productService = productService; 
             this._categoryService = categoryService; 
-            this._customerService = customerService;
-            this._urlRecordService = urlRecordService;
+            this._customerService = customerService; 
             this._workContext = workContext; 
             this._pictureService = pictureService; 
             this._customerActivityService = customerActivityService;
@@ -96,7 +90,6 @@ namespace Nop.Web.Areas.Admin.Controllers
             this._storeMappingService = storeMappingService;
          
             this._cacheManager = cacheManager;
-            this._dateTimeHelper = dateTimeHelper; 
           
             this._downloadService = downloadService;
             this._settingService = settingService;
@@ -106,102 +99,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         #endregion
 
         #region Utilities
-        
-       
-        protected virtual void UpdatePictureSeoNames(Product product)
-        {
-            foreach (var pp in product.ProductPictures)
-                _pictureService.SetSeoFilename(pp.PictureId, _pictureService.GetPictureSeName(product.Name));
-        }
-
-        protected virtual void PrepareAclModel(ProductModel model, Product product, bool excludeProperties)
-        {
-            if (model == null)
-                throw new ArgumentNullException(nameof(model));
-
-            if (!excludeProperties && product != null)
-                model.SelectedCustomerRoleIds = _aclService.GetCustomerRoleIdsWithAccess(product).ToList();
-
-            var allRoles = _customerService.GetAllCustomerRoles(true);
-            foreach (var role in allRoles)
-            {
-                model.AvailableCustomerRoles.Add(new SelectListItem
-                {
-                    Text = role.Name,
-                    Value = role.Id.ToString(),
-                    Selected = model.SelectedCustomerRoleIds.Contains(role.Id)
-                });
-            }
-        }
-
-        protected virtual void SaveProductAcl(Product product, ProductModel model)
-        {
-            product.SubjectToAcl = model.SelectedCustomerRoleIds.Any();
-
-            var existingAclRecords = _aclService.GetAclRecords(product);
-            var allCustomerRoles = _customerService.GetAllCustomerRoles(true);
-            foreach (var customerRole in allCustomerRoles)
-            {
-                if (model.SelectedCustomerRoleIds.Contains(customerRole.Id))
-                {
-                    //new role
-                    if (existingAclRecords.Count(acl => acl.CustomerRoleId == customerRole.Id) == 0)
-                        _aclService.InsertAclRecord(product, customerRole.Id);
-                }
-                else
-                {
-                    //remove role
-                    var aclRecordToDelete = existingAclRecords.FirstOrDefault(acl => acl.CustomerRoleId == customerRole.Id);
-                    if (aclRecordToDelete != null)
-                        _aclService.DeleteAclRecord(aclRecordToDelete);
-                }
-            }
-        }
-
-        protected virtual void PrepareStoresMappingModel(ProductModel model, Product product, bool excludeProperties)
-        {
-            if (model == null)
-                throw new ArgumentNullException(nameof(model));
-
-            if (!excludeProperties && product != null)
-                model.SelectedStoreIds = _storeMappingService.GetStoresIdsWithAccess(product).ToList();
-
-            var allStores = _storeService.GetAllStores();
-            foreach (var store in allStores)
-            {
-                model.AvailableStores.Add(new SelectListItem
-                {
-                    Text = store.Name,
-                    Value = store.Id.ToString(),
-                    Selected = model.SelectedStoreIds.Contains(store.Id)
-                });
-            }
-        }
-
-        protected virtual void SaveStoreMappings(Product product, ProductModel model)
-        {
-            product.LimitedToStores = model.SelectedStoreIds.Any();
-
-            var existingStoreMappings = _storeMappingService.GetStoreMappings(product);
-            var allStores = _storeService.GetAllStores();
-            foreach (var store in allStores)
-            {
-                if (model.SelectedStoreIds.Contains(store.Id))
-                {
-                    //new store
-                    if (existingStoreMappings.Count(sm => sm.StoreId == store.Id) == 0)
-                        _storeMappingService.InsertStoreMapping(product, store.Id);
-                }
-                else
-                {
-                    //remove store
-                    var storeMappingToDelete = existingStoreMappings.FirstOrDefault(sm => sm.StoreId == store.Id);
-                    if (storeMappingToDelete != null)
-                        _storeMappingService.DeleteStoreMapping(storeMappingToDelete);
-                }
-            }
-        }
-
+         
         protected virtual void PrepareCategoryMappingModel(ProductModel model, Product product, bool excludeProperties)
         {
             if (model == null)
@@ -268,49 +166,23 @@ namespace Nop.Web.Areas.Admin.Controllers
 
             if (product != null)
             {
-                var parentGroupedProduct = _productService.GetProductById(product.ParentGroupedProductId);
-                if (parentGroupedProduct != null)
-                {
-                    model.AssociatedToProductId = product.ParentGroupedProductId;
-                    model.AssociatedToProductName = parentGroupedProduct.Name;
-                }
-
-                model.CreatedOn = _dateTimeHelper.ConvertToUserTime(product.CreatedOnUtc, DateTimeKind.Utc);
-                model.UpdatedOn = _dateTimeHelper.ConvertToUserTime(product.UpdatedOnUtc, DateTimeKind.Utc);
+                  
+                model.CreatedOn = product.CreatedOn;
+                model.UpdatedWriteOn = product.UpdatedWriteOn;
             }
             
             //supported product types
-            foreach (var productType in ProductType.SimpleProduct.ToSelectList(false).ToList())
+            foreach (var productType in ProductType.PCIE1.ToSelectList(false).ToList())
             {
                 var productTypeId = int.Parse(productType.Value);
-                model.ProductsTypesSupportedByProductTemplates.Add(productTypeId, new List<SelectListItem>());
-              
-            }
-              
-            //last stock quantity
-            if (product != null)
-            {
-                model.LastStockQuantity = product.StockQuantity;
+               
             }
 
+
+
             //default values
-            if (setPredefinedValues)
-            {
-                model.MaximumCustomerEnteredPrice = 1000;
-                model.MaxNumberOfDownloads = 10;
-                model.RecurringCycleLength = 100;
-                model.RecurringTotalCycles = 10;
-                model.RentalPriceLength = 1;
-                model.StockQuantity = 10000;
-                model.NotifyAdminForQuantityBelow = 1;
-                model.OrderMinimumQuantity = 1;
-                model.OrderMaximumQuantity = 10000; 
-                model.UnlimitedDownloads = true;
-                model.IsShipEnabled = true;
-                model.AllowCustomerReviews = true;
-                model.Published = true;
-                model.VisibleIndividually = true;
-            }
+
+            model.Published = false;
 
             //editor settings 
            // model.ProductEditorSettingsModel = productEditorSettings.ToModel();
@@ -348,29 +220,27 @@ namespace Nop.Web.Areas.Admin.Controllers
             var model = new ProductListModel();
             
             //categories
-            model.AvailableCategories.Add(new SelectListItem { Text = "Admin.Common.All", Value = "0" });
-            var categories = SelectListHelper.GetCategoryList(_categoryService, _cacheManager, true);
-            foreach (var c in categories)
-                model.AvailableCategories.Add(c); 
+            model.AvailableDrivers.Add(new SelectListItem { Text = "选择磁盘", Value = "0" });
+            DriveInfo[] drives = DriveInfo.GetDrives();
+            CommonHelper.UploadFilePath = drives[0].Name;
+            // model.AvailableDrivers.Add(new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
+            foreach (var item in drives)
+                model.AvailableDrivers.Add(new SelectListItem { Text = item.Name, Value = item.Name });
 
-            //stores
-            model.AvailableStores.Add(new SelectListItem { Text = "Admin.Common.All", Value = "0" });
-            foreach (var s in _storeService.GetAllStores())
-                model.AvailableStores.Add(new SelectListItem { Text = s.Name, Value = s.Id.ToString() });
-                     
+            //大小
+            model.AvailableDMA = DmaList();
 
-            //product types
-            model.AvailableProductTypes = ProductType.SimpleProduct.ToSelectList(false).ToList();
-            model.AvailableProductTypes.Insert(0, new SelectListItem { Text = "Admin.Common.All", Value = "0" });
-
-            //"published" property
-            //0 - all (according to "ShowHidden" parameter)
-            //1 - published only
-            //2 - unpublished only
-            model.AvailablePublishedOptions.Add(new SelectListItem { Text = "Admin.Catalog.Products.List.SearchPublished.All", Value = "0" });
-            model.AvailablePublishedOptions.Add(new SelectListItem { Text = ("Admin.Catalog.Products.List.SearchPublished.PublishedOnly"), Value = "1" });
-            model.AvailablePublishedOptions.Add(new SelectListItem { Text = ("Admin.Catalog.Products.List.SearchPublished.UnpublishedOnly"), Value = "2" });
-
+            model.AvailableMethod.Add(new SelectListItem
+            {
+                Text = "存盘",
+                Value = "1"
+            });
+            model.AvailableMethod.Add(new SelectListItem
+            {
+                Text = "测速",
+                Value = "2"
+            });
+            
             return View(model);
         }
 
@@ -379,34 +249,18 @@ namespace Nop.Web.Areas.Admin.Controllers
         {
             if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
                 return AccessDeniedKendoGridJson();
-         
-
-            var categoryIds = new List<int> { model.SearchCategoryId };
-            //include subcategories
-            if (model.SearchIncludeSubCategories && model.SearchCategoryId > 0)
-                categoryIds.AddRange(GetChildCategoryIds(model.SearchCategoryId));
-
+          
             //0 - all (according to "ShowHidden" parameter)
             //1 - published only
             //2 - unpublished only
-            bool? overridePublished = null;
-            if (model.SearchPublishedId == 1)
-                overridePublished = true;
-            else if (model.SearchPublishedId == 2)
-                overridePublished = false;
-
-            var products = _productService.SearchProducts(
-                categoryIds: categoryIds,
-                manufacturerId: model.SearchManufacturerId,
-                storeId: model.SearchStoreId,
-                vendorId: model.SearchVendorId,
-                warehouseId: model.SearchWarehouseId,
-                productType: model.SearchProductTypeId > 0 ? (ProductType?)model.SearchProductTypeId : null,
-                keywords: model.SearchProductName,
+          
+            var products = _productService.SearchProducts(                
+                manufacturerId: 0,
+                storeId: 0,
+                vendorId: 0, 
                 pageIndex: command.Page - 1,
                 pageSize: command.PageSize,
-                showHidden: true,
-                overridePublished: overridePublished
+                showHidden: true                  
             );
             var gridModel = new DataSourceResult
             {
@@ -414,13 +268,9 @@ namespace Nop.Web.Areas.Admin.Controllers
                 {
                     var productModel = x.ToModel();
                 //little performance optimization: ensure that "FullDescription" is not returned
-                productModel.FullDescription = "";
+                productModel.Remark = "";
 
-                //picture
-                var defaultProductPicture = _pictureService.GetPicturesByProductId(x.Id, 1).FirstOrDefault();
-                    productModel.PictureThumbnailUrl = _pictureService.GetPictureUrl(defaultProductPicture, 75, true);
-                //friendly stock qantity
-
+              
                 return productModel;
                 }),
                 Total = products.TotalCount
@@ -429,7 +279,58 @@ namespace Nop.Web.Areas.Admin.Controllers
             return Json(gridModel);
         }
 
-     
+         private List<SelectListItem> DmaList()
+        {
+            var list = new List<SelectListItem>()
+            {
+                new SelectListItem()
+                {
+                    Text="8K",
+                    Value="8",
+                }, new SelectListItem()
+                {
+                    Text="16K",
+                    Value="16",
+                }, new SelectListItem()
+                {
+                    Text="32K",
+                    Value="32",
+                },
+                 new SelectListItem()
+                {
+                    Text="64K",
+                    Value="64",
+                },
+                  new SelectListItem()
+                {
+                    Text="128K",
+                    Value="128",
+                },
+                   new SelectListItem()
+                {
+                    Text="256K",
+                    Value="256",
+                },
+                new SelectListItem()
+                {
+                    Text="512K",
+                    Value="512",
+                },
+                 new SelectListItem()
+                {
+                    Text="1024K",
+                    Value="1024",
+                },
+                  new SelectListItem()
+                {
+                    Text="2048K",
+                    Value="2048",
+                }
+
+            };
+            return list;
+            
+        }
         //create product
         public virtual IActionResult Create()
         {
@@ -440,9 +341,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             var model = new ProductModel();
 
             PrepareProductModel(model, null, true, true);
-           
-            PrepareAclModel(model, null, false);
-            PrepareStoresMappingModel(model, null, false);
+            
             PrepareCategoryMappingModel(model, null, false);
          
             return View(model);
@@ -461,21 +360,14 @@ namespace Nop.Web.Areas.Admin.Controllers
 
                 //product
                 var product = model.ToEntity();
-                product.CreatedOnUtc = DateTime.UtcNow;
-                product.UpdatedOnUtc = DateTime.UtcNow;
+                product.CreatedOn = DateTime.Now;
+                product.UpdatedWriteOn = DateTime.Now;
                 _productService.InsertProduct(product);
-                //search engine name
-                model.SeName = product.ValidateSeName(model.SeName, product.Name, true);
-                _urlRecordService.SaveSlug(product, model.SeName, 0);
-           
+              
                 //categories
                 SaveCategoryMappings(product, model);
           
-                //ACL (customer roles)
-                SaveProductAcl(product, model);
-                //stores
-                SaveStoreMappings(product, model);
-              
+               
                 //activity log
                 _customerActivityService.InsertActivity("AddNewProduct", ("ActivityLog.AddNewProduct"), product.Name);
 
@@ -493,8 +385,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
             //If we got this far, something failed, redisplay form
             PrepareProductModel(model, null, false, true);
-            PrepareAclModel(model, null, true);
-            PrepareStoresMappingModel(model, null, true);
+            
             PrepareCategoryMappingModel(model, null, true);
         
             return View(model);
@@ -515,10 +406,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
             var model = product.ToModel();
             PrepareProductModel(model, product, false, false);
-           
-
-            PrepareAclModel(model, product, false);
-            PrepareStoresMappingModel(model, product, false);
+            
             PrepareCategoryMappingModel(model, product, false);
           
             return View(model);
@@ -537,67 +425,25 @@ namespace Nop.Web.Areas.Admin.Controllers
                 return RedirectToAction("List");
 
        
-            //check if the product quantity has been changed while we were editing the product
-            //and if it has been changed then we show error notification
-            //and redirect on the editing page without data saving
-            if (product.StockQuantity != model.LastStockQuantity)
-            {
-                ErrorNotification(("Admin.Catalog.Products.Fields.StockQuantity.ChangedWarning"));
-                return RedirectToAction("Edit", new { id = product.Id });
-            }
-
+      
             if (ModelState.IsValid)
             {
               
 
                 //we do not validate maximum number of products per vendor when editing existing products (only during creation of new products)
 
-             
-                //some previously used values
-             
-                var prevDownloadId = product.DownloadId;
-                var prevSampleDownloadId = product.SampleDownloadId;
-                var previousStockQuantity = product.StockQuantity;
-                var previousWarehouseId = product.WarehouseId;
+              
 
                 //product
                 product = model.ToEntity(product);
 
-                product.UpdatedOnUtc = DateTime.UtcNow;
+                product.UpdatedWriteOn = DateTime.Now;
                 _productService.UpdateProduct(product);
-                //search engine name
-                model.SeName = product.ValidateSeName(model.SeName, product.Name, true);
-                _urlRecordService.SaveSlug(product, model.SeName, 0);
-              
+             
                 //categories
                 SaveCategoryMappings(product, model);
-              
-                //ACL (customer roles)
-                SaveProductAcl(product, model);
-                //stores
-                SaveStoreMappings(product, model);
                
-                //picture seo names
-                UpdatePictureSeoNames(product);
-
-             
-                //delete an old "download" file (if deleted or updated)
-                if (prevDownloadId > 0 && prevDownloadId != product.DownloadId)
-                {
-                    var prevDownload = _downloadService.GetDownloadById(prevDownloadId);
-                    if (prevDownload != null)
-                        _downloadService.DeleteDownload(prevDownload);
-                }
-                //delete an old "sample download" file (if deleted or updated)
-                if (prevSampleDownloadId > 0 && prevSampleDownloadId != product.SampleDownloadId)
-                {
-                    var prevSampleDownload = _downloadService.GetDownloadById(prevSampleDownloadId);
-                    if (prevSampleDownload != null)
-                        _downloadService.DeleteDownload(prevSampleDownload);
-                }
-
               
-
                 //activity log
                 _customerActivityService.InsertActivity("EditProduct", ("ActivityLog.EditProduct"), product.Name);
 
@@ -615,8 +461,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
             //If we got this far, something failed, redisplay form
             PrepareProductModel(model, product, false, true);
-            PrepareAclModel(model, product, true);
-            PrepareStoresMappingModel(model, product, true);
+           
             PrepareCategoryMappingModel(model, product, true);
         
             return View(model);
@@ -658,7 +503,20 @@ namespace Nop.Web.Areas.Admin.Controllers
             return Json(new { Result = true });
         }
 
-    
+       [HttpPost]
+        public virtual IActionResult  SelectedDir(string diskName)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+                return AccessDeniedView();
+
+            if (!string.IsNullOrEmpty(diskName))
+            {
+                return Json(new { Result = true,Percent=67,Info="32.54G 可用" });
+            }
+
+            return Json(new { Result = false });
+        }
+
         #endregion
 
         #region Required products
@@ -697,59 +555,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
             return Json(new { Text = result });
         }
-
-        public virtual IActionResult RequiredProductAddPopup()
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
-
-            var model = new ProductModel.AddRequiredProductModel();
-          
-            //categories
-            model.AvailableCategories.Add(new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
-            var categories = SelectListHelper.GetCategoryList(_categoryService, _cacheManager, true);
-            foreach (var c in categories)
-                model.AvailableCategories.Add(c);
-                     
-            //stores
-            model.AvailableStores.Add(new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
-            foreach (var s in _storeService.GetAllStores())
-                model.AvailableStores.Add(new SelectListItem { Text = s.Name, Value = s.Id.ToString() });
-                    
-
-            //product types
-            model.AvailableProductTypes = ProductType.SimpleProduct.ToSelectList(false).ToList();
-            model.AvailableProductTypes.Insert(0, new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
-            
-            return View(model);
-        }
-
-        [HttpPost]
-        public virtual IActionResult RequiredProductAddPopupList(DataSourceRequest command, ProductModel.AddRequiredProductModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedKendoGridJson();
-             
-            var products = _productService.SearchProducts(
-                categoryIds: new List<int> { model.SearchCategoryId },
-                manufacturerId: 0,
-                storeId: model.SearchStoreId,
-                vendorId: 0,
-                productType: model.SearchProductTypeId > 0 ? (ProductType?)model.SearchProductTypeId : null,
-                keywords: model.SearchProductName,
-                pageIndex: command.Page - 1,
-                pageSize: command.PageSize,
-                showHidden: true
-                );
-            var gridModel = new DataSourceResult
-            {
-                Data = products.Select(x => x.ToModel()),
-                Total = products.TotalCount
-            };
-
-            return Json(gridModel);
-        }
-
+ 
         #endregion
          
 
@@ -890,35 +696,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         {
             if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
                 return AccessDeniedView();
-
-         
-
-            var categoryIds = new List<int> { model.SearchCategoryId };
-            //include subcategories
-            if (model.SearchIncludeSubCategories && model.SearchCategoryId > 0)
-                categoryIds.AddRange(GetChildCategoryIds(model.SearchCategoryId));
-
-            //0 - all (according to "ShowHidden" parameter)
-            //1 - published only
-            //2 - unpublished only
-            bool? overridePublished = null;
-            if (model.SearchPublishedId == 1)
-                overridePublished = true;
-            else if (model.SearchPublishedId == 2)
-                overridePublished = false;
-
-            var products = _productService.SearchProducts(
-                categoryIds: categoryIds,
-                manufacturerId: model.SearchManufacturerId,
-                storeId: model.SearchStoreId,
-                vendorId: model.SearchVendorId,
-                warehouseId: model.SearchWarehouseId,
-                productType: model.SearchProductTypeId > 0 ? (ProductType?)model.SearchProductTypeId : null,
-                keywords: model.SearchProductName,
-                showHidden: true,
-                overridePublished: overridePublished
-            );
-
+              
             try
             {
                 byte[] bytes;
@@ -944,34 +722,11 @@ namespace Nop.Web.Areas.Admin.Controllers
         {
             if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
                 return AccessDeniedView();
-
-          
-
-            var categoryIds = new List<int> { model.SearchCategoryId };
-            //include subcategories
-            if (model.SearchIncludeSubCategories && model.SearchCategoryId > 0)
-                categoryIds.AddRange(GetChildCategoryIds(model.SearchCategoryId));
-
+             
             //0 - all (according to "ShowHidden" parameter)
             //1 - published only
             //2 - unpublished only
-            bool? overridePublished = null;
-            if (model.SearchPublishedId == 1)
-                overridePublished = true;
-            else if (model.SearchPublishedId == 2)
-                overridePublished = false;
-
-            var products = _productService.SearchProducts(
-                categoryIds: categoryIds,
-                manufacturerId: model.SearchManufacturerId,
-                storeId: model.SearchStoreId,
-                vendorId: model.SearchVendorId,
-                warehouseId: model.SearchWarehouseId,
-                productType: model.SearchProductTypeId > 0 ? (ProductType?)model.SearchProductTypeId : null,
-                keywords: model.SearchProductName,
-                showHidden: true,
-                overridePublished: overridePublished
-            );
+           
             try
             {
                 var bytes =new byte[1024] ;// _exportManager.ExportProductsToXlsx(products);
@@ -999,17 +754,8 @@ namespace Nop.Web.Areas.Admin.Controllers
             var associatedProduct = _productService.GetProductById(productId);
             if (associatedProduct != null)
             { 
-                //gift card
-                if (associatedProduct.IsGiftCard)
-                {
-                    return Json(new { Result = ("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.AssociatedProduct.GiftCard") });
-                }
-
-                //downloaable product
-                if (associatedProduct.IsDownload)
-                {
-                    return Json(new { Result = ("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.AssociatedProduct.Downloadable") });
-                }
+                
+                
             }
 
             return Json(new { Result = string.Empty });

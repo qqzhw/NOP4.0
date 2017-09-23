@@ -115,7 +115,7 @@ namespace Nop.Web.Framework.Infrastructure
              builder.RegisterType<CategoryService>().As<ICategoryService>().InstancePerLifetimeScope();
           
             builder.RegisterType<ProductService>().As<IProductService>().InstancePerLifetimeScope();
-             builder.RegisterType<GenericAttributeService>().As<IGenericAttributeService>().InstancePerLifetimeScope();
+ 
               builder.RegisterType<MaintenanceService>().As<IMaintenanceService>().InstancePerLifetimeScope();
                builder.RegisterType<CustomerService>().As<ICustomerService>().InstancePerLifetimeScope();
             builder.RegisterType<PermissionService>().As<IPermissionService>().InstancePerLifetimeScope();
@@ -125,14 +125,14 @@ namespace Nop.Web.Framework.Infrastructure
            builder.RegisterType<DownloadService>().As<IDownloadService>().InstancePerLifetimeScope();
                builder.RegisterType<EncryptionService>().As<IEncryptionService>().InstancePerLifetimeScope();
             builder.RegisterType<CookieAuthenticationService>().As<IAuthenticationService>().InstancePerLifetimeScope();
-            builder.RegisterType<UrlRecordService>().As<IUrlRecordService>().InstancePerLifetimeScope();
+           
                builder.RegisterType<DefaultLogger>().As<ILogger>().InstancePerLifetimeScope();
 
             builder.RegisterType<CustomerRegistrationService>().As<ICustomerRegistrationService>().InstancePerLifetimeScope();
 
             builder.RegisterType<CustomerActivityService>().As<ICustomerActivityService>().InstancePerLifetimeScope();
            builder.RegisterType<WidgetService>().As<IWidgetService>().InstancePerLifetimeScope();
-               builder.RegisterType<DateTimeHelper>().As<IDateTimeHelper>().InstancePerLifetimeScope();
+            
             builder.RegisterType<SitemapGenerator>().As<ISitemapGenerator>().InstancePerLifetimeScope();
             builder.RegisterType<PageHeadBuilder>().As<IPageHeadBuilder>().InstancePerLifetimeScope();
             builder.RegisterType<ScheduleTaskService>().As<IScheduleTaskService>().InstancePerLifetimeScope();

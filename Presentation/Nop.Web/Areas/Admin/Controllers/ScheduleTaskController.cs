@@ -19,7 +19,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         private readonly IScheduleTaskService _scheduleTaskService;
         private readonly IPermissionService _permissionService;
-        private readonly IDateTimeHelper _dateTimeHelper;       
+      
         private readonly ICustomerActivityService _customerActivityService;
 
         #endregion
@@ -27,15 +27,12 @@ namespace Nop.Web.Areas.Admin.Controllers
         #region Constructors
 
         public ScheduleTaskController(IScheduleTaskService scheduleTaskService, 
-            IPermissionService permissionService,
-            IDateTimeHelper dateTimeHelper,  
+            IPermissionService permissionService,          
             ICustomerActivityService customerActivityService)
         {
             this._scheduleTaskService = scheduleTaskService;
             this._permissionService = permissionService;
-            this._dateTimeHelper = dateTimeHelper;
-            
-            this._customerActivityService = customerActivityService;
+              this._customerActivityService = customerActivityService;
         }
 
 		#endregion 
@@ -51,9 +48,9 @@ namespace Nop.Web.Areas.Admin.Controllers
                                 Seconds = task.Seconds,
                                 Enabled = task.Enabled,
                                 StopOnError = task.StopOnError,
-                                LastStartUtc = task.LastStartUtc.HasValue ? _dateTimeHelper.ConvertToUserTime(task.LastStartUtc.Value, DateTimeKind.Utc).ToString("G") : "",
-                                LastEndUtc = task.LastEndUtc.HasValue ? _dateTimeHelper.ConvertToUserTime(task.LastEndUtc.Value, DateTimeKind.Utc).ToString("G") : "",
-                                LastSuccessUtc = task.LastSuccessUtc.HasValue ? _dateTimeHelper.ConvertToUserTime(task.LastSuccessUtc.Value, DateTimeKind.Utc).ToString("G") : "",
+                                LastStartUtc = task.LastStartUtc.HasValue ? (task.LastStartUtc.Value).ToString("G") : "",
+                                LastEndUtc = task.LastEndUtc.HasValue ?(task.LastEndUtc.Value).ToString("G") : "",
+                                LastSuccessUtc = task.LastSuccessUtc.HasValue ? (task.LastSuccessUtc.Value).ToString("G") : "",
                             };
             return model;
         }

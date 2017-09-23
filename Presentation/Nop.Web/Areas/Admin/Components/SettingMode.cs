@@ -19,7 +19,7 @@ namespace Nop.Web.Areas.Admin.Components
             var model = new ModeModel()
             {
                 ModeName = modeName,
-                Enabled = _workContext.CurrentCustomer.GetAttribute<bool>(modeName)
+                Enabled = true
             };
 
             return View(model);

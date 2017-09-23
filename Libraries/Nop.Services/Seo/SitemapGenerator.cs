@@ -173,7 +173,7 @@ namespace Nop.Services.Seo
                 visibleIndividuallyOnly: true, orderBy: ProductSortingEnum.CreatedOn).Select(product =>
             { 
                 var url = urlHelper.RouteUrl("Product", new { SeName = product.GetSeName() }, GetHttpProtocol());
-                return new SitemapUrl(url, UpdateFrequency.Weekly, product.UpdatedOnUtc);
+                return new SitemapUrl(url, UpdateFrequency.Weekly, product.UpdatedWriteOn);
             });
         }
 

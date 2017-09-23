@@ -22,8 +22,6 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         private readonly ILogger _logger;
         private readonly IWorkContext _workContext;
-        
-        private readonly IDateTimeHelper _dateTimeHelper;
         private readonly IPermissionService _permissionService;
 
         #endregion
@@ -31,13 +29,11 @@ namespace Nop.Web.Areas.Admin.Controllers
         #region Ctor
 
         public LogController(ILogger logger, IWorkContext workContext,
-           IDateTimeHelper dateTimeHelper,
-            IPermissionService permissionService)
+                   IPermissionService permissionService)
         {
             this._logger = logger;
             this._workContext = workContext;
            
-            this._dateTimeHelper = dateTimeHelper;
             this._permissionService = permissionService;
         }
 
@@ -69,10 +65,10 @@ namespace Nop.Web.Areas.Admin.Controllers
                 return AccessDeniedKendoGridJson();
 
             DateTime? createdOnFromValue = (model.CreatedOnFrom == null) ? null
-                            : (DateTime?)_dateTimeHelper.ConvertToUtcTime(model.CreatedOnFrom.Value, _dateTimeHelper.CurrentTimeZone);
+                            : (DateTime?)(model.CreatedOnFrom.Value);
 
             DateTime? createdToFromValue = (model.CreatedOnTo == null) ? null
-                            : (DateTime?)_dateTimeHelper.ConvertToUtcTime(model.CreatedOnTo.Value, _dateTimeHelper.CurrentTimeZone).AddDays(1);
+                            : (DateTime?)(model.CreatedOnTo.Value).AddDays(1);
 
             LogLevel? logLevel = model.LogLevelId > 0 ? (LogLevel?)(model.LogLevelId) : null;
 
@@ -93,7 +89,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                     CustomerEmail = x.Customer != null ? x.Customer.Email : null,
                     PageUrl = x.PageUrl,
                     ReferrerUrl = x.ReferrerUrl,
-                    CreatedOn = _dateTimeHelper.ConvertToUserTime(x.CreatedOnUtc, DateTimeKind.Utc)
+                    CreatedOn = (x.CreatedOnUtc)
                 }),
                 Total = logItems.TotalCount
             };
@@ -135,7 +131,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 CustomerEmail = log.Customer != null ? log.Customer.Email : null,
                 PageUrl = log.PageUrl,
                 ReferrerUrl = log.ReferrerUrl,
-                CreatedOn = _dateTimeHelper.ConvertToUserTime(log.CreatedOnUtc, DateTimeKind.Utc)
+                CreatedOn = (log.CreatedOnUtc)
             };
 
             return View(model);

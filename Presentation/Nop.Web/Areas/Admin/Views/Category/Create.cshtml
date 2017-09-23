@@ -9,20 +9,20 @@
 <form asp-controller="Category" asp-action="Create" method="post" id="category-form">
     <div class="content-header clearfix">
         <h1 class="pull-left">
-            @T("Admin.Catalog.Categories.AddNew")
+           新增通道
             <small>
                 <i class="fa fa-arrow-circle-left"></i>
-                <a asp-action="List">@T("Admin.Catalog.Categories.BackToList")</a>
+                <a asp-action="List">返回列表</a>
             </small>
         </h1>
         <div class="pull-right">
             <button type="submit" name="save" class="btn bg-blue">
                 <i class="fa fa-floppy-o"></i>
-                @T("Admin.Common.Save")
+               保存
             </button>
             <button type="submit" name="save-continue" class="btn bg-blue">
                 <i class="fa fa-floppy-o"></i>
-                @T("Admin.Common.SaveContinue")
+             保存并编辑
             </button>
         </div>
     </div>

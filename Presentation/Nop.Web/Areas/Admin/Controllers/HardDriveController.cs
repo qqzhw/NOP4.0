@@ -22,8 +22,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 {
     public partial class HardDriveController : BaseAdminController
     {
-        private readonly ICustomerService _customerService;
-        private readonly IUrlRecordService _urlRecordService;
+        private readonly ICustomerService _customerService; 
         private readonly IWebHelper _webHelper; 
         private readonly IWorkContext _workContext;
         private readonly IStoreContext _storeContext;
@@ -37,8 +36,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         #region Constructors
 
         public HardDriveController(
-            ICustomerService customerService,
-            IUrlRecordService urlRecordService,
+            ICustomerService customerService, 
             IWebHelper webHelper, 
             IWorkContext workContext,
             IStoreContext storeContext,
@@ -47,8 +45,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             CatalogSettings catalogSettings,
             IHostingEnvironment hostingEnvironment)
         {
-            this._customerService = customerService;
-            this._urlRecordService = urlRecordService;
+            this._customerService = customerService; 
             this._webHelper = webHelper; 
             this._workContext = workContext;
             this._storeContext = storeContext;

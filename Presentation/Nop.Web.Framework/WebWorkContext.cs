@@ -31,7 +31,6 @@ namespace Nop.Web.Framework
         private readonly IHttpContextAccessor _httpContextAccessor;       
         private readonly IAuthenticationService _authenticationService;      
         private readonly ICustomerService _customerService;
-        private readonly IGenericAttributeService _genericAttributeService;   
         private readonly IStoreContext _storeContext;
         private readonly IStoreMappingService _storeMappingService;
         private readonly IUserAgentHelper _userAgentHelper;
@@ -45,8 +44,7 @@ namespace Nop.Web.Framework
 
         public WebWorkContext(IHttpContextAccessor httpContextAccessor,           
             IAuthenticationService authenticationService,           
-            ICustomerService customerService,
-            IGenericAttributeService genericAttributeService,          
+            ICustomerService customerService,           
             IStoreContext storeContext,
             IStoreMappingService storeMappingService,
             IUserAgentHelper userAgentHelper )
@@ -55,9 +53,7 @@ namespace Nop.Web.Framework
           
             this._authenticationService = authenticationService;
            
-            this._customerService = customerService;
-            this._genericAttributeService = genericAttributeService;
-           
+            this._customerService = customerService;          
             this._storeContext = storeContext;
             this._storeMappingService = storeMappingService;
             this._userAgentHelper = userAgentHelper;         
@@ -148,18 +144,8 @@ namespace Nop.Web.Framework
 
                 if (customer != null && !customer.Deleted && customer.Active && !customer.RequireReLogin)
                 {
-                    //get impersonate user if required
-                    var impersonatedCustomerId = customer.GetAttribute<int?>(SystemCustomerAttributeNames.ImpersonatedCustomerId);
-                    if (impersonatedCustomerId.HasValue && impersonatedCustomerId.Value > 0)
-                    {
-                        var impersonatedCustomer = _customerService.GetCustomerById(impersonatedCustomerId.Value);
-                        if (impersonatedCustomer != null && !impersonatedCustomer.Deleted && impersonatedCustomer.Active && !impersonatedCustomer.RequireReLogin)
-                        {
-                            //set impersonated customer
-                            _originalCustomerIfImpersonated = customer;
-                            customer = impersonatedCustomer;
-                        }
-                    }
+                   
+                  
                 }
 
                 if (customer == null || customer.Deleted || !customer.Active || customer.RequireReLogin)

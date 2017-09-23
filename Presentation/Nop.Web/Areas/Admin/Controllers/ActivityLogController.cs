@@ -21,7 +21,6 @@ namespace Nop.Web.Areas.Admin.Controllers
         #region Fields
 
         private readonly ICustomerActivityService _customerActivityService;
-        private readonly IDateTimeHelper _dateTimeHelper;
        
         private readonly IPermissionService _permissionService;
 
@@ -29,14 +28,11 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         #region Constructors
 
-        public ActivityLogController(ICustomerActivityService customerActivityService,
-            IDateTimeHelper dateTimeHelper,  
+        public ActivityLogController(ICustomerActivityService customerActivityService,        
             IPermissionService permissionService)
 		{
             this._customerActivityService = customerActivityService;
-            this._dateTimeHelper = dateTimeHelper;
-           
-            this._permissionService = permissionService;
+             this._permissionService = permissionService;
 		}
 
 		#endregion 
@@ -115,10 +111,10 @@ namespace Nop.Web.Areas.Admin.Controllers
                 return AccessDeniedKendoGridJson();
 
             DateTime? startDateValue = (model.CreatedOnFrom == null) ? null
-                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(model.CreatedOnFrom.Value, _dateTimeHelper.CurrentTimeZone);
+                : (DateTime?)(model.CreatedOnFrom.Value);
 
             DateTime? endDateValue = (model.CreatedOnTo == null) ? null
-                            : (DateTime?)_dateTimeHelper.ConvertToUtcTime(model.CreatedOnTo.Value, _dateTimeHelper.CurrentTimeZone).AddDays(1);
+                            : (DateTime?)(model.CreatedOnTo.Value).AddDays(1);
 
             var activityLog = _customerActivityService.GetAllActivities(startDateValue, endDateValue,null, model.ActivityLogTypeId, command.Page - 1, command.PageSize, model.IpAddress);
             var gridModel = new DataSourceResult
@@ -126,7 +122,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 Data = activityLog.Select(x =>
                 {
                     var m = x.ToModel();
-                    m.CreatedOn = _dateTimeHelper.ConvertToUserTime(x.CreatedOnUtc, DateTimeKind.Utc);
+                    m.CreatedOn = (x.CreatedOnUtc);
                     return m;
                     
                 }),

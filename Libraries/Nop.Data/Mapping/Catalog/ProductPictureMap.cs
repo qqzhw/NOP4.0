@@ -12,11 +12,7 @@ namespace Nop.Data.Mapping.Catalog
             this.HasRequired(pp => pp.Picture)
                 .WithMany()
                 .HasForeignKey(pp => pp.PictureId);
-
-
-            this.HasRequired(pp => pp.Product)
-                .WithMany(p => p.ProductPictures)
-                .HasForeignKey(pp => pp.ProductId);
+ 
         }
     }
 }

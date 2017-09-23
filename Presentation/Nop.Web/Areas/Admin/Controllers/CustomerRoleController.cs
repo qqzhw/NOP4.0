@@ -251,7 +251,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 model.AvailableStores.Add(new SelectListItem { Text = s.Name, Value = s.Id.ToString() });
 
             //product types
-            model.AvailableProductTypes = ProductType.SimpleProduct.ToSelectList(false).ToList();
+            model.AvailableProductTypes = ProductType.PCIE1.ToSelectList(false).ToList();
             model.AvailableProductTypes.Insert(0, new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
 
             return View(model);

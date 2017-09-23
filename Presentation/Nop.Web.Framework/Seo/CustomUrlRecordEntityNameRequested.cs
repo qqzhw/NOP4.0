@@ -15,21 +15,11 @@ namespace Nop.Web.Framework.Seo
         /// </summary>
         public RouteData RouteData { get; private set; }
 
-        /// <summary>
-        /// Gets or sets URL record
-        /// </summary>
-        public UrlRecordService.UrlRecordForCaching UrlRecord { get; private set; }
-
+       
         #endregion
 
         #region Ctor
-
-        public CustomUrlRecordEntityNameRequested(RouteData routeData, UrlRecordService.UrlRecordForCaching urlRecord)
-        {
-            RouteData = routeData;
-            UrlRecord = urlRecord;
-        }
-
+         
         #endregion
     }
 }

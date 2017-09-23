@@ -7,7 +7,7 @@
 @{
     const string panelId = "nopcommerce-news-box";
     const string hidePanelAttributeName = "HideNopCommerceNewsPanel";
-    var hidePanel = workContext.CurrentCustomer.GetAttribute<bool>(hidePanelAttributeName);
+    var hidePanel = false;
 }
 
 <div class="box box-info @if(hidePanel){<text>collapsed-box</text>}" id="@panelId">
