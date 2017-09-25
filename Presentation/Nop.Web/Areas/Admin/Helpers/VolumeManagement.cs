@@ -32,7 +32,7 @@ namespace Nop.Web.Areas.Admin.Helpers
 
 
 
-            public override bool Equals(object obj)
+            public   override bool Equals(object obj)
             {
                 try
                 {

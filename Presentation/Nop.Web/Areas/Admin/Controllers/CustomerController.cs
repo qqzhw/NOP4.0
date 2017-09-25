@@ -169,14 +169,8 @@ namespace Nop.Web.Areas.Admin.Controllers
                     model.AdminComment = customer.AdminComment;
                     model.IsTaxExempt = customer.IsTaxExempt;
                     model.Active = customer.Active;
-
-                    if (customer.RegisteredInStoreId == 0 || allStores.All(s => s.Id != customer.RegisteredInStoreId))
-                        model.RegisteredInStore = string.Empty;
-                    else
-                        model.RegisteredInStore = allStores.First(s => s.Id == customer.RegisteredInStoreId).Name;
-
-                   
-                
+					 
+                  
                     model.CreatedOn =  customer.CreatedOnUtc;
                     model.LastActivityDate =customer.LastActivityDateUtc;
                     model.LastIpAddress = customer.LastIpAddress;
@@ -205,19 +199,9 @@ namespace Nop.Web.Areas.Admin.Controllers
             }
 
           
-            model.GenderEnabled = _customerSettings.GenderEnabled;
-            model.DateOfBirthEnabled = _customerSettings.DateOfBirthEnabled;
-            model.CompanyEnabled = _customerSettings.CompanyEnabled;
-            model.StreetAddressEnabled = _customerSettings.StreetAddressEnabled;
-            model.StreetAddress2Enabled = _customerSettings.StreetAddress2Enabled;
-            model.ZipPostalCodeEnabled = _customerSettings.ZipPostalCodeEnabled;
-            model.CityEnabled = _customerSettings.CityEnabled;
-            model.CountryEnabled = _customerSettings.CountryEnabled;
-            model.StateProvinceEnabled = _customerSettings.StateProvinceEnabled;
+         
             model.PhoneEnabled = _customerSettings.PhoneEnabled;
-            model.FaxEnabled = _customerSettings.FaxEnabled;
-
-        
+          
             //customer roles
             var allRoles = _customerService.GetAllCustomerRoles(true);
             var adminRole = allRoles.FirstOrDefault(c => c.SystemName == SystemCustomerRoleNames.Registered);
@@ -307,11 +291,8 @@ namespace Nop.Web.Areas.Admin.Controllers
             var defaultRoleIds = new List<int> {_customerService.GetCustomerRoleBySystemName(SystemCustomerRoleNames.Registered).Id};
             var model = new CustomerListModel
             {
-                UsernamesEnabled = _customerSettings.UsernamesEnabled,
-                DateOfBirthEnabled = _customerSettings.DateOfBirthEnabled,
-                CompanyEnabled = _customerSettings.CompanyEnabled,
-                PhoneEnabled = _customerSettings.PhoneEnabled,
-                ZipPostalCodeEnabled = _customerSettings.ZipPostalCodeEnabled,
+                UsernamesEnabled = _customerSettings.UsernamesEnabled, 
+                PhoneEnabled = _customerSettings.PhoneEnabled, 
                 SearchCustomerRoleIds = defaultRoleIds,
             };
             var allRoles = _customerService.GetAllCustomerRoles(true);
@@ -432,7 +413,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                     Active = model.Active,
                     CreatedOnUtc = DateTime.UtcNow,
                     LastActivityDateUtc = DateTime.UtcNow,
-                    RegisteredInStoreId = _storeContext.CurrentStore.Id
+                  
                 };
                 _customerService.InsertCustomer(customer);
                  

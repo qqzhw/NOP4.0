@@ -130,24 +130,10 @@ namespace Nop.Web.Factories
 
             if (_customerSettings.UserRegistrationType == UserRegistrationType.EmailValidation)
                 model.EmailToRevalidate = customer.EmailToRevalidate;
-            
-          
-
-         
-            model.GenderEnabled = _customerSettings.GenderEnabled;
-            model.DateOfBirthEnabled = _customerSettings.DateOfBirthEnabled;
-            model.DateOfBirthRequired = _customerSettings.DateOfBirthRequired;
-        
-            model.CityEnabled = _customerSettings.CityEnabled;
-            model.CityRequired = _customerSettings.CityRequired;
-         
-            model.StateProvinceEnabled = _customerSettings.StateProvinceEnabled;
-            model.StateProvinceRequired = _customerSettings.StateProvinceRequired;
+              
             model.PhoneEnabled = _customerSettings.PhoneEnabled;
             model.PhoneRequired = _customerSettings.PhoneRequired;
-            model.FaxEnabled = _customerSettings.FaxEnabled;
-            model.FaxRequired = _customerSettings.FaxRequired;
-          
+            
             model.UsernamesEnabled = _customerSettings.UsernamesEnabled;
             model.AllowUsersToChangeUsernames = _customerSettings.AllowUsersToChangeUsernames;
             model.CheckUsernameAvailabilityEnabled = _customerSettings.CheckUsernameAvailabilityEnabled;
@@ -205,31 +191,7 @@ namespace Nop.Web.Factories
                 Tab = CustomerNavigationEnum.Orders,
                 ItemClass = "customer-orders"
             });
-
-        
-            if (!_customerSettings.HideDownloadableProductsTab)
-            {
-                model.CustomerNavigationItems.Add(new CustomerNavigationItemModel
-                {
-                    RouteName = "CustomerDownloadableProducts",
-                    Title = "Account.DownloadableProducts",
-                    Tab = CustomerNavigationEnum.DownloadableProducts,
-                    ItemClass = "downloadable-products"
-                });
-            }
-
-            if (!_customerSettings.HideBackInStockSubscriptionsTab)
-            {
-                model.CustomerNavigationItems.Add(new CustomerNavigationItemModel
-                {
-                    RouteName = "CustomerBackInStockSubscriptions",
-                    Title = "Account.BackInStockSubscriptions",
-                    Tab = CustomerNavigationEnum.BackInStockSubscriptions,
-                    ItemClass = "back-in-stock-subscriptions"
-                });
-            }
-
-        
+			 
             model.CustomerNavigationItems.Add(new CustomerNavigationItemModel
             {
                 RouteName = "CustomerChangePassword",

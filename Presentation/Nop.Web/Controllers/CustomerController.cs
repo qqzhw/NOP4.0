@@ -394,10 +394,7 @@ namespace Nop.Web.Controllers
         {
             if (!_workContext.CurrentCustomer.IsRegistered())
                 return new UnauthorizedResult();
-
-            if (_customerSettings.HideDownloadableProductsTab)
-                return RedirectToRoute("CustomerInfo");
-
+			 
             var model = _customerModelFactory.PrepareCustomerDownloadableProductsModel();
             return View(model);
         }

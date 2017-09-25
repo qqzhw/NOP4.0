@@ -32,9 +32,13 @@
   <ItemGroup>
 	<!-- We copy the entire \App_Data directory. But we ignore InstalledPlugins.txt and Settings.txt files  -->
 	<Content Include="App_Data\**" CopyToPublishDirectory="PreserveNewest" Exclude="App_Data\*.txt" />
+	<Compile Remove="Areas\Admin\Models\Messages\**" />
 	
 	<Compile Remove="Plugins\**" />
+	
+	<EmbeddedResource Remove="Areas\Admin\Models\Messages\**" />
 	<EmbeddedResource Remove="Plugins\**" />
+	<None Remove="Areas\Admin\Models\Messages\**" />
 	<None Remove="Plugins\**" />
 	
 	<!-- We copy the entire \Plugins and \Themes directories.
@@ -49,7 +53,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Folder Include="Areas\Admin\Models\Messages\" />
     <Folder Include="Areas\Admin\Validators\Common\" />
     <Folder Include="Areas\Admin\Validators\Messages\" />
     <Folder Include="wwwroot\images\新文件夹\" />

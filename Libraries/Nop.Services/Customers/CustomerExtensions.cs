@@ -105,11 +105,7 @@ namespace Nop.Services.Customers
             //the guests don't have a password
             if (customer.IsGuest())
                 return false;
-
-            //password lifetime is disabled for user
-            if (!customer.CustomerRoles.Any(role => role.Active && role.EnablePasswordLifetime))
-                return false;
-
+			 
             //setting disabled for all
             var customerSettings = EngineContext.Current.Resolve<CustomerSettings>();
             if (customerSettings.PasswordLifetime == 0)

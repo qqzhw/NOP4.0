@@ -49,22 +49,19 @@
                                         <nop-label asp-for="DriverName" />
                                     </div>
                                     <div class="col-md-4">
-                                        <nop-select asp-for="DriverName" asp-items="Model.AvailableDrivers" />
+                                        <nop-select asp-for="DriverName"  asp-items="Model.AvailableDrivers" />
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div id="passStrength" style="width: 400px;" data-role="progressbar" class="k-widget k-progressbar k-progressbar-horizontal">
-                                            <span class="k-progress-status-wrap">
-                                                <span class="k-progress-status">25.G5可用</span>
+                                            <span class="k-progress-status-wrap" style="z-index:2;">
+                                                <span class="k-progress-status"  id="valDiskTotal">25.G5可用</span>
                                             </span>
-                                            <div class="k-state-selected" style="width: 56%;">
+                                            <div class="k-state-selected" id="diskPercent">
 
-                                            </div>
-
+                                            </div> 
                                         </div>
-                                        @*<h5>Text <span style="margin-left:10px;vertical-align:central;padding-bottom:5px;">TotalSizeText</span></h5>*@
-
-
                                     </div>
+									 
                                 </div>
 
                                 <div class="form-group" @(Model.AvailableDMA.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
@@ -304,12 +301,12 @@
                     url: "@(Url.Action("SelectedDir", "Product"))",
                     data: postData,
                     complete: function(data) {
-                        //reload grid
-                        debugger;
+                        //reload grid 
                     },
                     success: function (data) {
-                        console.log(data);
-                        debugger;
+						console.log(data);
+						$("#diskPercent").attr("style", "width:"+data.Percent+"%");
+						$("#valDiskTotal").html(data.Info); 
                     },  
                     error: function(xhr, ajaxOptions, thrownError) {
                         alert(thrownError);

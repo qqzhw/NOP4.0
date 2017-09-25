@@ -73,15 +73,8 @@ namespace Nop.Core.Domain.Customers
         /// </summary>
         public bool RequireReLogin { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value indicating number of failed login attempts (wrong password)
-        /// </summary>
-        public int FailedLoginAttempts { get; set; }
-        /// <summary>
-        /// Gets or sets the date and time until which a customer cannot login (locked out)
-        /// </summary>
-        public DateTime? CannotLoginUntilDateUtc { get; set; }
-
+       
+        
         /// <summary>
         /// Gets or sets a value indicating whether the customer is active
         /// </summary>
@@ -121,11 +114,7 @@ namespace Nop.Core.Domain.Customers
         /// Gets or sets the date and time of last activity
         /// </summary>
         public DateTime LastActivityDateUtc { get; set; }
-
-        /// <summary>
-        ///  Gets or sets the store identifier in which customer registered
-        /// </summary>
-        public int RegisteredInStoreId { get; set; }
+		 
         
         #region Navigation properties
  

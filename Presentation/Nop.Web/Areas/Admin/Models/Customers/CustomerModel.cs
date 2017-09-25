@@ -109,8 +109,7 @@ namespace Nop.Web.Areas.Admin.Models.Customers
 
         public List<CustomerAttributeModel> CustomerAttributes { get; set; }
 
-        [NopResourceDisplayName("Admin.Customers.Customers.Fields.RegisteredInStore")]
-        public string RegisteredInStore { get; set; }
+      
 
 
 

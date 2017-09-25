@@ -26,64 +26,8 @@ namespace Nop.Web.Areas.Admin.Validators.Customers
                 //only for registered users
                 .When(x => IsRegisteredCustomerRoleChecked(x, customerService));
 
-            //form fields
-            if (customerSettings.CountryEnabled && customerSettings.CountryRequired)
-            {
-                RuleFor(x => x.CountryId)
-                    .NotEqual(0)
-                    .WithMessage(("Account.Fields.Country.Required"))
-                    //only for registered users
-                    .When(x => IsRegisteredCustomerRoleChecked(x, customerService));
-            }
-            if (customerSettings.CountryEnabled &&
-                customerSettings.StateProvinceEnabled &&
-                customerSettings.StateProvinceRequired)
-            {
-                RuleFor(x => x.StateProvinceId).Must((x, context) =>
-                {                 
-                    return true;
-                }).WithMessage(("Account.Fields.StateProvince.Required"));
-            }
-            if (customerSettings.CompanyRequired && customerSettings.CompanyEnabled)
-            {
-                RuleFor(x => x.Company)
-                    .NotEmpty()
-                    .WithMessage(("Admin.Customers.Customers.Fields.Company.Required"))
-                    //only for registered users
-                    .When(x => IsRegisteredCustomerRoleChecked(x, customerService));
-            }
-            if (customerSettings.StreetAddressRequired && customerSettings.StreetAddressEnabled)
-            {
-                RuleFor(x => x.StreetAddress)
-                    .NotEmpty()
-                    .WithMessage(("Admin.Customers.Customers.Fields.StreetAddress.Required"))
-                    //only for registered users
-                    .When(x => IsRegisteredCustomerRoleChecked(x, customerService));
-            }
-            if (customerSettings.StreetAddress2Required && customerSettings.StreetAddress2Enabled)
-            {
-                RuleFor(x => x.StreetAddress2)
-                    .NotEmpty()
-                    .WithMessage(("Admin.Customers.Customers.Fields.StreetAddress2.Required"))
-                    //only for registered users
-                    .When(x => IsRegisteredCustomerRoleChecked(x, customerService));
-            }
-            if (customerSettings.ZipPostalCodeRequired && customerSettings.ZipPostalCodeEnabled)
-            {
-                RuleFor(x => x.ZipPostalCode)
-                    .NotEmpty()
-                    .WithMessage(("Admin.Customers.Customers.Fields.ZipPostalCode.Required"))
-                    //only for registered users
-                    .When(x => IsRegisteredCustomerRoleChecked(x, customerService));
-            }
-            if (customerSettings.CityRequired && customerSettings.CityEnabled)
-            {
-                RuleFor(x => x.City)
-                    .NotEmpty()
-                    .WithMessage(("Admin.Customers.Customers.Fields.City.Required"))
-                    //only for registered users
-                    .When(x => IsRegisteredCustomerRoleChecked(x, customerService));
-            }
+         
+           
             if (customerSettings.PhoneRequired && customerSettings.PhoneEnabled)
             {
                 RuleFor(x => x.Phone)
@@ -92,15 +36,7 @@ namespace Nop.Web.Areas.Admin.Validators.Customers
                     //only for registered users
                     .When(x => IsRegisteredCustomerRoleChecked(x, customerService));
             }
-            if (customerSettings.FaxRequired && customerSettings.FaxEnabled)
-            {
-                RuleFor(x => x.Fax)
-                    .NotEmpty()
-                    .WithMessage(("Admin.Customers.Customers.Fields.Fax.Required"))
-                    //only for registered users
-                    .When(x => IsRegisteredCustomerRoleChecked(x, customerService));
-            }
-
+            
             SetDatabaseValidationRules<Customer>(dbContext);
         }
 

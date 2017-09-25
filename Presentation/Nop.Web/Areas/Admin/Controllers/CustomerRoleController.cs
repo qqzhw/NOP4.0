@@ -266,12 +266,10 @@ namespace Nop.Web.Areas.Admin.Controllers
 
           
             var products = _productService.SearchProducts(
-                categoryIds: new List<int> { model.SearchCategoryId },
-                manufacturerId: model.SearchManufacturerId,
-                storeId: model.SearchStoreId,
+              
                 vendorId: model.SearchVendorId,
                 productType: model.SearchProductTypeId > 0 ? (ProductType?)model.SearchProductTypeId : null,
-                keywords: model.SearchProductName,
+          
                 pageIndex: command.Page - 1,
                 pageSize: command.PageSize,
                 showHidden: true

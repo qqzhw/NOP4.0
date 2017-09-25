@@ -505,30 +505,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public virtual IActionResult ProductAddPopupList(DataSourceRequest command, CategoryModel.AddCategoryProductModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedKendoGridJson();
-
-            var gridModel = new DataSourceResult();
-            var products = _productService.SearchProducts(
-                categoryIds: new List<int> { model.SearchCategoryId },
-                manufacturerId: model.SearchManufacturerId,
-                storeId: model.SearchStoreId,
-                vendorId: model.SearchVendorId,
-                productType: model.SearchProductTypeId > 0 ? (ProductType?)model.SearchProductTypeId : null,
-                keywords: model.SearchProductName,
-                pageIndex: command.Page - 1,
-                pageSize: command.PageSize,
-                showHidden: true
-                );
-            gridModel.Data = products.Select(x => x.ToModel());
-            gridModel.Total = products.TotalCount;
-
-            return Json(gridModel);
-        }
-        
+     
         [HttpPost]
         [FormValueRequired("save")]
         public virtual IActionResult ProductAddPopup(CategoryModel.AddCategoryProductModel model)

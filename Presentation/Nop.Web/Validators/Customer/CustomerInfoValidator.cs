@@ -25,53 +25,13 @@ namespace Nop.Web.Validators.Customer
             }
 
           
-            if (customerSettings.CountryEnabled && 
-                customerSettings.StateProvinceEnabled &&
-                customerSettings.StateProvinceRequired)
-            {
-                RuleFor(x => x.StateProvinceId).Must((x, context) =>
-                { 
-                    return true;
-                }).WithMessage(("Account.Fields.StateProvince.Required"));
-            }
-            if (customerSettings.DateOfBirthEnabled && customerSettings.DateOfBirthRequired)
-            {
-                //entered?
-                RuleFor(x => x.DateOfBirthDay).Must((x, context) =>
-                {
-                    var dateOfBirth = x.ParseDateOfBirth();
-                    if (!dateOfBirth.HasValue)
-                        return false;
-
-                    return true;
-                }).WithMessage(("Account.Fields.DateOfBirth.Required"));
-
-                //minimum age
-                RuleFor(x => x.DateOfBirthDay).Must((x, context) =>
-                {
-                    var dateOfBirth = x.ParseDateOfBirth();
-                    if (dateOfBirth.HasValue && customerSettings.DateOfBirthMinimumAge.HasValue &&
-                        CommonHelper.GetDifferenceInYears(dateOfBirth.Value, DateTime.Today) <
-                        customerSettings.DateOfBirthMinimumAge.Value)
-                        return false;
-
-                    return true;
-                }).WithMessage(string.Format(("Account.Fields.DateOfBirth.MinimumAge"), customerSettings.DateOfBirthMinimumAge));
-            }
-             
          
-            if (customerSettings.CityRequired && customerSettings.CityEnabled)
-            {
-                RuleFor(x => x.City).NotEmpty().WithMessage(("Account.Fields.City.Required"));
-            }
+        
             if (customerSettings.PhoneRequired && customerSettings.PhoneEnabled)
             {
                 RuleFor(x => x.Phone).NotEmpty().WithMessage(("Account.Fields.Phone.Required"));
             }
-            if (customerSettings.FaxRequired && customerSettings.FaxEnabled)
-            {
-                RuleFor(x => x.Fax).NotEmpty().WithMessage(("Account.Fields.Fax.Required"));
-            }
+           
         }
     }
 }

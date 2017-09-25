@@ -169,8 +169,7 @@ namespace Nop.Services.Seo
         /// <returns>Collection of sitemap URLs</returns>
         protected virtual IEnumerable<SitemapUrl> GetProductUrls(IUrlHelper urlHelper)
         {
-            return _productService.SearchProducts(storeId: _storeContext.CurrentStore.Id,
-                visibleIndividuallyOnly: true, orderBy: ProductSortingEnum.CreatedOn).Select(product =>
+            return _productService.SearchProducts().Select(product =>
             { 
                 var url = urlHelper.RouteUrl("Product", new { SeName = product.GetSeName() }, GetHttpProtocol());
                 return new SitemapUrl(url, UpdateFrequency.Weekly, product.UpdatedWriteOn);

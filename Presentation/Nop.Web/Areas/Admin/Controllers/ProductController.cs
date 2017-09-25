@@ -38,6 +38,7 @@ using Nop.Web.Framework.Extensions;
 using Nop.Web.Framework.Kendoui;
 using Nop.Web.Framework.Mvc;
 using Nop.Web.Framework.Mvc.Filters;
+using Nop.Web.Models.Directory;
 
 namespace Nop.Web.Areas.Admin.Controllers
 {
@@ -254,9 +255,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             //1 - published only
             //2 - unpublished only
           
-            var products = _productService.SearchProducts(                
-                manufacturerId: 0,
-                storeId: 0,
+            var products = _productService.SearchProducts(  
                 vendorId: 0, 
                 pageIndex: command.Page - 1,
                 pageSize: command.PageSize,
@@ -511,7 +510,18 @@ namespace Nop.Web.Areas.Admin.Controllers
 
             if (!string.IsNullOrEmpty(diskName))
             {
-                return Json(new { Result = true,Percent=67,Info="32.54G 可用" });
+				string Info = string.Empty;
+				double Percent = 0;
+				DriveInfo[] drives = DriveInfo.GetDrives();
+				foreach (var drive in drives)
+				{
+					if (drive.Name.Contains(diskName))
+					{
+						Info = ByteFormatter.ToString(drive.AvailableFreeSpace) + " 可用";
+						 Percent = 100.0 - (int)(drive.AvailableFreeSpace * 100.0 / drive.TotalSize);
+					}
+				}
+				return Json(new { Result = true,Percent=Percent,Info=Info });
             }
 
             return Json(new { Result = false });
