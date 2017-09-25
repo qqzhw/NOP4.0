@@ -527,47 +527,28 @@ namespace Nop.Web.Areas.Admin.Controllers
             return Json(new { Result = false });
         }
 
-        #endregion
-
-        #region Required products
-
         [HttpPost]
-        public virtual IActionResult LoadProductFriendlyNames(string productIds)
+        public virtual IActionResult OpenChannel(ProductModel model)
         {
-            var result = "";
-
             if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-                return Json(new { Text = result });
-
-            if (!String.IsNullOrWhiteSpace(productIds))
+                return AccessDeniedView();
+            var findItem = _productService.GetProductById(model.Id);
+            if (findItem == null)
+                return Json(new { Result = false });
+            else
             {
-                var ids = new List<int>();
-                var rangeArray = productIds
-                    .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(x => x.Trim())
-                    .ToList();
-
-                foreach (string str1 in rangeArray)
-                {
-                    int tmp1;
-                    if (int.TryParse(str1, out tmp1))
-                        ids.Add(tmp1);
-                }
-
-                var products = _productService.GetProductsByIds(ids.ToArray());
-                for (int i = 0; i <= products.Count - 1; i++)
-                {
-                    result += products[i].Name;
-                    if (i != products.Count - 1)
-                        result += ", ";
-                }
-            }
-
-            return Json(new { Text = result });
+                findItem.IsOpen = model.IsOpen;
+                _productService.UpdateProduct(findItem);
+                return Json(new { Result = true }); 
+            } 
         }
- 
+
+
+        
         #endregion
-         
+
+
+
 
         #region Product pictures
 
@@ -755,25 +736,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         #endregion
 
           
-
-        #region Product attribute values
-           
-        //action displaying notification (warning) to a store owner when associating some product
-        public virtual IActionResult AssociatedProductGetWarnings(int productId)
-        {
-            var associatedProduct = _productService.GetProductById(productId);
-            if (associatedProduct != null)
-            { 
-                
-                
-            }
-
-            return Json(new { Result = string.Empty });
-        }
-
-        #endregion
-                 
-
+ 
         #endregion
     }
 }

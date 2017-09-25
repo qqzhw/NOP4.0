@@ -113,6 +113,7 @@
                         <div id="products-grid"></div>
                         <script>
                             $(document).ready(function() {
+
                                 $("#products-grid").kendoGrid({
                                     dataSource: {
                                         type: "json",
@@ -147,29 +148,33 @@
                                             field: "Name",
                                             title: "通道名称",
                                             width: 300
-                                        },  {
+                                        }, {
                                             field: "UpdatedWriteOn",
                                             title: "上次采集时间",
                                             width: 200,
-                                            format:"{0:yyyy-MM-dd HH:mm}"
+                                            format: "{0:yyyy-MM-dd HH:mm}"
                                         }, {
                                             field: "DefaultDir",
                                             title: "默认文件夹",
                                             width: 100
-                                        },  {
+                                        }, {
                                             field: "Published",
                                             title: "通道状态",
                                             width: 100,
                                             headerAttributes: { style: "text-align:center" },
                                             attributes: { style: "text-align:center" },
-                                            template: '# if(Published) {# <i class="fa fa-check true-icon"></i> #} else {# <i class="fa fa-close false-icon"></i> #} #'
-                                        }, {
+                                            template: '# if(IsOpen) {# <i class="fa fa-check true-icon"></i> #} else {# <i class="fa fa-close false-icon"></i> #} #'
+                                        }, @*{
                                             field: "Id",
                                             title: "操作",
                                             headerAttributes: { style: "text-align:center" },
                                             attributes: { style: "text-align:center" },
                                             template: '<a class="btn btn-default" href="Edit/#=Id#"><i class="fa fa-pencil"></i>@T("预览")</a> <a class="btn btn-default" href="Edit/#=Id#"><i class="fa fa-pencil"></i>打开</a> <a class="btn btn-default" href="Edit/#=Id#"><i class="fa fa-pencil"></i>关闭</a>'
+                                        },*@
+                                        {
+                                            command: [{ text: "打开", click: showChannel }, { text: "关闭", click: closeChannel }], title: " ", width: "180px"
                                         }
+                                         
                                     ]
                                 });
                             });
@@ -181,7 +186,6 @@
     </div>
 
     <script type="text/javascript">
-        var selectedIds = [];
 
         $(document).ready(function () {
             //search button
@@ -195,17 +199,13 @@
                 selectedIds = [];
                 return false;
             });
-
-
             //delete selected
-            $('#delete-selected').click(function(e) {
+            $('#delete-selected').click(function (e) {
                 e.preventDefault();
-
                 var postData = {
                     selectedIds: selectedIds
                 };
                 addAntiForgeryToken(postData);
-
                 $.ajax({
                     cache: false,
                     type: "POST",
@@ -223,33 +223,59 @@
                 });
                 return false;
             });
-
-            $('#mastercheckbox').click(function () {
-                $('.checkboxGroups').attr('checked', $(this).is(':checked')).change();
-            });
-
-            //wire up checkboxes.
-            $('#products-grid').on('change', 'input[type=checkbox][id!=mastercheckbox][class=checkboxGroups]', function (e) {
-                var $check = $(this);
-                if ($check.is(":checked") == true) {
-                    var checked = jQuery.inArray($check.val(), selectedIds);
-                    if (checked == -1) {
-                        //add id to selectedIds.
-                        selectedIds.push($check.val());
-                    }
-                }
-                else {
-                    var checked = jQuery.inArray($check.val(), selectedIds);
-                    if (checked > -1) {
-                        //remove id from selectedIds.
-                        selectedIds = $.grep(selectedIds, function (item, index) {
-                            return item != $check.val();
-                        });
-                    }
-                }
-                updateMasterCheckbox();
-            });
         });
+        function showChannel(e) { 
+            e.preventDefault();
+
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            dataItem.IsOpen = true;
+            var postData = {
+                  "Id": dataItem.Id, "IsOpen": dataItem.IsOpen
+                };
+                addAntiForgeryToken(postData);
+                $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: "@(Url.Action("OpenChannel", "Product"))",
+                    data: postData,
+                    complete: function(data) {
+                        //reload grid
+                        var grid = $('#products-grid').data('kendoGrid');
+                        grid.dataSource.read();
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        alert(thrownError);
+                    },
+                    traditional: true
+                });
+                return false;
+        }
+
+        function closeChannel(e) { 
+            e.preventDefault(); 
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            dataItem.IsOpen = false;
+            var postData = {
+                  "Id": dataItem.Id, "IsOpen": dataItem.IsOpen
+                };
+                addAntiForgeryToken(postData);
+                $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: "@(Url.Action("OpenChannel", "Product"))",
+                    data: postData,
+                    complete: function(data) {
+                        //reload grid
+                        var grid = $('#products-grid').data('kendoGrid');
+                        grid.dataSource.read();
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        alert(thrownError);
+                    },
+                    traditional: true
+                });
+                return false;
+        }
 
         function additionalData() {
             var data = {
@@ -287,9 +313,7 @@
 <script type="text/javascript">
         $(document).ready(function () {
             $('#DriverName').on("change",function (e) {
-                e.preventDefault();
-                alert(e.target.value);
-                debugger;
+                e.preventDefault(); 
                 var postData = {
                     diskName: e.target.value
                 };
