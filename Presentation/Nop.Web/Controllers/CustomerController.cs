@@ -156,7 +156,7 @@ namespace Nop.Web.Controllers
                             //if (String.IsNullOrEmpty(returnUrl) || !Url.IsLocalUrl(returnUrl))
                             //    return RedirectToRoute("HomePage");
 							if (String.IsNullOrEmpty(returnUrl) || !Url.IsLocalUrl(returnUrl))
-								return Redirect("/Admin");
+								return Redirect("/Admin/Product");
 							return Redirect(returnUrl);
                         }
                     case CustomerLoginResults.CustomerNotExist:

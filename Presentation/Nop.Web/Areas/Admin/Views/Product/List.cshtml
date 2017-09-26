@@ -89,7 +89,7 @@
                             <div class="col-md-9 col-md-offset-3">
                                 <button type="button"  style="width:100px;margin-left:10px;" id="connect-device" class="btn btn-primary ">
                                     <i class="fa fa-search"></i>
-                                    连接设备
+                                    <span id="connectText">连接设备</span>
                                 </button>
                                 <button type="button" style="margin-left:20px;"   id="check-device" class="btn btn-success disabled">
                                     <i class="fa fa-cloud-upload"></i>
@@ -112,8 +112,7 @@
                     <div class="panel-body">
                         <div id="products-grid"></div>
                         <script>
-                            $(document).ready(function() {
-
+                            $(document).ready(function() { 
                                 $("#products-grid").kendoGrid({
                                     dataSource: {
                                         type: "json",
@@ -188,16 +187,37 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
-            //search button
-            $('#search-products').click(function () {
-                //search
-                var grid = $('#products-grid').data('kendoGrid');
-                grid.dataSource.page(1); //new search. Set page size to 1
-                //grid.dataSource.read(); we already loaded the grid above using "page" function
-                //clear selected checkboxes
-                $('.checkboxGroups').attr('checked', false).change();
-                selectedIds = [];
-                return false;
+            //连接设备
+			$('#connect-device').click(function (e) {
+				e.preventDefault();
+                //var grid = $('#products-grid').data('kendoGrid');
+                //grid.dataSource.page(1);
+                //grid.dataSource.read();
+                 var postData = {
+                    selectedIds: 1
+                };
+                addAntiForgeryToken(postData);
+                $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: "@(Url.Action("ConnectDevice", "Product"))",
+                    data: postData,
+                    complete: function(data) {
+                        //reload grid
+                        //var grid = $('#products-grid').data('kendoGrid');
+						//grid.dataSource.read(); 
+						$(e.target).html("已连接");
+						$(e.currentTarget).addClass("disabled");
+						$(e.currentTarget).attr("disabled", true);
+						$("#check-device").removeClass("disabled");
+						$("#read-data").removeClass("disabled");
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        alert(thrownError);
+                    },
+                    traditional: true
+                });
+                return false; 
             });
             //delete selected
             $('#delete-selected').click(function (e) {
@@ -224,7 +244,7 @@
                 return false;
             });
         });
-        function showChannel(e) { 
+        function showChannel(e) {
             e.preventDefault();
 
             var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
@@ -251,8 +271,8 @@
                 return false;
         }
 
-        function closeChannel(e) { 
-            e.preventDefault(); 
+        function closeChannel(e) {
+            e.preventDefault();
             var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
             dataItem.IsOpen = false;
             var postData = {

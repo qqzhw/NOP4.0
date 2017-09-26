@@ -501,8 +501,34 @@ namespace Nop.Web.Areas.Admin.Controllers
 
             return Json(new { Result = true });
         }
+		
+		[HttpPost]
+		public virtual IActionResult ConnectDevice(string diskName)
+		{
+			if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+				return AccessDeniedView();
 
-       [HttpPost]
+			if (!string.IsNullOrEmpty(diskName))
+			{
+				string Info = string.Empty;
+				double Percent = 0;
+				DriveInfo[] drives = DriveInfo.GetDrives();
+				foreach (var drive in drives)
+				{
+					if (drive.Name.Contains(diskName))
+					{
+						Info = ByteFormatter.ToString(drive.AvailableFreeSpace) + " 可用";
+						Percent = 100.0 - (int)(drive.AvailableFreeSpace * 100.0 / drive.TotalSize);
+					}
+				}
+				return Json(new { Result = true, Percent = Percent, Info = Info });
+			}
+
+			return Json(new { Result = false });
+		}
+
+
+		[HttpPost]
         public virtual IActionResult  SelectedDir(string diskName)
         {
             if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
