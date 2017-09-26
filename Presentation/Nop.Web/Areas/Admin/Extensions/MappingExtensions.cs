@@ -190,12 +190,19 @@ namespace Nop.Web.Areas.Admin.Extensions
         {
             return model.MapTo(destination);
         }
-      
+		public static DeviceSettingsModel ToModel(this DeviceSettings entity)
+		{
+			return entity.MapTo<DeviceSettings, DeviceSettingsModel>();
+		}
+		public static DeviceSettings ToEntity(this  DeviceSettingsModel model, DeviceSettings destination)
+		{
+			return model.MapTo(destination);
+		}
 
 
 
-        //general (captcha) settings
-        public static GeneralCommonSettingsModel.CaptchaSettingsModel ToModel(this CaptchaSettings entity)
+		//general (captcha) settings
+		public static GeneralCommonSettingsModel.CaptchaSettingsModel ToModel(this CaptchaSettings entity)
         {
             return entity.MapTo<CaptchaSettings, GeneralCommonSettingsModel.CaptchaSettingsModel>();
         }

@@ -24,13 +24,12 @@ namespace Nop.Core.Domain.Catalog
 
 
 		public bool IsConnect { get; set; }
-
+		public bool CanConnect { get; set; }
 
 		public bool CanClosed { get; set; }
 
 		public bool ShowRate { get; set; }
-
 		public int Status { get; set; }
-
+		
 	}
 }

@@ -34,17 +34,13 @@
 	<Content Include="App_Data\**" CopyToPublishDirectory="PreserveNewest" Exclude="App_Data\*.txt" />
 	<Compile Remove="Areas\Admin\Models\Messages\**" />
 	
-	<Compile Remove="Plugins\**" />
-	
 	<EmbeddedResource Remove="Areas\Admin\Models\Messages\**" />
-	<EmbeddedResource Remove="Plugins\**" />
 	<None Remove="Areas\Admin\Models\Messages\**" />
-	<None Remove="Plugins\**" />
 	
 	<!-- We copy the entire \Plugins and \Themes directories.
 	But we ignore cshtml files to avoid "Duplicate 'Content' items were included" error during publishing.
 	We also can use "CheckForDuplicateItemsContinueOnError" as per https://github.com/dotnet/sdk/blob/master/src/Tasks/Microsoft.NET.Build.Tasks/build/Microsoft.NET.Sdk.DefaultItems.targets -->
-	<Content Include="Plugins\**" CopyToPublishDirectory="PreserveNewest" Exclude="Plugins\**\*.cshtml" />
+	<Content Include="Plugins\**" CopyToPublishDirectory="PreserveNewest" />
 	<Content Include="Themes\**" CopyToPublishDirectory="PreserveNewest" Exclude="Themes\**\*.cshtml" />
     
     <None Update="Areas\Admin\sitemap.config">
@@ -56,6 +52,7 @@
     <Folder Include="Areas\Admin\Validators\Common\" />
     <Folder Include="Areas\Admin\Validators\Messages\" />
     <Folder Include="wwwroot\images\新文件夹\" />
+    <Folder Include="Plugins\" />
   </ItemGroup>
   
   <ItemGroup>

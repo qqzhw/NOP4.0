@@ -315,7 +315,7 @@ namespace Nop.Core
         {
             //little hack here
             //always set culture to 'en-US' (Kendo UI has a bug related to editing decimal values in other cultures)
-            var culture = new CultureInfo("en-US");
+            var culture = new CultureInfo("zh-CN");
             CultureInfo.CurrentCulture = culture;
             CultureInfo.CurrentUICulture = culture;
         }

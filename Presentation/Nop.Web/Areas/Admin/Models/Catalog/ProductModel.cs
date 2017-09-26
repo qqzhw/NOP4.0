@@ -58,8 +58,8 @@ namespace Nop.Web.Areas.Admin.Models.Catalog
         public DateTime? CreatedOn { get; set; }
         [NopResourceDisplayName("写入时间")]
         public DateTime? UpdatedWriteOn { get; set; }
-
-        [NopResourceDisplayName("VerdorId")]
+		public string  UpdatedWriteOnText { get; set; }
+		[NopResourceDisplayName("VerdorId")]
         public string VendorId { get; set; }
 
         [NopResourceDisplayName("默认文件夹")]

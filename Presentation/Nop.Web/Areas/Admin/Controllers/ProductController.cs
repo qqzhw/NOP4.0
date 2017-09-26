@@ -59,7 +59,8 @@ namespace Nop.Web.Areas.Admin.Controllers
         private readonly IStaticCacheManager _cacheManager;        
         private readonly IDownloadService _downloadService;
         private readonly ISettingService _settingService;
-        
+		private readonly DeviceSettings _deviceSettings;
+		
         #endregion
 
         #region Constructors
@@ -76,7 +77,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             IStoreMappingService storeMappingService, 
             IStaticCacheManager cacheManager,         
             IDownloadService downloadService,
-            ISettingService settingService )
+            ISettingService settingService)
         {
             this._productService = productService; 
             this._categoryService = categoryService; 
@@ -94,8 +95,8 @@ namespace Nop.Web.Areas.Admin.Controllers
           
             this._downloadService = downloadService;
             this._settingService = settingService;
-        
-        }
+			_deviceSettings = _settingService.LoadSetting<DeviceSettings>();
+		}
 
         #endregion
 
@@ -266,6 +267,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 Data = products.Select(x =>
                 {
                     var productModel = x.ToModel();
+					productModel.UpdatedWriteOnText = productModel.UpdatedWriteOn?.ToString("yyyy-MM-dd HH:mm:ss");
                 //little performance optimization: ensure that "FullDescription" is not returned
                 productModel.Remark = "";
 
