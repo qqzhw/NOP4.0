@@ -27,8 +27,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\Hcdz.PcieLib\Hcdz.PcieLib.csproj" />
     <ProjectReference Include="..\..\Libraries\Nop.Core\Nop.Core.csproj" />
     <ProjectReference Include="..\..\Libraries\Nop.Services\Nop.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="wdapi_dotnet1221">
+      <HintPath>..\..\Dlls\wdapi_dotnet1221.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

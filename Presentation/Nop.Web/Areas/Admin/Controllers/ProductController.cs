@@ -23,22 +23,31 @@ using Nop.Services.Common;
 using Nop.Services.Configuration;
 using Nop.Services.Customers; 
 using Nop.Services.ExportImport;
-using Nop.Services.Helpers;
-
+using Nop.Services.Helpers; 
 using Nop.Services.Logging;
-using Nop.Services.Media;
-
+using Nop.Services.Media; 
 using Nop.Services.Security;
-using Nop.Services.Seo;
- 
-using Nop.Services.Stores;
- 
+using Nop.Services.Seo; 
+using Nop.Services.Stores; 
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Extensions;
 using Nop.Web.Framework.Kendoui;
 using Nop.Web.Framework.Mvc;
 using Nop.Web.Framework.Mvc.Filters;
 using Nop.Web.Models.Directory;
+using Hcdz.PcieLib;
+using wdc_err = Jungo.wdapi_dotnet.WD_ERROR_CODES;
+using DWORD = System.UInt32;
+using WORD = System.UInt16;
+using BYTE = System.Byte;
+using BOOL = System.Boolean;
+using UINT32 = System.UInt32;
+using UINT64 = System.UInt64;
+using WDC_DEVICE_HANDLE = System.IntPtr;
+using WDC_ADDR_SIZE = System.UInt32;
+using HANDLE = System.IntPtr;
+using System.Threading;
+using Nop.Core.Infrastructure;
 
 namespace Nop.Web.Areas.Admin.Controllers
 {
@@ -60,7 +69,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         private readonly IDownloadService _downloadService;
         private readonly ISettingService _settingService;
 		private readonly DeviceSettings _deviceSettings;
-		
+        private PCIE_DeviceList pciDevList;
         #endregion
 
         #region Constructors
@@ -96,12 +105,20 @@ namespace Nop.Web.Areas.Admin.Controllers
             this._downloadService = downloadService;
             this._settingService = settingService;
 			_deviceSettings = _settingService.LoadSetting<DeviceSettings>();
+            
 		}
 
         #endregion
 
         #region Utilities
-         
+
+
+      
+        private void ReadDMA()
+        {
+          
+        }
+
         protected virtual void PrepareCategoryMappingModel(ProductModel model, Product product, bool excludeProperties)
         {
             if (model == null)
@@ -558,6 +575,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         [HttpPost]
         public virtual IActionResult OpenChannel(ProductModel model)
         {
+            pciDevList = EngineContext.Current.Resolve<PCIE_DeviceList>();
             if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
                 return AccessDeniedView();
             var findItem = _productService.GetProductById(model.Id);
@@ -567,15 +585,49 @@ namespace Nop.Web.Areas.Admin.Controllers
             {
                 findItem.IsOpen = model.IsOpen;
                 _productService.UpdateProduct(findItem);
-                return Json(new { Result = true }); 
+                return Json(new { Result = true,count=pciDevList.Count }); 
             } 
         }
 
 
-        
+
         #endregion
 
 
+        /* Open a handle to a device */
+        private bool DeviceOpen(int iSelectedIndex)
+        {
+            DWORD dwStatus;
+            PCIE_Device device = pciDevList.Get(iSelectedIndex);
+
+            /* Open a handle to the device */
+            dwStatus = device.Open();
+            if (dwStatus != (DWORD)wdc_err.WD_STATUS_SUCCESS)
+            {
+                Log.ErrLog("NEWAMD86_diag.DeviceOpen: Failed opening a " +
+                    "handle to the device (" + device.ToString(false) + ")");
+                return false;
+            }
+            Log.TraceLog("NEWAMD86_diag.DeviceOpen: The device was successfully open." +
+                "You can now activate the device through the enabled menu above");
+            return true;
+        }
+
+        /* Close handle to a NEWAMD86 device */
+        private BOOL DeviceClose(int iSelectedIndex)
+        {
+            PCIE_Device device = pciDevList.Get(iSelectedIndex);
+            BOOL bStatus = false;
+
+            if (device.Handle != IntPtr.Zero && !(bStatus = device.Close()))
+            {
+                Log.ErrLog("NEWAMD86_diag.DeviceClose: Failed closing NEWAMD86 "
+                    + "device (" + device.ToString(false) + ")");
+            }
+            else
+                device.Handle = IntPtr.Zero;
+            return bStatus;
+        }
 
 
         #region Product pictures

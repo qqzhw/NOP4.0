@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks; 
-using Jungo.wdapi_dotnet; 
+using Jungo.wdapi_dotnet;
+
 using BYTE = System.Byte;
 using WORD = System.UInt16;
 using DWORD = System.UInt32;

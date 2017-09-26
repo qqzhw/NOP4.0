@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\Hcdz.PcieLib\Hcdz.PcieLib.csproj" />
     <ProjectReference Include="..\..\Libraries\Nop.Core\Nop.Core.csproj" />
     <ProjectReference Include="..\..\Libraries\Nop.Services\Nop.Services.csproj" />
     <ProjectReference Include="..\Nop.Web.Framework\Nop.Web.Framework.csproj" />
@@ -60,6 +61,9 @@
       <HintPath>..\..\Dlls\Pvirtech.TcpSocket.dll</HintPath>
     </Reference>
     <Reference Include="System.Management" />
+    <Reference Include="wdapi_dotnet1221">
+      <HintPath>..\..\Dlls\wdapi_dotnet1221.dll</HintPath>
+    </Reference>
   </ItemGroup>
     
   <!-- This target execute after "Build" target.
@@ -93,6 +97,10 @@
     <TypeScriptMapRoot />
     <TypeScriptSourceRoot />
   <EnableDefaultContentItems>false</EnableDefaultContentItems>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x86</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup> 
       
 </Project>
