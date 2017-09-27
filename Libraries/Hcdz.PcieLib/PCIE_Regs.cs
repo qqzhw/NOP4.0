@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;  
+﻿
+using System;
+
 using Jungo.wdapi_dotnet;
 using DWORD = System.UInt32;
 
@@ -32,7 +30,7 @@ namespace Hcdz.PcieLib
     public class PCIE_Regs
     {
         private const uint WDC_AD_CFG_SPACE = 0xFF;
-        public readonly WDC_REG[] gNEWAMD86_CfgRegs = new WDC_REG[]
+        public readonly WDC_REG[] gPCIE_CfgRegs = new WDC_REG[]
         {
             new WDC_REG(WDC_AD_CFG_SPACE, (DWORD)PCI_CFG_REG.PCI_VID, wdc_lib_consts.WDC_SIZE_16, WDC_DIRECTION.WDC_READ_WRITE, "VID", "Vendor ID" ),
             new WDC_REG(WDC_AD_CFG_SPACE, (DWORD)PCI_CFG_REG.PCI_DID, wdc_lib_consts.WDC_SIZE_16, WDC_DIRECTION.WDC_READ_WRITE, "DID", "Device ID" ),
@@ -63,7 +61,7 @@ namespace Hcdz.PcieLib
         };
 
         /* run-time registers information array */
-        public readonly WDC_REG[] gNEWAMD86_RT_Regs = { };
+        public readonly WDC_REG[] gPCIE_RT_Regs = { };
     };
 
 }

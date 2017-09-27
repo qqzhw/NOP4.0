@@ -35,7 +35,9 @@ using Nop.Web.Framework.Mvc.Routing;
 using Nop.Web.Framework.Themes;
 using Nop.Web.Framework.UI;
 using Nop.Services.Directory;
-
+using Hcdz.PcieLib;
+using DWORD = System.UInt32;
+using wdc_err = Jungo.wdapi_dotnet.WD_ERROR_CODES;
 namespace Nop.Web.Framework.Infrastructure
 {
     /// <summary>
@@ -152,7 +154,7 @@ namespace Nop.Web.Framework.Infrastructure
 
             //register all settings
             builder.RegisterSource(new SettingsSource());
-
+            
             //picture service
             if (!string.IsNullOrEmpty(config.AzureBlobStorageConnectionString))
                 builder.RegisterType<AzurePictureService>().As<IPictureService>().InstancePerLifetimeScope();
@@ -172,7 +174,30 @@ namespace Nop.Web.Framework.Infrastructure
                     }, typeof(IConsumer<>)))
                     .InstancePerLifetimeScope();
             }
+            Initializer(builder);
         }
+
+        private   void Initializer(ContainerBuilder builder)
+        {
+          var   pciDevList = PCIE_DeviceList.TheDeviceList();
+
+            try
+            {
+                UInt32 dwStatus = pciDevList.Init();
+                if (dwStatus != (UInt32)wdc_err.WD_STATUS_SUCCESS)
+                {
+                    return;
+                }
+                builder.RegisterInstance<PCIE_DeviceList>(pciDevList).SingleInstance();
+            
+            }
+            catch (Exception)
+            {
+
+            }
+
+        }
+
 
         /// <summary>
         /// Gets order of this dependency registrar implementation
