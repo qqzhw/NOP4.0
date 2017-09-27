@@ -18,7 +18,7 @@ namespace Hcdz.PcieLib
         private string PCIE_DEFAULT_DRIVER_NAME = "windrvr1221";
         private DWORD PCIE_DEFAULT_VENDOR_ID = 0x10EE;
         private DWORD PCIE_DEFAULT_DEVICE_ID = 0x7028;
-
+		public DWORD StatusCode { get; set; }
         private static PCIE_DeviceList instance;
 
         public static PCIE_DeviceList TheDeviceList()

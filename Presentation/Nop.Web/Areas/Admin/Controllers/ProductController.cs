@@ -96,16 +96,11 @@ namespace Nop.Web.Areas.Admin.Controllers
             this._customerActivityService = customerActivityService;
             this._permissionService = permissionService;
             this._aclService = aclService;
-            this._storeService = storeService;
-          
-            this._storeMappingService = storeMappingService;
-         
-            this._cacheManager = cacheManager;
-          
+            this._storeService = storeService; 
+            this._storeMappingService = storeMappingService; 
+            this._cacheManager = cacheManager; 
             this._downloadService = downloadService;
-            this._settingService = settingService;
-			_deviceSettings = _settingService.LoadSetting<DeviceSettings>();
-            
+            this._settingService = settingService; 
 		}
 
         #endregion
@@ -161,23 +156,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                     });
                 }
         }
-
-       
-       
-     
-        protected virtual string[] ParseProductTags(string productTags)
-        {
-            var result = new List<string>();
-            if (!String.IsNullOrWhiteSpace(productTags))
-            {
-                string[] values = productTags.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (string val1 in values)
-                    if (!String.IsNullOrEmpty(val1.Trim()))
-                        result.Add(val1.Trim());
-            }
-            return result.ToArray();
-        }
-        
+		 
         protected virtual void PrepareProductModel(ProductModel model, Product product, bool setPredefinedValues, bool excludeProperties)
         {
             if (model == null)
@@ -237,9 +216,24 @@ namespace Nop.Web.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             var model = new ProductListModel();
-            
-            //categories
-            model.AvailableDrivers.Add(new SelectListItem { Text = "选择磁盘", Value = "0" });
+			var deviceSettings = _settingService.LoadSetting<DeviceSettings>();
+			if (deviceSettings.IsConnect)
+			{
+				model.CanConnected = false;
+				model.CanChecked = true;
+				model.CanWrite = true;
+				model.CanClosed = true;
+				model.IsWriteing = true;
+			}
+			else
+			{
+				model.CanConnected = true;
+				model.CanChecked = false;
+				model.CanWrite = false;
+				model.CanClosed = false;
+			}
+			//categories
+			model.AvailableDrivers.Add(new SelectListItem { Text = "选择磁盘", Value = "0" });
             DriveInfo[] drives = DriveInfo.GetDrives();
             CommonHelper.UploadFilePath = drives[0].Name;
             // model.AvailableDrivers.Add(new SelectListItem { Text = ("Admin.Common.All"), Value = "0" });
@@ -268,11 +262,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         {
             if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
                 return AccessDeniedKendoGridJson();
-          
-            //0 - all (according to "ShowHidden" parameter)
-            //1 - published only
-            //2 - unpublished only
-          
+           
             var products = _productService.SearchProducts(  
                 vendorId: 0, 
                 pageIndex: command.Page - 1,
@@ -520,30 +510,39 @@ namespace Nop.Web.Areas.Admin.Controllers
 
             return Json(new { Result = true });
         }
-		
+
 		[HttpPost]
-		public virtual IActionResult ConnectDevice(string diskName)
+		public virtual IActionResult LoadSettings()
 		{
 			if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
 				return AccessDeniedView();
-
-			if (!string.IsNullOrEmpty(diskName))
+			var deviceSettings = _settingService.LoadSetting<DeviceSettings>();
+			if (deviceSettings.IsConnect)
 			{
-				string Info = string.Empty;
-				double Percent = 0;
-				DriveInfo[] drives = DriveInfo.GetDrives();
-				foreach (var drive in drives)
-				{
-					if (drive.Name.Contains(diskName))
-					{
-						Info = ByteFormatter.ToString(drive.AvailableFreeSpace) + " 可用";
-						Percent = 100.0 - (int)(drive.AvailableFreeSpace * 100.0 / drive.TotalSize);
-					}
-				}
-				return Json(new { Result = true, Percent = Percent, Info = Info });
+				return Json(new { Result = true, CanConnect=false, });
 			}
+			  
+			return Json(new { Result = false, Msg = "连接失败!" });
+		}
 
-			return Json(new { Result = false });
+
+		[HttpPost]
+		public virtual IActionResult ConnectDevice()
+		{
+			if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+				return AccessDeniedView();
+			pciDevList = EngineContext.Current.Resolve<PCIE_DeviceList>();
+			if (pciDevList.StatusCode==0)
+			{
+				for (int i = 0; i < pciDevList.Count; i++)
+				{
+					//打开设备
+					DeviceOpen(i);
+				}
+				return Json(new { Result = true,Msg="连接成功!" });
+			} 
+
+			return Json(new { Result = false,Msg="连接失败!" });
 		}
 
 
@@ -603,13 +602,10 @@ namespace Nop.Web.Areas.Admin.Controllers
             /* Open a handle to the device */
             dwStatus = device.Open();
             if (dwStatus != (DWORD)wdc_err.WD_STATUS_SUCCESS)
-            {
-                Log.ErrLog("NEWAMD86_diag.DeviceOpen: Failed opening a " +
-                    "handle to the device (" + device.ToString(false) + ")");
+            { 
                 return false;
             }
-            Log.TraceLog("NEWAMD86_diag.DeviceOpen: The device was successfully open." +
-                "You can now activate the device through the enabled menu above");
+			device.IsConnected = true;
             return true;
         }
 
@@ -621,8 +617,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
             if (device.Handle != IntPtr.Zero && !(bStatus = device.Close()))
             {
-                Log.ErrLog("NEWAMD86_diag.DeviceClose: Failed closing NEWAMD86 "
-                    + "device (" + device.ToString(false) + ")");
+                device.IsConnected=false;
             }
             else
                 device.Handle = IntPtr.Zero;

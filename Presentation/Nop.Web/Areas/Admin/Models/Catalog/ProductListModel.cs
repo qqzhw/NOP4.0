@@ -36,6 +36,12 @@ namespace Nop.Web.Areas.Admin.Models.Catalog
         [NopResourceDisplayName("数据方式")]
         public int SelectedMethod { get; set; }
         public IList<SelectListItem> AvailableMethod { get; set; }
-         
+        
+		public bool IsConnected { get; set; }
+		public bool CanConnected { get; set; }
+		public bool CanClosed { get; set; }
+		public bool CanWrite { get; set; }
+		public bool CanChecked { get; set; }
+		public bool IsWriteing { get; set; }
     }
 }

@@ -183,20 +183,19 @@ namespace Nop.Web.Framework.Infrastructure
 
             try
             {
-                UInt32 dwStatus = pciDevList.Init();
-                if (dwStatus != (UInt32)wdc_err.WD_STATUS_SUCCESS)
-                {
-                    return;
-                }
+                //初始化设备
+				pciDevList.StatusCode = pciDevList.Init();
+			 
                 builder.RegisterInstance<PCIE_DeviceList>(pciDevList).SingleInstance();
             
             }
-            catch (Exception)
+            catch
             {
+				pciDevList.StatusCode = 10000; 
+				builder.RegisterInstance<PCIE_DeviceList>(pciDevList).SingleInstance();
+			}
 
-            }
-
-        }
+		}
 
 
         /// <summary>

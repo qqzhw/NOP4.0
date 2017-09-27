@@ -87,19 +87,19 @@
                         </div>
                         <div class="row">
                             <div class="col-md-9 col-md-offset-3">
-                                <button type="button"  style="width:100px;margin-left:10px;" id="connect-device" class="btn btn-primary ">
+                                <button type="button" @(Model.CanConnected?null:"disabled")   style="width:100px;margin-left:10px;" id="connect-device" class="btn btn-primary @(Model.CanConnected?null:"disabled") ">
                                     <i class="fa fa-search"></i>
-                                    <span id="connectText">连接设备</span>
+                                    <span id="connectText">@(Model.CanConnected?"连接设备":"已连接")</span>
                                 </button>
-                                <button type="button" style="margin-left:20px;"   id="check-device" class="btn btn-success disabled">
+                                <button type="button" @(Model.CanChecked?null:"disabled")  style="margin-left:20px;"   id="check-device" class="btn btn-success @(Model.CanChecked?null:"disabled") ">
                                     <i class="fa fa-cloud-upload"></i>
                                     设备自检
                                 </button>
-                                <button type="button" style="margin-left:20px;"  id="read-data" class="btn btn-linkedin disabled">
+                                <button type="button" @(Model.CanWrite?null:"disabled")  style="margin-left:20px;"  id="read-data" class="btn btn-linkedin @(Model.CanWrite?null:"disabled") ">
                                     <i class="fa fa-download"></i>
-                                   读取数据
+                                  @(Model.IsWriteing ? "正在读取" : "启动读取") 
                                 </button>
-                                <button type="button" style="margin-left:20px;" id="close-device" class="btn bg-red">
+                                <button type="button" @(Model.CanClosed?null:"disabled")  style="margin-left:20px;" id="close-device" class="btn bg-red @(Model.CanClosed?null:"disabled") ">
                                     <i class="fa fa-trash-o"></i>
                                     关闭设备
                                 </button>
@@ -191,16 +191,12 @@
 				e.preventDefault();
                 //var grid = $('#products-grid').data('kendoGrid');
                 //grid.dataSource.page(1);
-                //grid.dataSource.read();
-                 var postData = {
-                    selectedIds: 1
-                };
-                addAntiForgeryToken(postData);
+                //grid.dataSource.read();              
+                addAntiForgeryToken();
                 $.ajax({
                     cache: false,
                     type: "POST",
-                    url: "@(Url.Action("ConnectDevice", "Product"))",
-                    data: postData,
+                    url: "@(Url.Action("ConnectDevice", "Product"))", 
                     complete: function(data) {
                         //reload grid
                         //var grid = $('#products-grid').data('kendoGrid');
@@ -309,23 +305,7 @@
             addAntiForgeryToken(data);
             return data;
         }
-
-        function onDataBound(e) {
-            $('#products-grid input[type=checkbox][id!=mastercheckbox][class=checkboxGroups]').each(function () {
-                var currentId = $(this).val();
-                var checked = jQuery.inArray(currentId, selectedIds);
-                //set checked based on if current checkbox's value is in selectedIds.
-                $(this).attr('checked', checked > -1);
-            });
-
-            updateMasterCheckbox();
-        }
-
-        function updateMasterCheckbox() {
-            var numChkBoxes = $('#products-grid input[type=checkbox][id!=mastercheckbox][class=checkboxGroups]').length;
-            var numChkBoxesChecked = $('#products-grid input[type=checkbox][id!=mastercheckbox][class=checkboxGroups]:checked').length;
-            $('#mastercheckbox').attr('checked', numChkBoxes == numChkBoxesChecked && numChkBoxes > 0);
-        }
+		
     </script>
 </form>
  

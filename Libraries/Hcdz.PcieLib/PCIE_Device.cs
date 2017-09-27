@@ -38,6 +38,7 @@ namespace Hcdz.PcieLib
         protected string m_sDeviceShortDesc;
         private PCIE_Regs m_regs;
         public string Name { get; set; }
+		public bool IsConnected { get; set; }
         #region " constructors "
         /* constructors & destructors */
         internal protected PCIE_Device(WD_PCI_SLOT slot) : this(0, 0, slot) { }
